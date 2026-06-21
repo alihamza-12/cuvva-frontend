@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+    /* Define custom branding tokens natively in CSS */
+    --color-cuvva-bg: #0b0d19;
+    --color-cuvva-card: #13172d;
+    --color-cuvva-border: #22294a;
+    --color-cuvva-purple: #ff3b57;
+    --color-cuvva-cyan: #00f0ff;
+    --color-cuvva-muted: #6b7280;
+    --color-cuvva-green: #10b981;
+    --color-cuvva-red: #ef4444;
+    --color-cuvva-amber: #f59e0b;
+
+    /* Custom Glow Effect Utilities */
+    --shadow-glow-purple: 0 0 15px rgba(255, 59, 87, 0.35);
+}
+
+@layer base {
+    body {
+        background-color: var(--color-cuvva-bg);
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+    }
+}
+
+@layer components {
+    .cuvva-card {
+        background-color: var(--color-cuvva-card);
+        border: 1px solid var(--color-cuvva-border);
+        border-radius: 1rem;
+    }
+
+    .cuvva-input {
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--color-cuvva-border);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: #ffffff;
+        outline: none;
+        transition: all 0.2s;
+    }
+
+    .cuvva-input:focus {
+        border-color: var(--color-cuvva-purple);
+        box-shadow: 0 0 0 2px rgba(255, 59, 87, 0.2);
+    }
+
+    .btn-primary {
+        background-color: var(--color-cuvva-purple);
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        border: 1px solid var(--color-cuvva-border);
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+    }
+}

@@ -1,11 +1,8 @@
-
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
-import "./App.css";
+import React from 'react';
+import AppRouter from './router/AppRouter';
 
 function App() {
-  return <><div>Hello</div></>;
+  return <AppRouter />;
 }
 
 export default App;
