@@ -351,7 +351,11 @@ export default function VehicleCatalog({
             vehicles.map((v) => (
               <div
                 key={v._id}
-                className="p-4 bg-[#060814]/60 border border-[#1e2238] rounded-xl flex flex-wrap justify-between items-center gap-4 hover:border-white/10 transition-colors"
+                className="p-4 bg-[#060814]/60 border border-[#1e2238] rounded-xl flex flex-wrap justify-between items-center gap-4 hover:border-white/10 transition-colors cursor-pointer"
+                onClick={() => {
+                  const reg = v.registration;
+                  window.location.href = `/admin/vehicles/${encodeURIComponent(reg)}`;
+                }}
               >
                 {/* Plate and Identity Column */}
                 <div className="flex items-center gap-3">

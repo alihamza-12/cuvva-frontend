@@ -12,6 +12,9 @@ import Login from "../pages/auth/LoginPage";
 import { selectCurrentUser } from "../features/authSlice";
 import ProtectedRoute from "./ProtectedRoute";
 import SuperAdminDashboard from "../pages/super-admin/Dashboard";
+import CustomerDetailPage from "../pages/super-admin/details/CustomerDetailPage";
+import VehicleDetailPage from "../pages/super-admin/details/VehicleDetailPage";
+import SubAdminDetailPage from "../pages/super-admin/details/SubAdminDetailPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -91,6 +94,12 @@ export default function AppRouter() {
         >
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<SuperAdminDashboard />} />
+          <Route path="customers/:id" element={<CustomerDetailPage />} />
+          <Route
+            path="vehicles/:registration"
+            element={<VehicleDetailPage />}
+          />
+          <Route path="sub-admins/:id" element={<SubAdminDetailPage />} />
         </Route>
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}

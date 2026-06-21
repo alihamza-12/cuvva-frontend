@@ -283,7 +283,15 @@ export default function AccountManagement({
                   {activeList.map((userRecord) => (
                     <tr
                       key={userRecord._id}
-                      className="text-gray-300 hover:bg-white/[0.01] transition-colors"
+                      onClick={() => {
+                        // Customers -> /admin/customers/:id, Sub-admins -> /admin/sub-admins/:id
+                        const base =
+                          activeDirectoryTab === "subAdmins"
+                            ? `/admin/sub-admins/${userRecord._id}`
+                            : `/admin/customers/${userRecord._id}`;
+                        window.location.href = base;
+                      }}
+                      className="cursor-pointer text-gray-300 hover:bg-white/[0.01] transition-colors"
                     >
                       {/* Identity Details Row */}
                       <td className="py-3.5 pl-1">
