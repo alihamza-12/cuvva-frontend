@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { LayoutDashboard, Users, Car, Shield, LogOut } from "lucide-react";
 
 export default function Sidebar({
@@ -7,6 +8,8 @@ export default function Sidebar({
   user = { fullName: "Super Admin", role: "Super Admin" },
   onLogout,
 }) {
+  const navigate = useNavigate();
+
   const menuItems = [
     {
       id: "overview",
@@ -85,9 +88,7 @@ export default function Sidebar({
                   onClick={(e) => {
                     e.preventDefault();
                     setActiveTab(item.id);
-                    window.history.pushState({}, "", item.href);
-                    // basic client-side navigation for non-router consumers
-                    window.dispatchEvent(new PopStateEvent("popstate"));
+                    navigate(item.href);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] uppercase tracking-wider font-bold transition-all duration-200 ${
                     isSelected
@@ -130,8 +131,7 @@ export default function Sidebar({
               key={item.id}
               onClick={() => {
                 setActiveTab(item.id);
-                window.history.pushState({}, "", item.href);
-                window.dispatchEvent(new PopStateEvent("popstate"));
+                navigate(item.href);
               }}
               className={`flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl transition-all ${
                 isSelected ? "text-[#644aff]" : "text-[#6b7280]"
@@ -151,10 +151,11 @@ export default function Sidebar({
           title="Exit Portal"
         >
           <LogOut size={16} />
-          <span className="text-[8px] uppercase tracking-wider font-bold">Exit</span>
+          <span className="text-[8px] uppercase tracking-wider font-bold">
+            Exit
+          </span>
         </button>
       </div>
     </>
   );
 }
-
