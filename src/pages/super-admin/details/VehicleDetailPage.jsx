@@ -72,7 +72,8 @@ export default function VehicleDetailPage() {
       <div className="flex-1 max-w-4xl p-6 mx-auto space-y-6 md:p-10">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate(-1)}
+            type="button"
+            onClick={() => navigate(-1, { replace: false })}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
           >
             <ArrowLeft size={14} /> Back

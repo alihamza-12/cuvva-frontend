@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Car,
@@ -16,6 +17,7 @@ export default function VehicleCatalog({
   onRefresh,
   axiosInstance,
 }) {
+  const navigate = useNavigate();
   // Operational States
   const [regInput, setRegInput] = useState("");
   const [lookupResult, setLookupResult] = useState(null);
@@ -354,7 +356,7 @@ export default function VehicleCatalog({
                 className="p-4 bg-[#060814]/60 border border-[#1e2238] rounded-xl flex flex-wrap justify-between items-center gap-4 hover:border-white/10 transition-colors cursor-pointer"
                 onClick={() => {
                   const reg = v.registration;
-                  window.location.href = `/admin/vehicles/${encodeURIComponent(reg)}`;
+                  navigate(`/admin/vehicles/${encodeURIComponent(reg)}`);
                 }}
               >
                 {/* Plate and Identity Column */}
