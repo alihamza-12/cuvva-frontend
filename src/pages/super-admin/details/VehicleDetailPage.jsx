@@ -55,12 +55,8 @@ export default function VehicleDetailPage() {
       <Sidebar
         activeTab={"vehicles"}
         setActiveTab={(tabId) => {
-          // Detail pages don't have tab-specific routes; return to main dashboard
-          // and let the dashboard reflect the selected tab.
           if (tabId === "overview") navigate("/admin/dashboard");
-          else if (tabId === "accounts") navigate("/admin/dashboard");
-          else if (tabId === "vehicles") navigate("/admin/dashboard");
-          else if (tabId === "policies") navigate("/admin/dashboard");
+          else navigate(`/admin/dashboard?tab=${tabId}`);
         }}
         user={{
           fullName: vehicle?.registration || "Super Admin",
@@ -73,7 +69,7 @@ export default function VehicleDetailPage() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => navigate(-1, { replace: false })}
+            onClick={() => navigate("/admin/dashboard", { replace: false })}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
           >
             <ArrowLeft size={14} /> Back

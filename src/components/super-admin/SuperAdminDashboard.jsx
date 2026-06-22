@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import {
   LayoutDashboard,
@@ -28,6 +28,7 @@ const api = axios.create({
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Navigation Routing States
   const [activeTab, setActiveTab] = useState("overview");
@@ -105,6 +106,20 @@ export default function SuperAdminDashboard() {
   useEffect(() => {
     fetchGlobalMetricsData();
   }, [fetchGlobalMetricsData]);
+
+  // Keep the dashboard tab in sync with URL query (?tab=...)
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tab = (searchParams.get("tab") || "overview").toLowerCase();
+
+    const allowedTabs = new Set([
+      "overview",
+      "accounts",
+      "vehicles",
+      "policies",
+    ]);
+    setActiveTab(allowedTabs.has(tab) ? tab : "overview");
+  }, [location.search]);
 
   // Session Invalidation Protocol
   const handleSessionRevocation = async () => {
