@@ -61,8 +61,9 @@ export default function SubAdminDetailPage() {
       <Sidebar
         activeTab={"accounts"}
         setActiveTab={(tabId) => {
-          // Detail pages don't have tab-specific routes; return to main dashboard
-          window.location.href = "/admin/dashboard";
+          // Keep SPA navigation (no full reload)
+          // Detail pages only need a safe fallback: go back to super-admin dashboard.
+          if (tabId) navigate("/admin/dashboard");
         }}
         user={{
           fullName: subAdmin?.fullName || "Super Admin",

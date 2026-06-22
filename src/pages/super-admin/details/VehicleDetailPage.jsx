@@ -57,13 +57,10 @@ export default function VehicleDetailPage() {
         setActiveTab={(tabId) => {
           // Detail pages don't have tab-specific routes; return to main dashboard
           // and let the dashboard reflect the selected tab.
-          if (tabId === "overview") window.location.href = "/admin/dashboard";
-          else if (tabId === "accounts")
-            window.location.href = "/admin/dashboard";
-          else if (tabId === "vehicles")
-            window.location.href = "/admin/dashboard";
-          else if (tabId === "policies")
-            window.location.href = "/admin/dashboard";
+          if (tabId === "overview") navigate("/admin/dashboard");
+          else if (tabId === "accounts") navigate("/admin/dashboard");
+          else if (tabId === "vehicles") navigate("/admin/dashboard");
+          else if (tabId === "policies") navigate("/admin/dashboard");
         }}
         user={{
           fullName: vehicle?.registration || "Super Admin",

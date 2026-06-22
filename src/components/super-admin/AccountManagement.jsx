@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   UserPlus,
   Shield,
@@ -14,7 +15,10 @@ export default function AccountManagement({
   onRefresh,
   axiosInstance,
 }) {
+  const navigate = useNavigate();
+
   // Form State
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -289,7 +293,7 @@ export default function AccountManagement({
                           activeDirectoryTab === "subAdmins"
                             ? `/admin/sub-admins/${userRecord._id}`
                             : `/admin/customers/${userRecord._id}`;
-                        window.location.href = base;
+                        navigate(base);
                       }}
                       className="cursor-pointer text-gray-300 hover:bg-white/[0.01] transition-colors"
                     >

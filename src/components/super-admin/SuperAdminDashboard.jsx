@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import {
   LayoutDashboard,
   Users,
@@ -25,6 +27,8 @@ const api = axios.create({
 });
 
 export default function SuperAdminDashboard() {
+  const navigate = useNavigate();
+
   // Navigation Routing States
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -47,34 +51,26 @@ export default function SuperAdminDashboard() {
     try {
       // Execute endpoints in parallel safely by mapping individual catches
       const [resSub, resCust, resVeh, resPol] = await Promise.all([
-        api
-          .get("/api/management/subadmins")
-          .catch((err) => ({
-            error: true,
-            data: { subAdmins: [] },
-            message: "Sub-Admins data grid offline.",
-          })),
-        api
-          .get("/api/management/customers")
-          .catch((err) => ({
-            error: true,
-            data: { customers: [] },
-            message: "Customer registries detached.",
-          })),
-        api
-          .get("/api/vehicles/all")
-          .catch((err) => ({
-            error: true,
-            data: { vehicles: [] },
-            message: "Vehicle asset catalog unreachable.",
-          })),
-        api
-          .get("/api/policies/all")
-          .catch((err) => ({
-            error: true,
-            data: { policies: [] },
-            message: "Insurance contract engine unavailable.",
-          })),
+        api.get("/api/management/subadmins").catch((err) => ({
+          error: true,
+          data: { subAdmins: [] },
+          message: "Sub-Admins data grid offline.",
+        })),
+        api.get("/api/management/customers").catch((err) => ({
+          error: true,
+          data: { customers: [] },
+          message: "Customer registries detached.",
+        })),
+        api.get("/api/vehicles/all").catch((err) => ({
+          error: true,
+          data: { vehicles: [] },
+          message: "Vehicle asset catalog unreachable.",
+        })),
+        api.get("/api/policies/all").catch((err) => ({
+          error: true,
+          data: { policies: [] },
+          message: "Insurance contract engine unavailable.",
+        })),
       ]);
 
       // Handle structural telemetry state allocations safely
@@ -121,7 +117,7 @@ export default function SuperAdminDashboard() {
       );
     } finally {
       // Clear local memory structures and force immediate fallback redirect
-      window.location.href = "/login";
+      navigate("/login", { replace: true });
     }
   };
 
