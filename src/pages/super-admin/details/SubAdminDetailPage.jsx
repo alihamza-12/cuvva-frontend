@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft, ShieldAlert } from "lucide-react";
 
 import Sidebar from "../../../components/super-admin/Sidebar";
-
-const api = axios.create({
-  baseURL: import.meta.env?.VITE_API_BASE_URL || "http://localhost:3000",
-  withCredentials: true,
-});
+import { getSubAdminById } from "../../../app/api/subAdminApi";
 
 export default function SubAdminDetailPage() {
   const { id } = useParams();
@@ -25,7 +20,7 @@ export default function SubAdminDetailPage() {
       setLoading(true);
       setError("");
       try {
-        const res = await api.get(`/api/management/subadmins/${id}`);
+        const res = await getSubAdminById(id);
 
         if (!mounted) return;
         setSubAdmin(res.data?.user || null);

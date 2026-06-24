@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft, User, ShieldAlert, Mail } from "lucide-react";
 
 import Sidebar from "../../../components/super-admin/Sidebar";
-
-const api = axios.create({
-  baseURL: import.meta.env?.VITE_API_BASE_URL || "http://localhost:3000",
-  withCredentials: true,
-});
+import { getCustomerById } from "../../../app/api/customerApi";
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
@@ -25,7 +20,7 @@ export default function CustomerDetailPage() {
       setLoading(true);
       setError("");
       try {
-        const res = await api.get(`/api/customers/${id}`);
+        const res = await getCustomerById(id);
         if (!mounted) return;
         setCustomer(res.data?.customer || null);
       } catch (err) {

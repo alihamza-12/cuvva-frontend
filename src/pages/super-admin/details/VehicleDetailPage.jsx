@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft, Car, ShieldAlert } from "lucide-react";
 
 import Sidebar from "../../../components/super-admin/Sidebar";
-
-const api = axios.create({
-  baseURL: import.meta.env?.VITE_API_BASE_URL || "http://localhost:3000",
-  withCredentials: true,
-});
+import { getVehicleByRegistration } from "../../../app/api/vehicleApi";
 
 export default function VehicleDetailPage() {
   const { registration } = useParams();
@@ -29,7 +24,7 @@ export default function VehicleDetailPage() {
           .trim()
           .toUpperCase()
           .replace(/\s+/g, "");
-        const res = await api.get(`/api/vehicles/lookup/${cleaned}`);
+        const res = await getVehicleByRegistration(cleaned);
         if (!mounted) return;
         setVehicle(res.data?.vehicle || null);
       } catch (err) {
