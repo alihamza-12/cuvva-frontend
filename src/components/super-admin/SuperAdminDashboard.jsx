@@ -21,6 +21,7 @@ import VehicleCatalog from "./VehicleCatalog";
 import PolicyContracts from "./PolicyContracts";
 import CreateUser from "./CreateUser";
 import CreatePolicy from "./CreatePolicy";
+import CreateVehicle from "./CreateVehicle";
 
 // Extensible API Instance with cookie protection policies
 const api = axios.create({
@@ -121,6 +122,7 @@ export default function SuperAdminDashboard() {
       "policies",
       "create-user",
       "create-policy",
+      "create-vehicle",
     ]);
     setActiveTab(allowedTabs.has(tab) ? tab : "overview");
   }, [location.search]);
@@ -253,6 +255,13 @@ export default function SuperAdminDashboard() {
 
           {activeTab === "create-policy" && (
             <CreatePolicy
+              axiosInstance={api}
+              onCreated={fetchGlobalMetricsData}
+            />
+          )}
+
+          {activeTab === "create-vehicle" && (
+            <CreateVehicle
               axiosInstance={api}
               onCreated={fetchGlobalMetricsData}
             />

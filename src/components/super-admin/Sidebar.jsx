@@ -47,6 +47,12 @@ export default function Sidebar({
       icon: Shield,
       href: "/admin/dashboard?tab=create-policy",
     },
+    {
+      id: "create-vehicle",
+      name: "Create Vehicle",
+      icon: Car,
+      href: "/admin/dashboard?tab=create-vehicle",
+    },
   ];
 
   const computeUserInitials = (nameString) => {
@@ -151,7 +157,7 @@ export default function Sidebar({
             >
               <Icon size={16} />
               <span className="text-[8px] uppercase tracking-wider font-bold">
-                {item.name.split(" ")[1] || item.name}
+                {item.name}
               </span>
             </button>
           );
