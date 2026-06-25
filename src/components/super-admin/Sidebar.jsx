@@ -41,6 +41,12 @@ export default function Sidebar({
       icon: Users,
       href: "/admin/dashboard?tab=create-user",
     },
+    {
+      id: "create-policy",
+      name: "Create Policey",
+      icon: Shield,
+      href: "/admin/dashboard?tab=create-policy",
+    },
   ];
 
   const computeUserInitials = (nameString) => {
