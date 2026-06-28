@@ -61,11 +61,20 @@ export default function Sidebar({
     if (fragments.length === 1) {
       return fragments[0].substring(0, 2).toUpperCase();
     }
-    return (fragments[0][0] + fragments[fragments.length - 1][0]).toUpperCase();
+    return (
+      (fragments[0] && fragments[0][0]) +
+      (fragments[fragments.length - 1] && fragments[fragments.length - 1][0])
+    ).toUpperCase();
+  };
+
+  const handleNavigate = (item) => {
+    setActiveTab(item.id);
+    navigate(item.href);
   };
 
   return (
     <>
+      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 bg-[#0d0f1d] border-r border-[#1e2238] flex-col justify-between p-6 h-screen sticky top-0 shrink-0 select-none z-50">
         <div className="space-y-8">
           <div className="flex items-center gap-2.5 px-2">
@@ -105,8 +114,7 @@ export default function Sidebar({
                   href={item.href}
                   onClick={(e) => {
                     e.preventDefault();
-                    setActiveTab(item.id);
-                    navigate(item.href);
+                    handleNavigate(item);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] uppercase tracking-wider font-bold transition-all duration-200 ${
                     isSelected
@@ -139,40 +147,48 @@ export default function Sidebar({
         </button>
       </aside>
 
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#0d0f1d] border-t border-[#1e2238] flex items-center justify-around px-2 z-50 shadow-2xl">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isSelected = activeTab === item.id;
+      {/* Mobile Bottom Nav */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 shadow-2xl bg-[#0d0f1d] border-t border-[#1e2238]">
+        <div className="flex items-stretch h-16">
+          {/* Use horizontal scroll so all items remain visible on small screens */}
+          <div className="flex-1 overflow-x-auto scrollbar-hide flex items-center px-1">
+            <div className="flex items-center gap-2">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isSelected = activeTab === item.id;
 
-          return (
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavigate(item)}
+                    className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all flex-shrink-0 ${
+                      isSelected ? "text-[#644aff]" : "text-[#6b7280]"
+                    }`}
+                    aria-label={item.name}
+                  >
+                    <Icon size={16} />
+                    <span className="text-[7px] uppercase tracking-wider font-bold whitespace-nowrap">
+                      {item.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="w-20 flex items-center justify-center border-l border-[#1e2238] bg-[#0d0f1d]">
             <button
-              key={item.id}
-              onClick={() => {
-                setActiveTab(item.id);
-                navigate(item.href);
-              }}
-              className={`flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl transition-all ${
-                isSelected ? "text-[#644aff]" : "text-[#6b7280]"
-              }`}
+              onClick={onLogout}
+              className="flex flex-col items-center justify-center gap-1 py-1 text-red-400"
+              title="Exit Portal"
             >
-              <Icon size={16} />
-              <span className="text-[8px] uppercase tracking-wider font-bold">
-                {item.name}
+              <LogOut size={16} />
+              <span className="text-[7px] uppercase tracking-wider font-bold whitespace-nowrap">
+                Exit
               </span>
             </button>
-          );
-        })}
-
-        <button
-          onClick={onLogout}
-          className="flex flex-col items-center justify-center gap-1 px-3 py-1 text-red-400"
-          title="Exit Portal"
-        >
-          <LogOut size={16} />
-          <span className="text-[8px] uppercase tracking-wider font-bold">
-            Exit
-          </span>
-        </button>
+          </div>
+        </div>
       </div>
     </>
   );
