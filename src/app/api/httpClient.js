@@ -1,19 +1,13 @@
 import axios from "axios";
 
-import { logOut } from "../../features/authSlice";
-import { store } from "../store";
-
 export const httpClient = axios.create({
   baseURL: import.meta.env?.VITE_API_BASE_URL || "http://localhost:3000",
   withCredentials: true,
 });
 
 function clearAuthAndRedirectToLogin() {
-  try {
-    store.dispatch(logOut());
-  } catch (_) {
-    // If store isn't available for some reason, fall back to localStorage cleanup
-  }
+  // eslint-disable-next-line no-console
+  console.log("[auth] clearing local auth and redirecting to /login");
 
   try {
     localStorage.removeItem("cuvva_user");
@@ -21,16 +15,15 @@ function clearAuthAndRedirectToLogin() {
     // ignore
   }
 
-  // Hard redirect to ensure React router state is reset
   window.location.assign("/login");
 }
 
+// Token refresh / retry on 401
 httpClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const { response, config } = error || {};
 
-    // Only handle Axios responses with 401
     if (!response || response.status !== 401) {
       return Promise.reject(error);
     }
@@ -42,7 +35,7 @@ httpClient.interceptors.response.use(
     }
 
     try {
-      // Attempt refresh using cookie-based refresh token
+      // Attempt refresh using httpOnly refreshToken cookie
       const refreshResponse = await httpClient.post(
         "/api/auth/refresh-token",
         {},

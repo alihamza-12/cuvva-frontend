@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+
+import { httpClient } from "../../app/api/httpClient";
 
 import {
   LayoutDashboard,
@@ -23,11 +24,8 @@ import CreateUser from "./CreateUser";
 import CreatePolicy from "./CreatePolicy";
 import CreateVehicle from "./CreateVehicle";
 
-// Extensible API Instance with cookie protection policies
-const api = axios.create({
-  baseURL: import.meta.env?.VITE_API_BASE_URL || "http://localhost:3000",
-  withCredentials: true,
-});
+// Use shared axios instance so the 401->refresh interceptor applies
+const api = httpClient;
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
