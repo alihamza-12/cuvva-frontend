@@ -137,7 +137,20 @@ export default function SuperAdminDashboard() {
         err,
       );
     } finally {
-      // Clear local memory structures and force immediate fallback redirect
+      // Clear ALL client-side session state (as requested)
+      try {
+        localStorage.clear();
+      } catch (e) {
+        console.warn("localStorage.clear() failed", e);
+      }
+
+      try {
+        sessionStorage.clear();
+      } catch (e) {
+        console.warn("sessionStorage.clear() failed", e);
+      }
+
+      // Force immediate fallback redirect
       navigate("/login", { replace: true });
     }
   };
