@@ -19,6 +19,7 @@ import Sidebar from "./Sidebar";
 import OverviewGrid from "./OverviewGrid";
 import AccountManagement from "./AccountManagement";
 import OwnCustomersManagement from "./OwnCustomersManagement";
+import AllSubAdminsManagement from "./AllSubAdminsManagement";
 import VehicleCatalog from "./VehicleCatalog";
 import PolicyContracts from "./PolicyContracts";
 import CreateUser from "./CreateUser";
@@ -243,6 +244,13 @@ export default function SuperAdminDashboard() {
 
           {activeTab === "own-customers" && (
             <OwnCustomersManagement
+              axiosInstance={api}
+              onRefresh={fetchGlobalMetricsData}
+            />
+          )}
+
+          {activeTab === "sub-admins" && (
+            <AllSubAdminsManagement
               axiosInstance={api}
               onRefresh={fetchGlobalMetricsData}
             />

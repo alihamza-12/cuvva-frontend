@@ -24,6 +24,12 @@ export default function Sidebar({
       href: "/admin/dashboard?tab=accounts",
     },
     {
+      id: "sub-admins",
+      name: "Sub Admins",
+      icon: Users,
+      href: "/admin/dashboard?tab=sub-admins",
+    },
+    {
       id: "own-customers",
       name: "View own customers",
       icon: Users,
