@@ -121,13 +121,10 @@ export default function Sidebar({
               const isSelected = activeTab === item.id;
 
               return (
-                <a
+                <button
+                  type="button"
                   key={item.id}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigate(item);
-                  }}
+                  onClick={() => navigate(item.href, { replace: true })}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] uppercase tracking-wider font-bold transition-all duration-200 ${
                     isSelected
                       ? "bg-[#644aff] text-white shadow-lg shadow-[#644aff]/15 border-l-2 border-white"
@@ -141,7 +138,7 @@ export default function Sidebar({
                     }
                   />
                   <span>{item.name}</span>
-                </a>
+                </button>
               );
             })}
           </nav>

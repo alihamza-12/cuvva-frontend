@@ -118,6 +118,7 @@ export default function SuperAdminDashboard() {
     const allowedTabs = new Set([
       "overview",
       "accounts",
+      "sub-admins",
       "own-customers",
       "vehicles",
       "policies",
