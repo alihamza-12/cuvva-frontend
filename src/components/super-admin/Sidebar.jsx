@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutDashboard, Users, Car, Shield, LogOut } from "lucide-react";
 
@@ -146,13 +145,20 @@ export default function Sidebar({
 
         <button
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] uppercase tracking-wider font-bold text-[#ef4444] hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all duration-200 group mt-auto"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] uppercase tracking-wider font-bold text-white mt-auto
+                     bg-gradient-to-r from-red-500/90 via-red-500 to-red-600/90
+                     hover:from-red-400 hover:via-red-500 hover:to-red-600
+                     shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_10px_30px_rgba(239,68,68,0.18)]
+                     transition-all duration-200
+                     border border-white/10
+                     group relative overflow-hidden shrink-0"
         >
+          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-[radial-gradient(1200px_circle_at_20%_50%,rgba(255,255,255,0.22),transparent_40%)]" />
           <LogOut
             size={14}
-            className="text-[#ef4444] group-hover:translate-x-0.5 transition-transform"
+            className="relative z-10 text-white group-hover:translate-x-0.5 transition-transform drop-shadow"
           />
-          <span>Terminate Session</span>
+          <span className="relative z-10">Terminate Session</span>
         </button>
       </aside>
 
@@ -188,10 +194,14 @@ export default function Sidebar({
           <div className="w-20 flex items-center justify-center border-l border-[#1e2238] bg-[#0d0f1d]">
             <button
               onClick={onLogout}
-              className="flex flex-col items-center justify-center gap-1 py-1 text-red-400"
+              className="flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl text-white
+                         bg-gradient-to-r from-red-500/90 via-red-500 to-red-600/90
+                         hover:from-red-400 hover:via-red-500 hover:to-red-600
+                         shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_8px_20px_rgba(239,68,68,0.18)]
+                         transition-all duration-200 border border-white/10"
               title="Exit Portal"
             >
-              <LogOut size={16} />
+              <LogOut size={16} className="drop-shadow" />
               <span className="text-[7px] uppercase tracking-wider font-bold whitespace-nowrap">
                 Exit
               </span>
