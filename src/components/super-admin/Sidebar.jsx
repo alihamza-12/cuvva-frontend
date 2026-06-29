@@ -24,6 +24,12 @@ export default function Sidebar({
       href: "/admin/dashboard?tab=accounts",
     },
     {
+      id: "own-customers",
+      name: "View own customers",
+      icon: Users,
+      href: "/admin/dashboard?tab=own-customers",
+    },
+    {
       id: "vehicles",
       name: "Vehicle Catalog",
       icon: Car,
@@ -151,7 +157,7 @@ export default function Sidebar({
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 shadow-2xl bg-[#0d0f1d] border-t border-[#1e2238]">
         <div className="flex items-stretch h-16">
           {/* Use horizontal scroll so all items remain visible on small screens */}
-          <div className="flex-1 overflow-x-auto scrollbar-hide flex items-center px-1">
+          <div className="flex items-center flex-1 px-1 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-2">
               {menuItems.map((item) => {
                 const Icon = item.icon;

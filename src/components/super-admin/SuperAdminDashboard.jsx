@@ -18,6 +18,7 @@ import {
 import Sidebar from "./Sidebar";
 import OverviewGrid from "./OverviewGrid";
 import AccountManagement from "./AccountManagement";
+import OwnCustomersManagement from "./OwnCustomersManagement";
 import VehicleCatalog from "./VehicleCatalog";
 import PolicyContracts from "./PolicyContracts";
 import CreateUser from "./CreateUser";
@@ -116,6 +117,7 @@ export default function SuperAdminDashboard() {
     const allowedTabs = new Set([
       "overview",
       "accounts",
+      "own-customers",
       "vehicles",
       "policies",
       "create-user",
@@ -236,6 +238,13 @@ export default function SuperAdminDashboard() {
               customers={customers}
               onRefresh={fetchGlobalMetricsData}
               axiosInstance={api}
+            />
+          )}
+
+          {activeTab === "own-customers" && (
+            <OwnCustomersManagement
+              axiosInstance={api}
+              onRefresh={fetchGlobalMetricsData}
             />
           )}
 

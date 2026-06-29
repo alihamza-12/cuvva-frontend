@@ -7,6 +7,7 @@ export default function AccountManagement({
   customers = [],
   onRefresh,
   axiosInstance,
+  ownCustomersOnly = false,
 }) {
   const navigate = useNavigate();
 
