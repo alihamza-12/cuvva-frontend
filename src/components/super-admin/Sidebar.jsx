@@ -86,8 +86,8 @@ export default function Sidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 bg-[#0d0f1d] border-r border-[#1e2238] flex-col justify-between p-6 h-screen sticky top-0 shrink-0 select-none z-50">
-        <div className="space-y-8">
+      <aside className="hidden lg:flex w-64 bg-[#0d0f1d] border-r border-[#1e2238] flex-col p-6 h-screen sticky top-0 shrink-0 select-none z-50">
+        <div className="flex-1 min-h-0 space-y-8">
           <div className="flex items-center gap-2.5 px-2">
             <div className="w-6 h-6 rounded-full bg-[#644aff] flex items-center justify-center font-black text-[10px] text-white">
               C
