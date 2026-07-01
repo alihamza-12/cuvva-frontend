@@ -203,7 +203,7 @@ export default function Sidebar({
             >
               <LogOut size={16} className="drop-shadow" />
               <span className="text-[7px] uppercase tracking-wider font-bold whitespace-nowrap">
-                Exit
+                Exit 
               </span>
             </button>
           </div>
