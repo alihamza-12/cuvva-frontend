@@ -1,94 +1,14 @@
-import React, { useState } from "react";
-import {
-  ShieldCheck,
-  Calendar,
-  FileText,
-  DollarSign,
-  Clock,
-  AlertTriangle,
-  User,
-  Car,
-} from "lucide-react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Calendar, FileText } from "lucide-react";
 
 export default function PolicyContracts({
   policies = [], // Defensive assignment: Prevents array map runtime breaks if undefined
-  onRefresh,
-  axiosInstance,
 }) {
-  // Form Initialization
-  const [form, setForm] = useState({
-    customerId: "",
-    vehicleId: "",
-    premiumAmount: "",
-    startDate: "",
-    endDate: "",
-    startTime: "",
-    endTime: "",
-    policyType: "Short Term",
-    coverageType: "Comprehensive",
-    underwriter: "",
-    internalNotes: "",
-  });
-
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  // Policy Issuance Controller
-  const handleIssuePolicy = async (e) => {
-    e.preventDefault();
-    setFormError("");
-    setFormSuccess("");
-    setSubmitting(true);
-
-    // Defensive Payload Sanitization and Type Formatting
-    const preparedPayload = {
-      ...form,
-      customerId: form.customerId.trim(), // Trims spaces that trigger ObjectId conversion faults
-      vehicleId: form.vehicleId.trim(),
-      premiumAmount: parseFloat(form.premiumAmount), // Forces proper numerical data casting
-      policyType: form.policyType,
-      coverageType: form.coverageType,
-      underwriter: form.underwriter.trim(),
-      internalNotes: form.internalNotes.trim(),
-    };
-
-    try {
-      // Post payload securely to backend router pipeline
-      const res = await axiosInstance.post("/api/policies", preparedPayload);
-
-      setFormSuccess(
-        res.data?.message ||
-          "Coverage contract issued successfully without database conflicts.",
-      );
-
-      // Reset layout forms back to original structural state safely
-      setForm({
-        customerId: "",
-        vehicleId: "",
-        premiumAmount: "",
-        startDate: "",
-        endDate: "",
-        startTime: "",
-        endTime: "",
-        policyType: "Short Term",
-        coverageType: "Comprehensive",
-        underwriter: "",
-        internalNotes: "",
-      });
-
-      if (onRefresh) onRefresh();
-    } catch (err) {
-      setFormError(
-        err.response?.data?.message ||
-          "Timeline timeline collision or system routing fault.",
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const navigate = useNavigate();
 
   // Helper utility format to make database UTC date arrays cleaner for presentation
+
   const formatDateString = (rawDate) => {
     if (!rawDate) return "N/A";
     return new Date(rawDate).toLocaleDateString("en-GB", {
@@ -100,244 +20,6 @@ export default function PolicyContracts({
 
   return (
     <div className="grid grid-cols-1 gap-8 text-xs xl:grid-cols-3 animate-fadeIn">
-      {/* FORM INTERFACE BLOCK */}
-      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 h-fit shadow-xl">
-        <div className="flex items-center gap-2 mb-4">
-          <ShieldCheck size={16} className="text-[#644aff]" />
-          <h3 className="text-sm font-bold tracking-wider text-white uppercase">
-            Issue Short-Term Policy Contract
-          </h3>
-        </div>
-
-        <form onSubmit={handleIssuePolicy} className="space-y-4">
-          {formError && (
-            <div className="flex items-center gap-2 p-3 text-xs text-red-400 border bg-red-500/10 border-red-500/20 rounded-xl">
-              <AlertTriangle size={14} className="shrink-0" />{" "}
-              <span>{formError}</span>
-            </div>
-          )}
-          {formSuccess && (
-            <div className="flex items-center gap-2 p-3 text-xs text-green-400 border bg-green-500/10 border-green-500/20 rounded-xl">
-              <ShieldCheck size={14} className="shrink-0" />{" "}
-              <span>{formSuccess}</span>
-            </div>
-          )}
-
-          {/* Customer Mapping Field */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-              Customer Reference Hash ID
-            </label>
-            <div className="relative">
-              <User
-                size={12}
-                className="absolute left-3.5 top-3.5 text-[#6b7280]"
-              />
-              <input
-                type="text"
-                placeholder="24-character hexadecimal ObjectId"
-                required
-                value={form.customerId}
-                onChange={(e) =>
-                  setForm({ ...form, customerId: e.target.value })
-                }
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
-              />
-            </div>
-          </div>
-
-          {/* Vehicle Mapping Field */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-              Vehicle Reference Hash ID
-            </label>
-            <div className="relative">
-              <Car
-                size={12}
-                className="absolute left-3.5 top-3.5 text-[#6b7280]"
-              />
-              <input
-                type="text"
-                placeholder="24-character hexadecimal ObjectId"
-                required
-                value={form.vehicleId}
-                onChange={(e) =>
-                  setForm({ ...form, vehicleId: e.target.value })
-                }
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
-              />
-            </div>
-          </div>
-
-          {/* Pricing Premium & Carrier Tier */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-                Premium Cost (£)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="45.50"
-                required
-                value={form.premiumAmount}
-                onChange={(e) =>
-                  setForm({ ...form, premiumAmount: e.target.value })
-                }
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2.5 text-white outline-none focus:border-[#644aff]"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-                Underwriter
-              </label>
-              <input
-                type="text"
-                placeholder="Mulsanne Ltd"
-                required
-                value={form.underwriter}
-                onChange={(e) =>
-                  setForm({ ...form, underwriter: e.target.value })
-                }
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2.5 text-white outline-none focus:border-[#644aff]"
-              />
-            </div>
-          </div>
-
-          {/* Coverage Type Options Configuration Dropdowns */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-                Policy Class
-              </label>
-              <select
-                value={form.policyType}
-                onChange={(e) =>
-                  setForm({ ...form, policyType: e.target.value })
-                }
-                className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2.5 text-white outline-none focus:border-[#644aff]"
-              >
-                <option value="Short Term">Short Term</option>
-                <option value="Hourly">Hourly Tier</option>
-                <option value="Subscription">Monthly Auto-Roll</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-                Coverage Scope
-              </label>
-              <select
-                value={form.coverageType}
-                onChange={(e) =>
-                  setForm({ ...form, coverageType: e.target.value })
-                }
-                className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2.5 text-white outline-none focus:border-[#644aff]"
-              >
-                <option value="Comprehensive">Comprehensive</option>
-                <option value="Third Party Only">Third Party Only (TPO)</option>
-                <option value="Third Party Fire & Theft">
-                  TPFT Asset Cover
-                </option>
-              </select>
-            </div>
-          </div>
-
-          {/* Temporal Boundaries (Activation Horizon) */}
-          <div className="p-3 bg-white/[0.02] border border-[#1e2238] rounded-xl space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={form.startDate}
-                  onChange={(e) =>
-                    setForm({ ...form, startDate: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  Start Time (HH:MM)
-                </label>
-                <input
-                  type="text"
-                  placeholder="08:00"
-                  required
-                  value={form.startTime}
-                  onChange={(e) =>
-                    setForm({ ...form, startTime: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={form.endDate}
-                  onChange={(e) =>
-                    setForm({ ...form, endDate: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  End Time (HH:MM)
-                </label>
-                <input
-                  type="text"
-                  placeholder="18:00"
-                  required
-                  value={form.endTime}
-                  onChange={(e) =>
-                    setForm({ ...form, endTime: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Audit Notes field mapping to internalNotes properties */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-              Administrative Internal Notes (Optional)
-            </label>
-            <textarea
-              placeholder="Specify vehicle allocation parameters or override justifications..."
-              value={form.internalNotes}
-              onChange={(e) =>
-                setForm({ ...form, internalNotes: e.target.value })
-              }
-              rows="2"
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2.5 text-white outline-none focus:border-[#644aff] resize-none"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-3 bg-[#644aff] hover:bg-[#523ad1] disabled:opacity-50 text-white font-bold rounded-xl uppercase tracking-wider transition-all shadow-lg shadow-[#644aff]/10"
-          >
-            {submitting
-              ? "Verifying Conflict Array..."
-              : "Execute Policy Block"}
-          </button>
-        </form>
-      </div>
-
       {/* FEED VISUALIZATION BLOCK */}
       <div className="xl:col-span-2 bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
@@ -362,9 +44,11 @@ export default function PolicyContracts({
             </div>
           ) : (
             policies.map((p) => (
-              <div
+              <button
                 key={p._id}
-                className="p-4.5 bg-[#060814]/60 border border-[#1e2238] rounded-xl space-y-3 hover:border-white/10 transition-colors"
+                type="button"
+                onClick={() => navigate(`/admin/policies/${p._id}`)}
+                className="w-full text-left p-4.5 bg-[#060814]/60 border border-[#1e2238] rounded-xl pace-y-3 cursor-pointer hover:border-[#3b4263] hover:ring-1 hover:ring-[#3b4263]/50 transition-all duration-300"
               >
                 {/* ID Token, Scope Tags & Cost Ledger Row */}
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -447,7 +131,7 @@ export default function PolicyContracts({
                     </div>
                   )}
                 </div>
-              </div>
+              </button>
             ))
           )}
         </div>
