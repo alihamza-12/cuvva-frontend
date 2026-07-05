@@ -15,6 +15,9 @@ import SuperAdminDashboard from "../pages/super-admin/Dashboard";
 import CustomerDetailPage from "../pages/super-admin/details/CustomerDetailPage";
 import VehicleDetailPage from "../pages/super-admin/details/VehicleDetailPage";
 import SubAdminDetailPage from "../pages/super-admin/details/SubAdminDetailPage";
+import { SubAdminHome } from "../pages/sub-admin/SubAdminHome";
+import { SubAdminLayout } from "../components/layout/SubAdminLayout";
+
 import PolicyDetailPage from "../pages/super-admin/details/PolicyDetailPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
@@ -109,11 +112,11 @@ export default function AppRouter() {
           path="/dashboard"
           element={
             <ProtectedRoute allowedRoles={["Sub Admin"]}>
-              <TempSubAdminLayout />
+              <SubAdminLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<TempSubDash />} />
+          <Route index element={<SubAdminHome />} />
         </Route>
 
         {/* Catch-All Fallback Redirect Security Guard */}
