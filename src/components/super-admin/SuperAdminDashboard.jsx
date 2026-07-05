@@ -21,7 +21,10 @@ import AccountManagement from "./AccountManagement";
 import OwnCustomersManagement from "./OwnCustomersManagement";
 import AllSubAdminsManagement from "./AllSubAdminsManagement";
 import VehicleCatalog from "./VehicleCatalog";
+import OwnVehiclesManagement from "./OwnVehiclesManagement";
+import OwnPoliciesManagement from "./OwnPoliciesManagement";
 import PolicyContracts from "./PolicyContracts";
+
 import CreateUser from "./CreateUser";
 import CreatePolicy from "./CreatePolicy";
 import CreateVehicle from "./CreateVehicle";
@@ -120,8 +123,11 @@ export default function SuperAdminDashboard() {
       "accounts",
       "sub-admins",
       "own-customers",
+      "own-vehicles",
+      "own-policies",
       "vehicles",
       "policies",
+
       "create-user",
       "create-policy",
       "create-vehicle",
@@ -258,6 +264,22 @@ export default function SuperAdminDashboard() {
           )}
 
           {/* TAB FRAME 3: VEHICLE CATALOG CATALOG MANAGEMENT */}
+          {activeTab === "own-vehicles" && (
+            <OwnVehiclesManagement
+              axiosInstance={api}
+              onRefresh={fetchGlobalMetricsData}
+            />
+          )}
+
+          {activeTab === "own-policies" && (
+            <OwnPoliciesManagement
+              policies={policies.filter(
+                (p) => p?.createdBy?.role === "Super Admin",
+              )}
+              onRefresh={fetchGlobalMetricsData}
+            />
+          )}
+
           {activeTab === "vehicles" && (
             <VehicleCatalog
               vehicles={vehicles}

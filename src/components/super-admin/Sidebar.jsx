@@ -35,6 +35,19 @@ export default function Sidebar({
       href: "/admin/dashboard?tab=own-customers",
     },
     {
+      id: "own-vehicles",
+      name: "Own Vehicles",
+      icon: Car,
+      href: "/admin/dashboard?tab=own-vehicles",
+    },
+    {
+      id: "own-policies",
+      name: "Own Policies",
+      icon: Shield,
+      href: "/admin/dashboard?tab=own-policies",
+    },
+
+    {
       id: "vehicles",
       name: "Vehicle Catalog",
       icon: Car,
@@ -87,7 +100,7 @@ export default function Sidebar({
     <>
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 bg-[#0d0f1d] border-r border-[#1e2238] flex-col p-6 h-screen sticky top-0 shrink-0 select-none z-50">
-        <div className="flex-1 min-h-0 space-y-8">
+        <div className="flex-1 min-h-0 space-y-8 overflow-y-auto pr-1 pr-2 scrollbar-thin scrollbar-thumb-[#2a2f4a]/60 scrollbar-track-transparent">
           <div className="flex items-center gap-2.5 px-2">
             <div className="w-6 h-6 rounded-full bg-[#644aff] flex items-center justify-center font-black text-[10px] text-white">
               C
@@ -203,7 +216,7 @@ export default function Sidebar({
             >
               <LogOut size={16} className="drop-shadow" />
               <span className="text-[7px] uppercase tracking-wider font-bold whitespace-nowrap">
-                Exit 
+                Exit
               </span>
             </button>
           </div>
