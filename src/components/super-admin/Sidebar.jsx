@@ -46,7 +46,6 @@ export default function Sidebar({
       icon: Shield,
       href: "/admin/dashboard?tab=own-policies",
     },
-
     {
       id: "vehicles",
       name: "Vehicle Catalog",
@@ -99,11 +98,18 @@ export default function Sidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-72 bg-[#0d0f1d] border-r border-[#1e2238] flex-col p-6 h-screen sticky top-0 shrink-0 select-none z-50 relative overflow-hidden">
+      <aside className="hidden lg:flex w-72 bg-[#0d0f1d] border-r border-[#1e2238] flex-col h-screen sticky top-0 shrink-0 select-none z-50 relative overflow-hidden">
         {/* Ambient glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_circle_at_20%_0%,rgba(100,74,255,0.22),transparent_55%),radial-gradient(700px_circle_at_70%_30%,rgba(255,59,87,0.14),transparent_45%)]" />
 
-        <div className="relative flex-1 min-h-0 space-y-8 overflow-y-auto pr-1 pr-2 scrollbar-thin scrollbar-thumb-[#2a2f4a]/60 scrollbar-track-transparent">
+        {/*
+          FIX 1: The scrollable nav area and the logout button are now two
+          explicit flex children of a column flex container, each with their
+          own padding, instead of one giant block with mt-auto trying to fight
+          for space. This guarantees they never visually touch/overlap
+          regardless of how many menu items are added.
+        */}
+        <div className="relative flex-1 min-h-0 overflow-y-auto px-6 pt-6 pb-4 space-y-8 scrollbar-thin scrollbar-thumb-[#2a2f4a]/60 scrollbar-track-transparent">
           {/* Brand */}
           <div className="flex items-center gap-2.5 px-2">
             <div className="w-7 h-7 rounded-2xl bg-[#644aff] flex items-center justify-center font-black text-[11px] text-white shadow-[0_0_0_1px_rgba(100,74,255,0.35),0_10px_30px_rgba(100,74,255,0.18)]">
@@ -135,22 +141,10 @@ export default function Sidebar({
           {/* Nav */}
           {(() => {
             const sections = [
-              {
-                title: "Overview",
-                items: [menuItems[0]],
-              },
-              {
-                title: "Management",
-                items: menuItems.slice(1, 6),
-              },
-              {
-                title: "Catalog",
-                items: menuItems.slice(6, 8),
-              },
-              {
-                title: "Create",
-                items: menuItems.slice(8),
-              },
+              { title: "Overview", items: [menuItems[0]] },
+              { title: "Management", items: menuItems.slice(1, 6) },
+              { title: "Catalog", items: menuItems.slice(6, 8) },
+              { title: "Create", items: menuItems.slice(8) },
             ];
 
             return sections.map((section, sIdx) => (
@@ -179,7 +173,6 @@ export default function Sidebar({
                             : "text-[#6b7280] hover:bg-white/5 hover:text-white hover:border-white/10"
                         }`}
                       >
-                        {/* left indicator */}
                         <span
                           className={`h-7 w-1.5 rounded-full ml-0.5 transition-all duration-200 shrink-0 ${
                             isSelected
@@ -188,7 +181,6 @@ export default function Sidebar({
                           }`}
                           aria-hidden="true"
                         />
-
                         <Icon
                           size={14}
                           className={
@@ -198,8 +190,6 @@ export default function Sidebar({
                           }
                         />
                         <span className="truncate">{item.name}</span>
-
-                        {/* right micro highlight */}
                         <span
                           className={`ml-auto h-2.5 w-2.5 rounded-full transition-all duration-200 ${
                             isSelected
@@ -217,24 +207,33 @@ export default function Sidebar({
           })()}
         </div>
 
-        {/* Logout */}
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] uppercase tracking-wider font-bold text-white mt-auto
-                     bg-gradient-to-r from-red-500/90 via-red-500 to-red-600/90
-                     hover:from-red-400 hover:via-red-500 hover:to-red-600
-                     shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_10px_30px_rgba(239,68,68,0.18)]
-                     transition-all duration-200
-                     border border-white/10
-                     group relative overflow-hidden shrink-0"
-        >
-          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-[radial-gradient(1200px_circle_at_20%_50%,rgba(255,255,255,0.22),transparent_40%)]" />
-          <LogOut
-            size={14}
-            className="relative z-10 text-white group-hover:translate-x-0.5 transition-transform drop-shadow"
-          />
-          <span className="relative z-10">Terminate Session</span>
-        </button>
+        {/*
+          FIX 2: Logout is now a separate, fixed-height footer region with its
+          own top border + padding + background, pinned via flex layout
+          (not `mt-auto` fighting the scroll container). It never overlaps
+          the nav list no matter how tall the list content is.
+        */}
+        <div className="relative shrink-0 border-t border-[#1e2238] bg-[#0d0f1d]/80 backdrop-blur-sm px-6 py-5">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl text-[11px] uppercase tracking-wider font-bold text-white
+                       bg-gradient-to-r from-red-500/90 via-red-500 to-red-600/90
+                       hover:from-red-400 hover:via-red-500 hover:to-red-600
+                       shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_10px_30px_rgba(239,68,68,0.18)]
+                       transition-all duration-200
+                       border border-white/10
+                       group relative overflow-hidden"
+          >
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-[radial-gradient(1200px_circle_at_20%_50%,rgba(255,255,255,0.22),transparent_40%)]" />
+            <LogOut
+              size={14}
+              className="relative z-10 text-white group-hover:translate-x-0.5 transition-transform drop-shadow"
+            />
+            <span className="relative z-10 cursor-pointer">
+              Terminate Session
+            </span>
+          </button>
+        </div>
       </aside>
 
       {/* Mobile Bottom Nav */}
@@ -242,7 +241,6 @@ export default function Sidebar({
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(800px_circle_at_50%_0%,rgba(100,74,255,0.18),transparent_55%)]" />
 
         <div className="relative flex items-stretch h-16">
-          {/* Use horizontal scroll so all items remain visible on small screens */}
           <div className="flex items-center flex-1 px-1 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-2">
               {menuItems.map((item) => {
