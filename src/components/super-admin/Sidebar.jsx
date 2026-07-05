@@ -155,7 +155,7 @@ export default function Sidebar({
 
             return sections.map((section, sIdx) => (
               <div key={section.title} className={sIdx === 0 ? "" : "pt-4"}>
-                <div className="flex items-center gap-2 px-2 mb-2">
+                <div className="flex items-center gap-2 px-2 mb-2 cursor-pointer">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <span className="text-[10px] uppercase tracking-widest text-[#8a8fbc] font-bold">
                     {section.title}
@@ -173,7 +173,7 @@ export default function Sidebar({
                         type="button"
                         key={item.id}
                         onClick={() => navigate(item.href, { replace: true })}
-                        className={`group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-bold tracking-wider transition-all duration-200 border border-transparent ${
+                        className={`cursor-pointer group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-bold tracking-wider transition-all duration-200 border border-transparent ${
                           isSelected
                             ? "bg-[#644aff] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_18px_40px_rgba(100,74,255,0.25)] border-white/10"
                             : "text-[#6b7280] hover:bg-white/5 hover:text-white hover:border-white/10"
