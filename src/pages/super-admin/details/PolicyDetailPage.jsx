@@ -4,6 +4,7 @@ import { ArrowLeft, FileText, Car, User, ShieldAlert } from "lucide-react";
 
 import Sidebar from "../../../components/super-admin/Sidebar";
 import { getPolicyById } from "../../../app/api/policyApi";
+import { updatePolicyById } from "../../../app/api/policyUpdateApi";
 
 export default function PolicyDetailPage() {
   const { id } = useParams();
@@ -12,6 +13,26 @@ export default function PolicyDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [policy, setPolicy] = useState(null);
+
+  const [updating, setUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState("");
+  const [updateSuccess, setUpdateSuccess] = useState("");
+
+  const [editForm, setEditForm] = useState({
+    premiumAmount: "",
+    startDate: "",
+    endDate: "",
+    startTime: "",
+    endTime: "",
+    policyType: "Temporary Car",
+    coverageType: "Comprehensive",
+    underwriter: "Wakam",
+    status: "Upcoming",
+    internalNotes: "",
+  });
+
+  const isEditMode =
+    new URLSearchParams(window.location.search).get("edit") === "1";
 
   useEffect(() => {
     let mounted = true;
@@ -41,6 +62,26 @@ export default function PolicyDetailPage() {
     };
   }, [id]);
 
+  useEffect(() => {
+    if (!policy) return;
+    setEditForm({
+      premiumAmount: policy.premiumAmount ?? "",
+      startDate: policy.startDate
+        ? new Date(policy.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: policy.endDate
+        ? new Date(policy.endDate).toISOString().split("T")[0]
+        : "",
+      startTime: policy.startTime || "",
+      endTime: policy.endTime || "",
+      policyType: policy.policyType || "Temporary Car",
+      coverageType: policy.coverageType || "Comprehensive",
+      underwriter: policy.underwriter || "Wakam",
+      status: policy.status || "Upcoming",
+      internalNotes: policy.internalNotes || "",
+    });
+  }, [policy]);
+
   const formatDate = (d) => {
     if (!d) return "N/A";
     try {
@@ -65,6 +106,40 @@ export default function PolicyDetailPage() {
         {safe}
       </span>
     );
+  };
+
+  const handleUpdatePolicy = async (e) => {
+    e.preventDefault();
+    if (!policy?._id) return;
+
+    setUpdating(true);
+    setUpdateError("");
+    setUpdateSuccess("");
+
+    try {
+      const payload = {
+        premiumAmount: parseFloat(editForm.premiumAmount),
+        startDate: editForm.startDate,
+        endDate: editForm.endDate,
+        startTime: editForm.startTime,
+        endTime: editForm.endTime,
+        policyType: editForm.policyType,
+        coverageType: editForm.coverageType,
+        underwriter: editForm.underwriter,
+        status: editForm.status,
+        internalNotes: editForm.internalNotes,
+      };
+
+      const res = await updatePolicyById(policy._id, payload);
+      setUpdateSuccess(res.data?.message || "Policy updated successfully.");
+
+      const refreshed = await getPolicyById(policy._id);
+      setPolicy(refreshed.data?.policy || null);
+    } catch (err) {
+      setUpdateError(err.response?.data?.message || "Failed to update policy.");
+    } finally {
+      setUpdating(false);
+    }
   };
 
   return (
@@ -128,7 +203,26 @@ export default function PolicyDetailPage() {
                   </div>
                 </div>
 
-                <div>{statusPill(policy.status)}</div>
+                <div className="flex items-center gap-2">
+                  {statusPill(policy.status)}
+                  {!isEditMode ? (
+                    <button
+                      type="button"
+                      className="px-3 py-2 rounded-xl bg-[#644aff]/10 border border-[#644aff]/30 hover:bg-[#644aff]/20 text-xs uppercase tracking-wider font-bold"
+                      onClick={() => navigate(`?edit=1`)}
+                    >
+                      Edit Policy
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+                      onClick={() => navigate(`?`)}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
@@ -185,80 +279,293 @@ export default function PolicyDetailPage() {
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                    Premium Amount
-                  </div>
-                  <div className="text-xs font-semibold text-white">
-                    £{policy.premiumAmount}
-                  </div>
-                </div>
+                {!isEditMode && (
+                  <>
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                        Premium Amount
+                      </div>
+                      <div className="text-xs font-semibold text-white">
+                        £{policy.premiumAmount}
+                      </div>
+                    </div>
 
-                <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                    Underwriter
-                  </div>
-                  <div className="text-xs font-semibold text-white">
-                    {policy.underwriter || "N/A"}
-                  </div>
-                </div>
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                        Underwriter
+                      </div>
+                      <div className="text-xs font-semibold text-white">
+                        {policy.underwriter || "N/A"}
+                      </div>
+                    </div>
 
-                <div className="space-y-1 md:col-span-2">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                    Internal Notes
-                  </div>
-                  <div className="text-xs text-[#6b7280]">
-                    {policy.internalNotes ? policy.internalNotes : "—"}
-                  </div>
-                </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                        Internal Notes
+                      </div>
+                      <div className="text-xs text-[#6b7280]">
+                        {policy.internalNotes ? policy.internalNotes : "—"}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
-            <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
-              <h3 className="mb-3 text-xs font-bold tracking-wider text-white uppercase">
-                Metadata
-              </h3>
+            {isEditMode ? (
+              <form
+                onSubmit={handleUpdatePolicy}
+                className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6"
+              >
+                <h3 className="mb-3 text-xs font-bold tracking-wider text-white uppercase">
+                  Update Policy
+                </h3>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                    Policy DB ID
+                {updateError && (
+                  <div className="flex items-center gap-2 p-3 mb-3 text-xs text-red-400 border bg-red-500/10 border-red-500/20 rounded-xl">
+                    {updateError}
                   </div>
-                  <div className="font-mono text-xs text-white">
-                    {policy._id}
+                )}
+                {updateSuccess && (
+                  <div className="flex items-center gap-2 p-3 mb-3 text-xs text-green-400 border bg-green-500/10 border-green-500/20 rounded-xl">
+                    {updateSuccess}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Premium Amount
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={editForm.premiumAmount}
+                      required
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          premiumAmount: e.target.value,
+                        })
+                      }
+                      className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Status
+                    </label>
+                    <select
+                      value={editForm.status}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, status: e.target.value })
+                      }
+                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                    >
+                      <option value="Upcoming">Upcoming</option>
+                      <option value="Active">Active</option>
+                      <option value="Expired">Expired</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      value={editForm.startDate}
+                      required
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, startDate: e.target.value })
+                      }
+                      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Start Time
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.startTime}
+                      required
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, startTime: e.target.value })
+                      }
+                      placeholder="08:00"
+                      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      value={editForm.endDate}
+                      required
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, endDate: e.target.value })
+                      }
+                      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      End Time
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.endTime}
+                      required
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, endTime: e.target.value })
+                      }
+                      placeholder="18:00"
+                      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Policy Type
+                    </label>
+                    <select
+                      value={editForm.policyType}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, policyType: e.target.value })
+                      }
+                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                    >
+                      <option value="Temporary Car">Temporary Car</option>
+                      <option value="Temporary Van">Temporary Van</option>
+                      <option value="Learner Driver">Learner Driver</option>
+                      <option value="Impound">Impound</option>
+                      <option value="Motorhome">Motorhome</option>
+                      <option value="Drive Away">Drive Away</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Coverage Type
+                    </label>
+                    <select
+                      value={editForm.coverageType}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          coverageType: e.target.value,
+                        })
+                      }
+                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                    >
+                      <option value="Comprehensive">Comprehensive</option>
+                      <option value="Third Party Only">Third Party Only</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Underwriter
+                    </label>
+                    <select
+                      value={editForm.underwriter}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          underwriter: e.target.value,
+                        })
+                      }
+                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                    >
+                      <option value="Wakam">Wakam</option>
+                      <option value="ERS Syndicate">ERS Syndicate</option>
+                      <option value="Crawford">Crawford</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Internal Notes
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={editForm.internalNotes}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          internalNotes: e.target.value,
+                        })
+                      }
+                      className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2.5 text-white outline-none resize-none focus:border-[#644aff]"
+                      placeholder="Administrative internal notes (optional)"
+                    />
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                    Issued By (CreatedBy)
-                  </div>
-                  <div className="text-xs text-[#6b7280]">
-                    {policy.createdBy?.fullName
-                      ? `${policy.createdBy.fullName} (${policy.createdBy.role})`
-                      : "N/A"}
-                  </div>
-                </div>
+                <button
+                  type="submit"
+                  disabled={updating}
+                  className="mt-4 w-full py-3 bg-[#644aff] hover:bg-[#523ad1] disabled:opacity-50 text-white font-bold rounded-xl uppercase tracking-wider transition-all shadow-lg shadow-[#644aff]/10"
+                >
+                  {updating ? "Updating Policy..." : "Save Changes"}
+                </button>
+              </form>
+            ) : (
+              <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
+                <h3 className="mb-3 text-xs font-bold tracking-wider text-white uppercase">
+                  Metadata
+                </h3>
 
-                <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                    Created At
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Policy DB ID
+                    </div>
+                    <div className="font-mono text-xs text-white">
+                      {policy._id}
+                    </div>
                   </div>
-                  <div className="text-xs text-[#6b7280]">
-                    {formatDate(policy.createdAt)}
-                  </div>
-                </div>
 
-                <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                    Updated At
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Issued By (CreatedBy)
+                    </div>
+                    <div className="text-xs text-[#6b7280]">
+                      {policy.createdBy?.fullName
+                        ? `${policy.createdBy.fullName} (${policy.createdBy.role})`
+                        : "N/A"}
+                    </div>
                   </div>
-                  <div className="text-xs text-[#6b7280]">
-                    {formatDate(policy.updatedAt)}
+
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Created At
+                    </div>
+                    <div className="text-xs text-[#6b7280]">
+                      {formatDate(policy.createdAt)}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                      Updated At
+                    </div>
+                    <div className="text-xs text-[#6b7280]">
+                      {formatDate(policy.updatedAt)}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

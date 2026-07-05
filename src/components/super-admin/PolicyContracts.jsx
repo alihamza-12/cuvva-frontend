@@ -44,11 +44,17 @@ export default function PolicyContracts({
             </div>
           ) : (
             policies.map((p) => (
-              <button
+              <div
                 key={p._id}
-                type="button"
-                onClick={() => navigate(`/admin/policies/${p._id}`)}
                 className="w-full text-left p-4.5 bg-[#060814]/60 border border-[#1e2238] rounded-xl pace-y-3 cursor-pointer hover:border-[#3b4263] hover:ring-1 hover:ring-[#3b4263]/50 transition-all duration-300"
+                onClick={() => navigate(`/admin/policies/${p._id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    navigate(`/admin/policies/${p._id}`);
+                  }
+                }}
               >
                 {/* ID Token, Scope Tags & Cost Ledger Row */}
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -131,7 +137,7 @@ export default function PolicyContracts({
                     </div>
                   )}
                 </div>
-              </button>
+              </div>
             ))
           )}
         </div>
