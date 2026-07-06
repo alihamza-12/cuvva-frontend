@@ -107,7 +107,7 @@ export function SubAdminOwnPolicies({ policies = [], onRefresh }) {
               <div
                 key={p._id}
                 className="p-4.5 bg-[#060814]/60 border border-[#1e2238] rounded-xl space-y-3 hover:border-white/10 transition-colors cursor-pointer"
-                onClick={() => navigate(`/admin/policies/${p._id}`)}
+                onClick={() => navigate(`/dashboard/policies/${p._id}`)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {

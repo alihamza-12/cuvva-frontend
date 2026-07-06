@@ -77,12 +77,12 @@ export function SubAdminPolicyContracts({ policies = [], onRefresh }) {
               <div
                 key={p._id}
                 className="w-full text-left p-4.5 bg-[#060814]/60 border border-[#1e2238] rounded-xl cursor-pointer hover:border-[#00f0ff]/40 hover:ring-1 hover:ring-[#00f0ff]/20 transition-all duration-300"
-                onClick={() => navigate(`/admin/policies/${p._id}`)}
+                onClick={() => navigate(`/dashboard/policies/${p._id}`)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ")
-                    navigate(`/admin/policies/${p._id}`);
+                    navigate(`/dashboard/policies/${p._id}`);
                 }}
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">

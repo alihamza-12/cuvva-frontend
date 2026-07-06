@@ -28,20 +28,44 @@ export default function SubAdminDashboard() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [systemAlert, setSystemAlert] = useState(null);
 
-  // Placeholder policy state until real data is wired up.
+  // Data states
   const [policies, setPolicies] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [myVehiclesError, setMyVehiclesError] = useState("");
 
   const fetchSubAdminMetricsData = useCallback(async () => {
     setIsSyncing(true);
     setSystemAlert(null);
 
     try {
-      // Lightweight health sync for UI parity with Super Admin.
-      // We intentionally do not assume specific Sub Admin endpoints yet.
-      await httpClient
-        .get("/api/vehicles/all")
-        .catch(() => Promise.resolve(null));
+      const [vehRes, polRes] = await Promise.all([
+        httpClient.get("/api/vehicles/all").catch((err) => ({
+          error: true,
+          message: err?.response?.data?.message || "Failed to load vehicles.",
+          data: { vehicles: [] },
+        })),
+        httpClient.get("/api/policies/my").catch((err) => ({
+          error: true,
+          message: err?.response?.data?.message || "Failed to load policies.",
+          data: { policies: [] },
+        })),
+      ]);
+
+      const vList = vehRes?.data?.vehicles || [];
+      const pList = polRes?.data?.policies || [];
+
+      setVehicles(vList);
+      setPolicies(pList);
+
+      const localizedErrors = [];
+      if (vehRes?.error) localizedErrors.push(vehRes?.message);
+      if (polRes?.error) localizedErrors.push(polRes?.message);
+
+      if (localizedErrors.length > 0) {
+        setSystemAlert(`Partial Sync Notice: ${localizedErrors.join(" | ")}`);
+      }
     } catch (err) {
+      console.error("Sub Admin sync failure:", err);
       setSystemAlert(
         "Critical connection failure. Sub Admin matrix handshake rejected.",
       );
@@ -87,14 +111,13 @@ export default function SubAdminDashboard() {
   };
 
   const counts = useMemo(() => {
-    // Will be powered by RTK Query in the next step.
     return {
       myCustomers: 0,
-      myVehicles: 0,
-      myPolicies: 0,
-      contracts: 0,
+      myVehicles: (vehicles || []).length,
+      myPolicies: (policies || []).length,
+      contracts: (policies || []).length,
     };
-  }, []);
+  }, [vehicles, policies]);
 
   if (loading) {
     return (

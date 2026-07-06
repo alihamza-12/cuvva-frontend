@@ -8,6 +8,8 @@ export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const isMyVehicleRoleAllowed = true;
   const [query, setQuery] = useState("");
 
   const fetchVehicles = useCallback(async () => {

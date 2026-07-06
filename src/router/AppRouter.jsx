@@ -19,6 +19,7 @@ import { SubAdminHome } from "../pages/sub-admin/SubAdminHome";
 import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 
 import PolicyDetailPage from "../pages/super-admin/details/PolicyDetailPage";
+import PolicyDetailPageSubAdmin from "../pages/sub-admin/PolicyDetailPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -117,6 +118,7 @@ export default function AppRouter() {
           }
         >
           <Route index element={<SubAdminHome />} />
+          <Route path="policies/:id" element={<PolicyDetailPageSubAdmin />} />
         </Route>
 
         {/* Catch-All Fallback Redirect Security Guard */}
