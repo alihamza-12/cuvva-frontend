@@ -29,9 +29,10 @@ export default function PolicyDetailPage() {
     internalNotes: "",
   });
 
+  const locationSearch = new URLSearchParams(window.location.search);
   const isEditMode = useMemo(() => {
-    return new URLSearchParams(window.location.search).get("edit") === "1";
-  }, [loading, policy]);
+    return locationSearch.get("edit") === "1";
+  }, [locationSearch]);
 
   useEffect(() => {
     let mounted = true;

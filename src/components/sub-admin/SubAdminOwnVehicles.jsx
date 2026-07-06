@@ -33,13 +33,9 @@ export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
   const filteredVehicles = useMemo(() => {
     const q = query.trim().toLowerCase();
 
-    // Ownership scope: keep records created by either Super Admin or Sub Admin.
-    // Backend should enforce final security; this is only a UI filter.
-    let list = vehicles.filter(
-      (v) =>
-        v?.createdBy?.role === "Super Admin" ||
-        v?.createdBy?.role === "Sub Admin",
-    );
+    // Backend already applies role-based visibility.
+    // Some payloads may omit `createdBy` for Sub Admins, so don't hard-filter by it.
+    let list = Array.isArray(vehicles) ? vehicles : [];
 
     if (!q) return list;
 
