@@ -3,6 +3,9 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import SubAdminSidebar from "../sub-admin/SubAdminSidebar";
 import { httpClient } from "../../app/api/httpClient";
+import CreateCustomerPage from "../../pages/sub-admin/CreateCustomerPage";
+import CreateVehiclePage from "../../pages/sub-admin/CreateVehiclePage";
+import CreatePolicyPage from "../../pages/sub-admin/CreatePolicyPage";
 
 export function SubAdminLayout() {
   const navigate = useNavigate();
@@ -20,6 +23,9 @@ export function SubAdminLayout() {
       "my-vehicles",
       "my-policies",
       "contracts",
+      "create-customer",
+      "create-vehicle",
+      "create-policy",
     ]);
 
     setActiveTab(allowedTabs.has(tab) ? tab : "overview");
@@ -64,7 +70,15 @@ export function SubAdminLayout() {
         </header>
 
         <main className="flex-1 w-full p-10 mx-auto space-y-8 max-w-7xl">
-          <Outlet />
+          {activeTab === "create-customer" ? (
+            <CreateCustomerPage />
+          ) : activeTab === "create-vehicle" ? (
+            <CreateVehiclePage />
+          ) : activeTab === "create-policy" ? (
+            <CreatePolicyPage />
+          ) : (
+            <Outlet />
+          )}
         </main>
       </div>
     </div>

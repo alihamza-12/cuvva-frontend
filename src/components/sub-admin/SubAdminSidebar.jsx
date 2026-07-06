@@ -47,6 +47,24 @@ export default function SubAdminSidebar({
       icon: FileText,
       href: "/dashboard?tab=contracts",
     },
+    {
+      id: "create-customer",
+      name: "Create Customer",
+      icon: Users,
+      href: "/dashboard?tab=create-customer",
+    },
+    {
+      id: "create-vehicle",
+      name: "Create Vehicle",
+      icon: Car,
+      href: "/dashboard?tab=create-vehicle",
+    },
+    {
+      id: "create-policy",
+      name: "Create Policy",
+      icon: Shield,
+      href: "/dashboard?tab=create-policy",
+    },
   ];
 
   const computeUserInitials = (nameString) => {
