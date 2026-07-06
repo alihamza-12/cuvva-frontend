@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, User, ShieldAlert, Mail } from "lucide-react";
 
 import { getCustomerById } from "../../app/api/customerApi";
+import { updateCustomer } from "../../app/api/customerUpdateApi";
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
@@ -11,6 +12,17 @@ export default function CustomerDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [customer, setCustomer] = useState(null);
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editForm, setEditForm] = useState({
+    fullName: "",
+    email: "",
+    expiresAt: "",
+  });
+
+  const [updating, setUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState("");
+  const [updateSuccess, setUpdateSuccess] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -141,10 +153,100 @@ export default function CustomerDetailPage() {
             </div>
 
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
-              <h3 className="mb-3 text-xs font-bold tracking-wider text-white uppercase">
-                Customer Detail Fields
-              </h3>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="text-xs font-bold tracking-wider text-white uppercase">
+                  Customer Detail
+                </h3>
+
+                {!isEditMode ? (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 hover:bg-[#00f0ff]/20 text-xs uppercase tracking-wider font-bold"
+                    onClick={() => {
+                      setEditForm({
+                        fullName: customer.fullName || "",
+                        email: customer.email || "",
+                        expiresAt: customer.expiresAt
+                          ? new Date(customer.expiresAt)
+                              .toISOString()
+                              .split("T")[0]
+                          : "",
+                      });
+                      setIsEditMode(true);
+                    }}
+                  >
+                    Edit Customer
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+                      onClick={() => {
+                        setIsEditMode(false);
+                        setUpdateError("");
+                        setUpdateSuccess("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={updating}
+                      className="px-3 py-2 rounded-xl bg-[#00f0ff] hover:bg-[#00cfe0] disabled:opacity-50 text-black text-xs uppercase tracking-wider font-bold"
+                      onClick={async () => {
+                        if (!customer?._id) return;
+
+                        setUpdating(true);
+                        setUpdateError("");
+                        setUpdateSuccess("");
+
+                        try {
+                          const payload = {
+                            fullName: editForm.fullName,
+                            email: editForm.email,
+                            expiresAt:
+                              editForm.expiresAt && editForm.expiresAt.trim()
+                                ? new Date(editForm.expiresAt)
+                                : null,
+                          };
+
+                          await updateCustomer(customer._id, payload);
+
+                          const refreshed = await getCustomerById(customer._id);
+                          setCustomer(refreshed.data?.customer || null);
+
+                          setUpdateSuccess("Customer updated successfully.");
+                          setIsEditMode(false);
+                        } catch (err) {
+                          setUpdateError(
+                            err.response?.data?.message ||
+                              "Failed to update customer.",
+                          );
+                        } finally {
+                          setUpdating(false);
+                        }
+                      }}
+                    >
+                      {updating ? "Updating..." : "Save Changes"}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {(updateError || updateSuccess) && (
+                <div className="mt-3 text-xs">
+                  {updateError && (
+                    <div className="text-red-400">{updateError}</div>
+                  )}
+                  {updateSuccess && (
+                    <div className="text-green-400">{updateSuccess}</div>
+                  )}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
                 <div className="space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     User ID
@@ -153,6 +255,7 @@ export default function CustomerDetailPage() {
                     {customer?._id}
                   </div>
                 </div>
+
                 <div className="space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Role
@@ -161,6 +264,7 @@ export default function CustomerDetailPage() {
                     {customer?.role}
                   </div>
                 </div>
+
                 <div className="space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Email
@@ -169,6 +273,7 @@ export default function CustomerDetailPage() {
                     {customer?.email}
                   </div>
                 </div>
+
                 <div className="space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Status
@@ -177,6 +282,7 @@ export default function CustomerDetailPage() {
                     {customer?.status || "Active"}
                   </div>
                 </div>
+
                 <div className="space-y-1 md:col-span-2">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Expires At
@@ -187,6 +293,7 @@ export default function CustomerDetailPage() {
                       : "Infinite"}
                   </div>
                 </div>
+
                 <div className="space-y-1 md:col-span-2">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Created By
