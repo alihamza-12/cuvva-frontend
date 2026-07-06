@@ -136,7 +136,7 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
                 {filteredCustomers.map((c) => (
                   <tr
                     key={c._id}
-                    onClick={() => navigate(`/admin/customers/${c._id}`)}
+                    onClick={() => navigate(`/dashboard/customers/${c._id}`)}
                     className="cursor-pointer group hover:bg-[#1a1d33] transition-colors"
                   >
                     <td className="py-4 pl-2">

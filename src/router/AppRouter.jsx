@@ -11,15 +11,19 @@ import { useSelector } from "react-redux";
 import Login from "../pages/auth/LoginPage";
 import { selectCurrentUser } from "../features/authSlice";
 import ProtectedRoute from "./ProtectedRoute";
+
 import SuperAdminDashboard from "../pages/super-admin/Dashboard";
 import CustomerDetailPage from "../pages/super-admin/details/CustomerDetailPage";
 import VehicleDetailPage from "../pages/super-admin/details/VehicleDetailPage";
 import SubAdminDetailPage from "../pages/super-admin/details/SubAdminDetailPage";
-import { SubAdminHome } from "../pages/sub-admin/SubAdminHome";
-import { SubAdminLayout } from "../components/layout/SubAdminLayout";
-
 import PolicyDetailPage from "../pages/super-admin/details/PolicyDetailPage";
+
+import { SubAdminHome } from "../pages/sub-admin/SubAdminHome";
+import VehicleDetailPageSubAdmin from "../pages/sub-admin/VehicleDetailPage";
+import CustomerDetailPageSubAdmin from "../pages/sub-admin/CustomerDetailPage";
 import PolicyDetailPageSubAdmin from "../pages/sub-admin/PolicyDetailPage";
+
+import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -92,7 +96,6 @@ export default function AppRouter() {
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={["Super Admin"]}>
-              {/* Uses a clean, standard pass-through layout handler */}
               <Outlet />
             </ProtectedRoute>
           }
@@ -118,7 +121,19 @@ export default function AppRouter() {
           }
         >
           <Route index element={<SubAdminHome />} />
+
+          {/* Feeds already use /dashboard/policies/:id */}
           <Route path="policies/:id" element={<PolicyDetailPageSubAdmin />} />
+
+          {/* Dedicated Sub Admin detail pages for vehicle + customer */}
+          <Route
+            path="vehicles/:registration"
+            element={<VehicleDetailPageSubAdmin />}
+          />
+          <Route
+            path="customers/:id"
+            element={<CustomerDetailPageSubAdmin />}
+          />
         </Route>
 
         {/* Catch-All Fallback Redirect Security Guard */}

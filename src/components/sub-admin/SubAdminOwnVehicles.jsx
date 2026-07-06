@@ -107,7 +107,7 @@ export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
                       className="group cursor-pointer hover:bg-[#1a1d33] transition-colors"
                       onClick={() =>
                         navigate(
-                          `/admin/vehicles/${encodeURIComponent(v.registration)}`,
+                          `/dashboard/vehicles/${encodeURIComponent(v.registration)}`,
                         )
                       }
                     >
@@ -135,7 +135,7 @@ export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(
-                              `/admin/vehicles/${encodeURIComponent(v.registration)}`,
+                              `/dashboard/vehicles/${encodeURIComponent(v.registration)}`,
                             );
                           }}
                           className="px-4 py-2 bg-[#060814] hover:bg-[#1a1d33] hover:text-white border border-[#1e2238] hover:border-[#00f0ff] text-[#8a8fbc] font-bold rounded-lg text-[10px] uppercase transition-all"
