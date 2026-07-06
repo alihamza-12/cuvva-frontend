@@ -28,6 +28,9 @@ export default function SubAdminDashboard() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [systemAlert, setSystemAlert] = useState(null);
 
+  // Placeholder policy state until real data is wired up.
+  const [policies, setPolicies] = useState([]);
+
   const fetchSubAdminMetricsData = useCallback(async () => {
     setIsSyncing(true);
     setSystemAlert(null);
@@ -171,14 +174,14 @@ export default function SubAdminDashboard() {
 
           {activeTab === "my-policies" && (
             <SubAdminOwnPolicies
-              policies={[]}
+              policies={policies}
               onRefresh={fetchSubAdminMetricsData}
             />
           )}
 
           {activeTab === "contracts" && (
             <SubAdminPolicyContracts
-              policies={[]}
+              policies={policies}
               onRefresh={fetchSubAdminMetricsData}
             />
           )}

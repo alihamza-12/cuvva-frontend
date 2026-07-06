@@ -16,7 +16,7 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axiosInstance.get("/api/management/customers");
+      const res = await axiosInstance.get("/api/customers");
       const list = res?.data?.customers || [];
       setCustomers(list);
     } finally {
