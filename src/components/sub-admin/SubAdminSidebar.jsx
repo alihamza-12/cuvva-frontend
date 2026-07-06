@@ -6,6 +6,7 @@ import {
   Shield,
   LogOut,
   FileText,
+  PlusCircle,
 } from "lucide-react";
 
 export default function SubAdminSidebar({
@@ -67,6 +68,35 @@ export default function SubAdminSidebar({
     },
   ];
 
+  // Group by *purpose* rather than array position, so reordering menuItems
+  // above never silently breaks the sections again. Each section lists the
+  // ids it owns; anything not claimed falls into a fallback "Other" bucket
+  // automatically (belt-and-braces against future additions being missed).
+  const SECTION_DEFS = [
+    { title: "Overview", ids: ["overview"] },
+    {
+      title: "My Records",
+      ids: ["my-customers", "my-vehicles", "my-policies", "contracts"],
+    },
+    {
+      title: "Create New",
+      ids: ["create-customer", "create-vehicle", "create-policy"],
+    },
+  ];
+
+  const claimedIds = new Set(SECTION_DEFS.flatMap((s) => s.ids));
+  const unclaimed = menuItems.filter((item) => !claimedIds.has(item.id));
+
+  const sections = [
+    ...SECTION_DEFS.map((def) => ({
+      title: def.title,
+      items: def.ids
+        .map((id) => menuItems.find((item) => item.id === id))
+        .filter(Boolean),
+    })),
+    ...(unclaimed.length ? [{ title: "Other", items: unclaimed }] : []),
+  ].filter((section) => section.items.length > 0);
+
   const computeUserInitials = (nameString) => {
     if (!nameString) return "AG";
     const fragments = nameString.trim().split(/\s+/);
@@ -83,6 +113,10 @@ export default function SubAdminSidebar({
     setActiveTab(item.id);
     navigate(item.href, { replace: true });
   };
+
+  // "Create New" items get a distinct accent (amber) so they read visually
+  // as actions rather than views, even though they share the same button shape.
+  const isCreateItem = (id) => id.startsWith("create-");
 
   return (
     <>
@@ -119,48 +153,56 @@ export default function SubAdminSidebar({
             </div>
           </div>
 
-          {/* Nav sections */}
-          {(() => {
-            const sections = [
-              { title: "Command", items: menuItems.slice(0, 2) },
-              { title: "Operations", items: menuItems.slice(2, 4) },
-              { title: "Documents", items: menuItems.slice(4) },
-            ];
+          {/* Nav sections, grouped by purpose */}
+          {sections.map((section, sIdx) => (
+            <div key={section.title} className={sIdx === 0 ? "" : "pt-4"}>
+              <div className="flex items-center gap-2 px-2 mb-2">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <span className="text-[10px] uppercase tracking-widest text-[#8a8fbc] font-bold">
+                  {section.title}
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              </div>
 
-            return sections.map((section, sIdx) => (
-              <div key={section.title} className={sIdx === 0 ? "" : "pt-4"}>
-                <div className="flex items-center gap-2 px-2 mb-2">
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                  <span className="text-[10px] uppercase tracking-widest text-[#8a8fbc] font-bold">
-                    {section.title}
-                  </span>
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                </div>
+              <nav className="space-y-1">
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const isSelected = activeTab === item.id;
+                  const isCreate = isCreateItem(item.id);
 
-                <nav className="space-y-1">
-                  {section.items.map((item) => {
-                    const Icon = item.icon;
-                    const isSelected = activeTab === item.id;
-
-                    return (
-                      <button
-                        type="button"
-                        key={item.id}
-                        onClick={() => handleNavigate(item)}
-                        className={`cursor-pointer group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-bold tracking-wider transition-all duration-200 border border-transparent ${
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      onClick={() => handleNavigate(item)}
+                      className={`cursor-pointer group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-bold tracking-wider transition-all duration-200 border border-transparent ${
+                        isSelected
+                          ? isCreate
+                            ? "bg-amber-400/10 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_18px_40px_rgba(251,191,36,0.20)] border-amber-400/25"
+                            : "bg-[#00f0ff]/10 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_18px_40px_rgba(0,240,255,0.20)] border-[#00f0ff]/25"
+                          : "text-[#6b7280] hover:bg-white/5 hover:text-white hover:border-white/10"
+                      }`}
+                    >
+                      <span
+                        className={`h-7 w-1.5 rounded-full ml-0.5 transition-all duration-200 shrink-0 ${
                           isSelected
-                            ? "bg-[#00f0ff]/10 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_18px_40px_rgba(0,240,255,0.20)] border-[#00f0ff]/25"
-                            : "text-[#6b7280] hover:bg-white/5 hover:text-white hover:border-white/10"
+                            ? isCreate
+                              ? "bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.35)]"
+                              : "bg-[#00f0ff] shadow-[0_0_12px_rgba(0,240,255,0.35)]"
+                            : "bg-transparent group-hover:bg-white/20"
                         }`}
-                      >
-                        <span
-                          className={`h-7 w-1.5 rounded-full ml-0.5 transition-all duration-200 shrink-0 ${
+                        aria-hidden="true"
+                      />
+                      {isCreate ? (
+                        <PlusCircle
+                          size={14}
+                          className={
                             isSelected
-                              ? "bg-[#00f0ff] shadow-[0_0_12px_rgba(0,240,255,0.35)]"
-                              : "bg-transparent group-hover:bg-white/20"
-                          }`}
-                          aria-hidden="true"
+                              ? "text-amber-400"
+                              : "text-[#6b7280] group-hover:text-white/90"
+                          }
                         />
+                      ) : (
                         <Icon
                           size={14}
                           className={
@@ -169,22 +211,24 @@ export default function SubAdminSidebar({
                               : "text-[#6b7280] group-hover:text-white/90"
                           }
                         />
-                        <span className="truncate">{item.name}</span>
-                        <span
-                          className={`ml-auto h-2.5 w-2.5 rounded-full transition-all duration-200 ${
-                            isSelected
-                              ? "bg-[#00f0ff] shadow-[0_0_14px_rgba(0,240,255,0.35)]"
-                              : "bg-white/0 group-hover:bg-white/15"
-                          }`}
-                          aria-hidden="true"
-                        />
-                      </button>
-                    );
-                  })}
-                </nav>
-              </div>
-            ));
-          })()}
+                      )}
+                      <span className="truncate">{item.name}</span>
+                      <span
+                        className={`ml-auto h-2.5 w-2.5 rounded-full transition-all duration-200 ${
+                          isSelected
+                            ? isCreate
+                              ? "bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.35)]"
+                              : "bg-[#00f0ff] shadow-[0_0_14px_rgba(0,240,255,0.35)]"
+                            : "bg-white/0 group-hover:bg-white/15"
+                        }`}
+                        aria-hidden="true"
+                      />
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          ))}
         </div>
 
         {/* Logout */}
@@ -221,6 +265,7 @@ export default function SubAdminSidebar({
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isSelected = activeTab === item.id;
+                const isCreate = isCreateItem(item.id);
 
                 return (
                   <button
@@ -228,17 +273,26 @@ export default function SubAdminSidebar({
                     onClick={() => handleNavigate(item)}
                     className={`flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-2xl transition-all flex-shrink-0 border border-transparent ${
                       isSelected
-                        ? "bg-[#00f0ff]/15 text-[#e9fdff] border-[#00f0ff]/25 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_12px_30px_rgba(0,240,255,0.18)]"
+                        ? isCreate
+                          ? "bg-amber-400/15 text-amber-100 border-amber-400/25 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_12px_30px_rgba(251,191,36,0.18)]"
+                          : "bg-[#00f0ff]/15 text-[#e9fdff] border-[#00f0ff]/25 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_12px_30px_rgba(0,240,255,0.18)]"
                         : "text-[#6b7280] hover:bg-white/5 hover:text-white hover:border-white/10"
                     }`}
                     aria-label={item.name}
                   >
-                    <Icon
-                      size={16}
-                      className={
-                        isSelected ? "text-[#00f0ff] animate-pulse" : ""
-                      }
-                    />
+                    {isCreate ? (
+                      <PlusCircle
+                        size={16}
+                        className={isSelected ? "text-amber-400" : ""}
+                      />
+                    ) : (
+                      <Icon
+                        size={16}
+                        className={
+                          isSelected ? "text-[#00f0ff] animate-pulse" : ""
+                        }
+                      />
+                    )}
                     <span className="text-[7px] uppercase tracking-[0.12em] font-bold whitespace-nowrap">
                       {item.name}
                     </span>
