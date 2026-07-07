@@ -25,7 +25,7 @@ import PolicyDetailPageSubAdmin from "../pages/sub-admin/PolicyDetailPage";
 
 import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 import CustomerHome from "../pages/customer/CustomerHome";
-import { CustomerLayout } from "../components/layout/CustomerLayout";
+import CustomerLayout from "../components/layout/CustomerLayout";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (

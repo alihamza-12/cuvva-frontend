@@ -1,56 +1,106 @@
+import React, { useEffect, useState, useCallback } from "react";
+import { MoreHorizontal } from "lucide-react";
+
+import PlateSearchBar from "../../components/customer/PlateSearchBar";
+import RecentlyViewedSection from "../../components/customer/RecentlyViewedSection";
+import BuyAgainSection from "../../components/customer/BuyAgainSection";
+
+// import { httpClient } from "../../app/api/httpClient";
+
+/**
+ * frontend/src/pages/customer/CustomerHome.jsx
+ *
+ * "Get insured" landing page — the customer's default home screen.
+ * Layout: header -> search -> Recently Viewed (horizontal scroll,
+ * localStorage-backed) -> Buy Again (only if an expired-policy vehicle
+ * exists, backend-driven).
+ *
+ * Rendered inside CustomerLayout.jsx, which supplies <CustomerBottomNav />.
+ */
+
+const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
+
 export default function CustomerHome() {
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [buyAgainVehicles, setBuyAgainVehicles] = useState([]);
+  const [buyAgainLoading, setBuyAgainLoading] = useState(true);
+
+  // --- Recently Viewed: local, per-device convenience list -------------
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]");
+      setRecentlyViewed(Array.isArray(stored) ? stored : []);
+    } catch {
+      setRecentlyViewed([]);
+    }
+  }, []);
+
+  const handleDismissRecent = useCallback((vehicleId) => {
+    setRecentlyViewed((prev) => {
+      const next = prev.filter((v) => v._id !== vehicleId);
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  // --- Buy Again: server-driven, only vehicles with an EXPIRED policy --
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchExpiredPolicyVehicles = async () => {
+      setBuyAgainLoading(true);
+      try {
+        // Replace with your real endpoint once available, e.g.:
+        // const res = await httpClient.get("/api/customers/me/policies/expired-vehicles");
+        // if (!mounted) return;
+        // setBuyAgainVehicles(res.data?.vehicles || []);
+
+        // Placeholder until backend endpoint exists — keep empty so the
+        // section correctly hides itself when there are no expired policies.
+        if (!mounted) return;
+        setBuyAgainVehicles([]);
+      } catch (err) {
+        if (!mounted) return;
+        setBuyAgainVehicles([]);
+      } finally {
+        if (!mounted) return;
+        setBuyAgainLoading(false);
+      }
+    };
+
+    fetchExpiredPolicyVehicles();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
-    <div className="space-y-6 animate-fadeIn">
-      <div>
-        <h2 className="text-2xl font-bold text-white">Customer Dashboard</h2>
-        <p className="text-sm text-[#6b7280] mt-2 leading-relaxed">
-          Welcome back. This is the initial customer role workspace. Future
-          iterations can show your vehicles, policies, and active contracts.
-        </p>
+    <div className="min-h-screen pb-32 text-white bg-black">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 pt-4">
+        <h1 className="text-[26px] font-extrabold tracking-tight">Get insured</h1>
+        <button
+          type="button"
+          aria-label="More options"
+          className="w-9 h-9 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center hover:bg-[#1d1e23] transition-colors"
+        >
+          <MoreHorizontal size={18} className="text-white" />
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
-          <div className="text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
-            Vehicles
-          </div>
-          <div className="mt-3 text-3xl font-black text-white">—</div>
-          <div className="mt-2 text-xs text-[#6b7280]">
-            View your registered vehicles.
-          </div>
-        </div>
-
-        <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
-          <div className="text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
-            Policies
-          </div>
-          <div className="mt-3 text-3xl font-black text-white">—</div>
-          <div className="mt-2 text-xs text-[#6b7280]">
-            Manage your active policies.
-          </div>
-        </div>
-
-        <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
-          <div className="text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
-            Contracts
-          </div>
-          <div className="mt-3 text-3xl font-black text-white">—</div>
-          <div className="mt-2 text-xs text-[#6b7280]">
-            Track policy contract status.
-          </div>
-        </div>
+      {/* Search */}
+      <div className="pt-5">
+        <PlateSearchBar />
       </div>
 
-      <div className="bg-[#0d0f1d] border border-dashed border-[#1e2238] rounded-2xl p-6 text-xs text-[#8a8fbc]">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-cyan-300/90">
-          CUVVA look & feel
-        </div>
-        <p className="mt-3 leading-relaxed">
-          This screen uses the same dark cyber UI style used across Admin and
-          Sub-Admin dashboards (glow borders, glassy header spacing, and
-          Tailwind-based layout).
-        </p>
-      </div>
+      {/* Recently Viewed */}
+      <RecentlyViewedSection
+        vehicles={recentlyViewed}
+        onDismiss={handleDismissRecent}
+      />
+
+      {/* Buy Again — only rendered when expired-policy vehicles exist */}
+      <BuyAgainSection vehicles={buyAgainVehicles} loading={buyAgainLoading} />
     </div>
   );
 }
