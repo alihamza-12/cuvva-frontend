@@ -24,6 +24,8 @@ import CustomerDetailPageSubAdmin from "../pages/sub-admin/CustomerDetailPage";
 import PolicyDetailPageSubAdmin from "../pages/sub-admin/PolicyDetailPage";
 
 import { SubAdminLayout } from "../components/layout/SubAdminLayout";
+import CustomerHome from "../pages/customer/CustomerHome";
+import { CustomerLayout } from "../components/layout/CustomerLayout";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -76,6 +78,9 @@ const RoleRedirect = () => {
   if (user.role === "Sub Admin") {
     return <Navigate to="/dashboard" replace />;
   }
+  if (user.role === "Customer") {
+    return <Navigate to="/customer" replace />;
+  }
 
   return <Navigate to="/login" replace />;
 };
@@ -109,6 +114,18 @@ export default function AppRouter() {
           />
           <Route path="sub-admins/:id" element={<SubAdminDetailPage />} />
           <Route path="policies/:id" element={<PolicyDetailPage />} />
+        </Route>
+
+        {/* ================= SECURE CUSTOMER WORKSPACE ================= */}
+        <Route
+          path="/customer"
+          element={
+            <ProtectedRoute allowedRoles={["Customer"]}>
+              <CustomerLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<CustomerHome />} />
         </Route>
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
