@@ -26,6 +26,7 @@ import PolicyDetailPageSubAdmin from "../pages/sub-admin/PolicyDetailPage";
 import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 import CustomerHome from "../pages/customer/CustomerHome";
 import CustomerLayout from "../components/layout/CustomerLayout";
+import PolicyQuotePage from "../pages/customer/PolicyQuotePage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -155,6 +156,7 @@ export default function AppRouter() {
 
         {/* Catch-All Fallback Redirect Security Guard */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/customer/policies/new" element={<PolicyQuotePage />} />
       </Routes>
     </BrowserRouter>
   );
