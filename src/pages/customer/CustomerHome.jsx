@@ -5,27 +5,29 @@ import PlateSearchBar from "../../components/customer/PlateSearchBar";
 import RecentlyViewedSection from "../../components/customer/RecentlyViewedSection";
 import BuyAgainSection from "../../components/customer/BuyAgainSection";
 
-// import { httpClient } from "../../app/api/httpClient";
+import { httpClient } from "../../app/api/httpClient";
+
+const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
+const MAX_RECENT = 10;
 
 /**
  * frontend/src/pages/customer/CustomerHome.jsx
  *
- * "Get insured" landing page — the customer's default home screen.
- * Layout: header -> search -> Recently Viewed (horizontal scroll,
- * localStorage-backed) -> Buy Again (only if an expired-policy vehicle
- * exists, backend-driven).
- *
- * Rendered inside CustomerLayout.jsx, which supplies <CustomerBottomNav />.
+ * "Get insured" landing page. No backend changes required:
+ *  - Recently Viewed is 100% client-side, persisted in localStorage by
+ *    PlateSearchBar.jsx on every successful search (survives refresh/
+ *    relaunch on this device/browser).
+ *  - Buy Again reuses your EXISTING "GET /api/policies/my" route (already
+ *    in policies.js) and filters client-side for status === "Expired",
+ *    deduping by vehicle — no new backend endpoint needed.
  */
-
-const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
-
 export default function CustomerHome() {
   const [recentlyViewed, setRecentlyViewed] = useState([]);
+
   const [buyAgainVehicles, setBuyAgainVehicles] = useState([]);
   const [buyAgainLoading, setBuyAgainLoading] = useState(true);
 
-  // --- Recently Viewed: local, per-device convenience list -------------
+  // --- Recently Viewed: read from localStorage on mount ---
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]");
@@ -35,30 +37,63 @@ export default function CustomerHome() {
     }
   }, []);
 
+  // Called by PlateSearchBar the moment a search succeeds, so the new
+  // vehicle appears instantly without re-reading localStorage.
+  const handleVehicleFound = useCallback((vehicle) => {
+    setRecentlyViewed((prev) =>
+      [vehicle, ...prev.filter((v) => v._id !== vehicle._id)].slice(0, MAX_RECENT),
+    );
+  }, []);
+
   const handleDismissRecent = useCallback((vehicleId) => {
     setRecentlyViewed((prev) => {
       const next = prev.filter((v) => v._id !== vehicleId);
-      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
+      try {
+        localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
       return next;
     });
   }, []);
 
-  // --- Buy Again: server-driven, only vehicles with an EXPIRED policy --
+  // --- Buy Again: derived from your EXISTING "my policies" endpoint ----
+  // No new backend route — reuses GET /api/policies/my, which already
+  // returns this customer's policies populated with vehicleId details.
   useEffect(() => {
     let mounted = true;
 
     const fetchExpiredPolicyVehicles = async () => {
       setBuyAgainLoading(true);
       try {
-        // Replace with your real endpoint once available, e.g.:
-        // const res = await httpClient.get("/api/customers/me/policies/expired-vehicles");
-        // if (!mounted) return;
-        // setBuyAgainVehicles(res.data?.vehicles || []);
-
-        // Placeholder until backend endpoint exists — keep empty so the
-        // section correctly hides itself when there are no expired policies.
+        const res = await httpClient.get("/api/policies/my");
         if (!mounted) return;
-        setBuyAgainVehicles([]);
+
+        const policies = res.data?.policies || [];
+
+        // Keep only Expired policies, then dedupe by vehicle, keeping
+        // each vehicle's most recently expired policy.
+        const expired = policies
+          .filter((p) => p.status === "Expired" && p.vehicleId)
+          .sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
+
+        const seen = new Set();
+        const vehicles = [];
+        for (const policy of expired) {
+          const v = policy.vehicleId;
+          if (seen.has(v._id)) continue;
+          seen.add(v._id);
+          vehicles.push({
+            _id: v._id,
+            registration: v.registration,
+            make: v.make,
+            model: v.model,
+            ownerLabel: `${v.make} ${v.model}`,
+            relationship: "Owner",
+          });
+        }
+
+        setBuyAgainVehicles(vehicles);
       } catch (err) {
         if (!mounted) return;
         setBuyAgainVehicles([]);
@@ -90,16 +125,16 @@ export default function CustomerHome() {
 
       {/* Search */}
       <div className="pt-5">
-        <PlateSearchBar />
+        <PlateSearchBar onVehicleFound={handleVehicleFound} />
       </div>
 
-      {/* Recently Viewed */}
+      {/* Recently Viewed — localStorage backed */}
       <RecentlyViewedSection
         vehicles={recentlyViewed}
         onDismiss={handleDismissRecent}
       />
 
-      {/* Buy Again — only rendered when expired-policy vehicles exist */}
+      {/* Buy Again — derived from existing GET /api/policies/my */}
       <BuyAgainSection vehicles={buyAgainVehicles} loading={buyAgainLoading} />
     </div>
   );
