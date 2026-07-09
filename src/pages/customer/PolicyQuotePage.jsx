@@ -14,10 +14,7 @@ import {
 import CarBrandIcon from "../../components/customer/CarBrandIcon";
 import DurationPickerSheet from "../../components/customer/DurationPickerSheet";
 import StartTimePickerSheet from "../../components/customer/StartTimePickerSheet";
-import {
-  calculatePremium,
-  calculateExtensionCost,
-} from "../../utils/calculatePremium";
+import { calculatePremium, calculateExtensionCost } from "../../utils/calculatePremium";
 
 /**
  * frontend/src/pages/customer/PolicyQuotePage.jsx
@@ -76,28 +73,18 @@ export default function PolicyQuotePage() {
   const endsAtLabel = useMemo(() => {
     const end = new Date(Date.now() + durationHours * 60 * 60 * 1000);
     const isToday = end.toDateString() === new Date().toDateString();
-    const time = end.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-    return isToday
-      ? `Ends today, ${time}`
-      : `Ends ${end.toLocaleDateString()}, ${time}`;
+    const time = end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+    return isToday ? `Ends today, ${time}` : `Ends ${end.toLocaleDateString()}, ${time}`;
   }, [durationHours]);
 
-  const durationLabel =
-    durationHours === 1 ? "1 hour" : `${durationHours} hours`;
+  const durationLabel = durationHours === 1 ? "1 hour" : `${durationHours} hours`;
 
   // "Get X hours instead for an extra £Y" upsell — steps to the next
   // duration tier up from whatever is currently selected.
   const DURATION_TIERS = [1, 2, 3, 6, 24];
   const nextTier = DURATION_TIERS.find((h) => h > durationHours);
   const extensionCost = nextTier
-    ? calculateExtensionCost(
-        { durationHours, vehicle, coverageType },
-        nextTier - durationHours,
-      )
+    ? calculateExtensionCost({ durationHours, vehicle, coverageType }, nextTier - durationHours)
     : null;
 
   const handleConfirmDuration = (hours) => {
@@ -116,23 +103,17 @@ export default function PolicyQuotePage() {
     setStartSheetOpen(false);
   };
 
-  const startMainLabel =
-    startMode === "immediate"
-      ? "Immediately"
-      : scheduledStartDate
-        ? scheduledStartDate.toLocaleDateString(undefined, {
-            weekday: "short",
-            day: "numeric",
-            month: "short",
-          })
-        : "Choose time";
+  const startMainLabel = startMode === "immediate"
+    ? "Immediately"
+    : scheduledStartDate
+      ? scheduledStartDate.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })
+      : "Choose time";
 
-  const startSubLabel =
-    startMode === "immediate"
-      ? "Starts at time of payment"
-      : scheduledStartDate
-        ? `Starts at ${scheduledStartDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`
-        : "";
+  const startSubLabel = startMode === "immediate"
+    ? "Starts at time of payment"
+    : scheduledStartDate
+      ? `Starts at ${scheduledStartDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`
+      : "";
 
   const handleContinue = () => {
     navigate("/customer/policies/checkout", {
@@ -147,9 +128,9 @@ export default function PolicyQuotePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen text-white bg-black">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-black/95 backdrop-blur-sm">
+      <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm flex items-center justify-between px-4 py-3">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -176,15 +157,13 @@ export default function PolicyQuotePage() {
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 px-4 pb-4 space-y-3 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
         {/* Vehicle identity block */}
         <div className="flex flex-col items-center pt-1 pb-2">
           <CarBrandIcon make={vehicle.make} size={56} />
           <div className="mt-3 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#17181c] border border-white/5">
             <UserIcon size={13} className="text-[#8b8d98]" />
-            <span className="text-[13px] font-semibold text-[#c8c9d1]">
-              Your car
-            </span>
+            <span className="text-[13px] font-semibold text-[#c8c9d1]">Your car</span>
           </div>
         </div>
 
@@ -197,17 +176,13 @@ export default function PolicyQuotePage() {
           >
             <span className="text-[14px] text-[#8b8d98]">Start</span>
             <div className="text-right">
-              <div className="text-[14px] font-bold text-[#7c6bff]">
-                {startMainLabel}
-              </div>
-              <div className="text-[12px] text-[#7c6bff]/70">
-                {startSubLabel}
-              </div>
+              <div className="text-[14px] font-bold text-[#7c6bff]">{startMainLabel}</div>
+              <div className="text-[12px] text-[#7c6bff]/70">{startSubLabel}</div>
             </div>
             <ChevronRight size={16} className="text-[#5c5e68] ml-2 shrink-0" />
           </button>
 
-          <div className="h-px mx-4 bg-white/5" />
+          <div className="h-px bg-white/5 mx-4" />
 
           <button
             type="button"
@@ -216,9 +191,7 @@ export default function PolicyQuotePage() {
           >
             <span className="text-[14px] text-[#8b8d98]">Duration</span>
             <div className="text-right">
-              <div className="text-[14px] font-bold text-[#7c6bff]">
-                {durationLabel}
-              </div>
+              <div className="text-[14px] font-bold text-[#7c6bff]">{durationLabel}</div>
               <div className="text-[12px] text-[#7c6bff]/70">{endsAtLabel}</div>
             </div>
             <ChevronRight size={16} className="text-[#5c5e68] ml-2 shrink-0" />
@@ -262,13 +235,12 @@ export default function PolicyQuotePage() {
         {/* Policy documents */}
         <button
           type="button"
+          onClick={() => navigate("/customer/policies/documents", { state: { vehicle } })}
           className="w-full flex items-center justify-between bg-[#17181c] rounded-2xl px-4 py-4"
         >
           <div className="flex items-center gap-3">
             <FileText size={18} className="text-[#8b8d98]" />
-            <span className="text-[14px] font-semibold text-white">
-              Policy documents
-            </span>
+            <span className="text-[14px] font-semibold text-white">Policy documents</span>
           </div>
           <ChevronRight size={18} className="text-[#5c5e68]" />
         </button>
@@ -283,8 +255,7 @@ export default function PolicyQuotePage() {
             <div className="flex items-center gap-2.5">
               <Sparkles size={16} className="text-[#a99bff]" />
               <span className="text-[13px] text-[#e6e2ff]">
-                Get {nextTier === 1 ? "1 hour" : `${nextTier} hours`} instead
-                for an extra{" "}
+                Get {nextTier === 1 ? "1 hour" : `${nextTier} hours`} instead for an extra{" "}
                 <span className="font-bold">£{extensionCost.toFixed(2)}</span>
               </span>
             </div>
@@ -294,15 +265,12 @@ export default function PolicyQuotePage() {
       </div>
 
       {/* Sticky footer: price + continue */}
-      <div className="sticky bottom-0 flex items-center justify-between px-4 py-4 bg-black border-t border-white/5">
+      <div className="sticky bottom-0 bg-black border-t border-white/5 px-4 py-4 flex items-center justify-between">
         <div>
           <div className="text-[22px] font-extrabold text-white">
             £{quote.premiumGBP.toFixed(2)}
           </div>
-          <button
-            type="button"
-            className="text-[12px] font-semibold text-[#7c6bff]"
-          >
+          <button type="button" className="text-[12px] font-semibold text-[#7c6bff]">
             Pricing breakdown
           </button>
         </div>
@@ -338,16 +306,10 @@ export default function PolicyQuotePage() {
 function BenefitRow({ title, body }) {
   return (
     <div className="flex gap-3">
-      <CheckCircle2
-        size={20}
-        className="text-white shrink-0 mt-0.5"
-        strokeWidth={1.8}
-      />
+      <CheckCircle2 size={20} className="text-white shrink-0 mt-0.5" strokeWidth={1.8} />
       <div>
         <div className="text-[15px] font-bold text-white">{title}</div>
-        <p className="mt-1 text-[13px] text-[#8b8d98] leading-relaxed">
-          {body}
-        </p>
+        <p className="mt-1 text-[13px] text-[#8b8d98] leading-relaxed">{body}</p>
       </div>
     </div>
   );

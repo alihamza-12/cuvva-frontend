@@ -27,6 +27,9 @@ import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 import CustomerHome from "../pages/customer/CustomerHome";
 import CustomerLayout from "../components/layout/CustomerLayout";
 import PolicyQuotePage from "../pages/customer/PolicyQuotePage";
+import PolicyDocumentsPage from "../pages/customer/PolicyDocumentsPage";
+import InsuranceSummaryPage from "../components/customer/InsuranceSummaryPage";
+import PolicyWordingPage from "../components/customer/PolicyWordingPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -157,6 +160,9 @@ export default function AppRouter() {
         {/* Catch-All Fallback Redirect Security Guard */}
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/customer/policies/new" element={<PolicyQuotePage />} />
+        <Route path="/customer/policies/documents" element={<PolicyDocumentsPage />} />
+        <Route path="/customer/policies/documents/ipid" element={<InsuranceSummaryPage />} />
+        <Route path="/customer/policies/documents/wording" element={<PolicyWordingPage />} />
       </Routes>
     </BrowserRouter>
   );
