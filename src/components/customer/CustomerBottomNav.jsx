@@ -14,7 +14,7 @@ import { Search, Users, Shield, Zap, CircleUser } from "lucide-react";
  */
 
 // Custom Policies icon to match the screenshot: shield with lightning bolt
-const PoliciesIcon = ({ size = 26, active = false, className = "" }) => (
+const PoliciesIcon = ({ size = 22, active = false, className = "" }) => (
   <div
     className={`relative flex items-center justify-center ${className}`}
     style={{ width: size, height: size }}
@@ -62,7 +62,6 @@ const TABS = [
     label: "Profile",
     path: "/customer/profile",
     // CircleUser gives you the user-in-circle from the screenshot
-    // If you prefer the plain outline: swap to `User` from lucide-react
     Icon: CircleUser,
   },
 ];
@@ -77,18 +76,18 @@ export default function CustomerBottomNav() {
       : location.pathname.startsWith(path);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-5 px-4 pointer-events-none safe-bottom">
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-3 px-3 pointer-events-none safe-bottom">
       <nav
         className="
           pointer-events-auto
           flex flex-row items-center justify-between
-          bg-[#18181c] 
+          bg-[#18181c]
           border border-white/[0.06]
           rounded-full
-          px-2.5 py-3
+          px-2 py-2
           shadow-[0_12px_40px_rgba(0,0,0,0.6)]
           w-full
-          max-w-[460px]
+          max-w-[420px]
           min-w-0
         "
         style={{
@@ -111,26 +110,26 @@ export default function CustomerBottomNav() {
               onClick={() => navigate(tab.path)}
               className={`
                 flex flex-col items-center justify-center
-                gap-1.5
-                rounded-[28px]
+                gap-1
+                rounded-[24px]
                 transition-all duration-200 ease-out
                 shrink-0
-                min-w-[76px]
+                min-w-[68px]
                 flex-1
                 ${
                   active
-                    ? "bg-[#2a2a31] px-5 py-2.5"
-                    : "px-3 py-2.5 hover:bg-white/[0.035]"
+                    ? "bg-[#2a2a31] px-4 py-2"
+                    : "px-2 py-2 hover:bg-white/[0.035]"
                 }
               `}
             >
               {/* ICON ON TOP */}
-              <div className="flex items-center justify-center h-[26px]">
+              <div className="flex items-center justify-center h-[22px]">
                 {tab.isCustom ? (
-                  <IconComp size={26} active={active} />
+                  <IconComp size={22} active={active} />
                 ) : (
                   <IconComp
-                    size={24}
+                    size={20}
                     strokeWidth={2.2}
                     className={active ? "text-[#7c5bff]" : "text-[#9a9aa3]"}
                     // fill the profile circle subtly when active, matches screenshot
@@ -143,15 +142,15 @@ export default function CustomerBottomNav() {
                 )}
               </div>
 
-              {/* LABEL UNDER ICON - EXACT HEADINGS */}
+              {/* LABEL UNDER ICON - SMALL LIKE SCREENSHOT */}
               <span
                 className={`
-                  text-[13px] leading-none tracking-[-0.01em] whitespace-nowrap
+                  text-[11px] leading-none tracking-normal whitespace-nowrap
                   transition-colors duration-200
                   ${
                     active
-                      ? "text-[#9370ff] font-[600]"
-                      : "text-[#e8e8ec] font-[500]"
+                      ? "text-[#9370ff] font-semibold"
+                      : "text-[#e8e8ec] font-medium"
                   }
                 `}
               >
@@ -165,16 +164,16 @@ export default function CustomerBottomNav() {
       {/* Safe area / hide scrollbar helper */}
       <style>{`
         .safe-bottom {
-          padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+          padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
         }
         @media (max-width: 380px) {
           nav button {
-            min-width: 68px !important;
-            padding-left: 10px !important;
-            padding-right: 10px !important;
+            min-width: 60px !important;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
           }
           nav button span {
-            font-size: 11.5px !important;
+            font-size: 10px !important;
           }
         }
       `}</style>
