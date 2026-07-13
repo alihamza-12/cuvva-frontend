@@ -7,7 +7,7 @@ import { ChevronLeft, HelpCircle, X, Check } from "lucide-react";
 // examples (confirmed against the reference screenshot: it's one photo
 // shown twice with different framing treatments, not two different
 // photos). Rename/replace this single file with your own.
-import exampleCarImage from "../../../public/car.jpeg";
+import exampleCarImage from "/car.jpeg";
 
 /**
  * frontend/src/pages/customer/VehiclePhotoCapturePage.jsx
