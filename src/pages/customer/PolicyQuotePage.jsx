@@ -148,7 +148,10 @@ export default function PolicyQuotePage() {
 
   const handleStatementsConfirm = () => {
     setStatementsModalOpen(false);
-    navigate("/customer/policies/checkout", {
+    // "Yes" now leads into the vehicle condition photo capture flow
+    // (front/back/left/right) before checkout, instead of skipping
+    // straight to checkout.
+    navigate("/customer/policies/photos/front", {
       state: {
         vehicle,
         durationHours,

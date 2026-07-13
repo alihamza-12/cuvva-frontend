@@ -30,6 +30,8 @@ import PolicyQuotePage from "../pages/customer/PolicyQuotePage";
 import PolicyDocumentsPage from "../pages/customer/PolicyDocumentsPage";
 import InsuranceSummaryPage from "../components/customer/InsuranceSummaryPage";
 import PolicyWordingPage from "../components/customer/PolicyWordingPage";
+import VehiclePhotoCapturePage from "../components/customer/VehiclePhotoCapturePage";
+import VehicleCameraCapturePage from "../components/customer/VehicleCameraCapturePage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -163,6 +165,8 @@ export default function AppRouter() {
         <Route path="/customer/policies/documents" element={<PolicyDocumentsPage />} />
         <Route path="/customer/policies/documents/ipid" element={<InsuranceSummaryPage />} />
         <Route path="/customer/policies/documents/wording" element={<PolicyWordingPage />} />
+        <Route path="/customer/policies/photos/:step" element={<VehiclePhotoCapturePage />} />
+        <Route path="/customer/policies/photos/:step/camera" element={<VehicleCameraCapturePage />} />
       </Routes>
     </BrowserRouter>
   );
