@@ -17,7 +17,25 @@ import { useGetMyProfileQuery } from "../../app/api/profileApi";
 export default function ProfilePage() {
   const { data, isLoading, error } = useGetMyProfileQuery();
 
-  const errorMessage = error?.response?.data?.message || error?.message || null;
+  const name = data?.customer?.fullName || "No customer data";
+
+  const stats = useMemo(
+    () => [
+      { id: "s1", icon: ShieldCheck, label: "Your policies", value: "—" },
+      { id: "s2", icon: Car, label: "Vehicles", value: "—" },
+      { id: "s3", icon: Settings, label: "Settings", value: "" },
+    ],
+    [],
+  );
+
+  const rows = useMemo(
+    () => [
+      { id: "r1", label: "Account details" },
+      { id: "r2", label: "Saved vehicles" },
+      { id: "r3", label: "Notification settings" },
+    ],
+    [],
+  );
 
   if (isLoading) {
     return (
@@ -39,26 +57,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  const name = data?.customer?.fullName || "No customer data";
-
-  const stats = useMemo(
-    () => [
-      { id: "s1", icon: ShieldCheck, label: "Your policies", value: "—" },
-      { id: "s2", icon: Car, label: "Vehicles", value: "—" },
-      { id: "s3", icon: Settings, label: "Settings", value: "" },
-    ],
-    [],
-  );
-
-  const rows = useMemo(
-    () => [
-      { id: "r1", label: "Account details" },
-      { id: "r2", label: "Saved vehicles" },
-      { id: "r3", label: "Notification settings" },
-    ],
-    [],
-  );
 
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
