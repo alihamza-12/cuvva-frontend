@@ -15,9 +15,32 @@ import { useGetMyProfileQuery } from "../../app/api/profileApi";
  * Theme-faithful mobile UI (dark background, rounded cards/rows)
  */
 export default function ProfilePage() {
-  const { data, isLoading } = useGetMyProfileQuery();
+  const { data, isLoading, error } = useGetMyProfileQuery();
 
-  const name = data?.customer?.fullName || (isLoading ? "Loading..." : "");
+  const errorMessage = error?.response?.data?.message || error?.message || null;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen pb-32 text-white bg-black">
+        <p className="text-white/80">Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen px-4 pb-32 text-white bg-black">
+        <div className="rounded-2xl bg-[#17181c] border border-white/5 p-4 w-full">
+          <p className="text-[16px] font-extrabold">Could not load profile</p>
+          <p className="text-[14px] text-[#9497a1] mt-2">
+            Please sign in again (or check your session cookie).
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const name = data?.customer?.fullName || "No customer data";
 
   const stats = useMemo(
     () => [
