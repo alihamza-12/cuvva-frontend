@@ -76,7 +76,7 @@ export default function CustomerBottomNav() {
       : location.pathname.startsWith(path);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-3 px-3 pointer-events-none safe-bottom">
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-3 pb-3 pointer-events-none safe-bottom">
       <nav
         className="
           pointer-events-auto

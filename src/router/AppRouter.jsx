@@ -32,6 +32,9 @@ import InsuranceSummaryPage from "../components/customer/InsuranceSummaryPage";
 import PolicyWordingPage from "../components/customer/PolicyWordingPage";
 import VehiclePhotoCapturePage from "../components/customer/VehiclePhotoCapturePage";
 import VehicleCameraCapturePage from "../components/customer/VehicleCameraCapturePage";
+import CarClubsPage from "../components/customer/CarClubsPage";
+import PoliciesPage from "../components/customer/PoliciesPage";
+import ProfilePage from "../components/customer/ProfilePage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -44,7 +47,6 @@ const TempForgot = () => (
 
 const TempSubAdminLayout = () => (
   <div className="flex min-h-screen bg-[#060814]">
-    {/* Temporary Sidebar placeholder until we build the real Sub-Admin Agent dashboard */}
     <div className="w-64 p-5 border-r bg-[#0d0f1d] border-[#1e2238] flex flex-col gap-6">
       <div className="text-lg font-extrabold text-[#00f0ff] uppercase tracking-wider">
         ⚡ AGENT HQ
@@ -123,6 +125,17 @@ export default function AppRouter() {
         </Route>
 
         {/* ================= SECURE CUSTOMER WORKSPACE ================= */}
+        {/*
+          FIX: car-clubs / policies / profile now live INSIDE this block
+          as children (relative paths), alongside `index`. This makes
+          them:
+            1. Actually reachable at /customer/car-clubs, /customer/policies,
+               /customer/profile (previously they were registered as
+               /car-clubs, /policies, /profile — wrong URLs entirely).
+            2. Rendered inside CustomerLayout's <Outlet/>, so
+               CustomerBottomNav shows on them.
+            3. Protected by the same role check as the rest of /customer.
+        */}
         <Route
           path="/customer"
           element={
@@ -132,7 +145,38 @@ export default function AppRouter() {
           }
         >
           <Route index element={<CustomerHome />} />
+          <Route path="car-clubs" element={<CarClubsPage />} />
+          <Route path="policies" element={<PoliciesPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
+
+        {/*
+          Full-screen purchase flow — deliberately OUTSIDE CustomerLayout
+          so the bottom nav stays hidden on these (X-to-close pattern).
+          Still protected individually if you want that; wrap each in
+          <ProtectedRoute allowedRoles={["Customer"]}> if needed.
+        */}
+        <Route path="/customer/policies/new" element={<PolicyQuotePage />} />
+        <Route
+          path="/customer/policies/documents"
+          element={<PolicyDocumentsPage />}
+        />
+        <Route
+          path="/customer/policies/documents/ipid"
+          element={<InsuranceSummaryPage />}
+        />
+        <Route
+          path="/customer/policies/documents/wording"
+          element={<PolicyWordingPage />}
+        />
+        <Route
+          path="/customer/policies/photos/:step"
+          element={<VehiclePhotoCapturePage />}
+        />
+        <Route
+          path="/customer/policies/photos/:step/camera"
+          element={<VehicleCameraCapturePage />}
+        />
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route
@@ -159,14 +203,14 @@ export default function AppRouter() {
           />
         </Route>
 
-        {/* Catch-All Fallback Redirect Security Guard */}
+        {/*
+          FIX: Catch-All Fallback moved to the VERY END. React Router
+          matches sibling routes in declaration order — having `*` first
+          meant it swallowed EVERY navigation (including your bottom nav
+          clicks) before any later route could ever match. It must
+          always be the last route in the list.
+        */}
         <Route path="*" element={<Navigate to="/" replace />} />
-        <Route path="/customer/policies/new" element={<PolicyQuotePage />} />
-        <Route path="/customer/policies/documents" element={<PolicyDocumentsPage />} />
-        <Route path="/customer/policies/documents/ipid" element={<InsuranceSummaryPage />} />
-        <Route path="/customer/policies/documents/wording" element={<PolicyWordingPage />} />
-        <Route path="/customer/policies/photos/:step" element={<VehiclePhotoCapturePage />} />
-        <Route path="/customer/policies/photos/:step/camera" element={<VehicleCameraCapturePage />} />
       </Routes>
     </BrowserRouter>
   );
