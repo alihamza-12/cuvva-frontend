@@ -8,6 +8,10 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
+import { useLogoutUserMutation } from "../../app/api/authApi";
+import { useDispatch } from "react-redux";
+import { logOut } from "../../features/authSlice";
+import { useNavigate } from "react-router-dom";
 
 /**
  * frontend/src/components/customer/ProfilePage.jsx
@@ -16,6 +20,9 @@ import { useGetMyProfileQuery } from "../../app/api/profileApi";
  */
 export default function ProfilePage() {
   const { data, isLoading, error } = useGetMyProfileQuery();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [logoutUser, { isLoading: isLoggingOut }] = useLogoutUserMutation();
 
   const name = data?.customer?.fullName || "No customer data";
 
@@ -123,11 +130,26 @@ export default function ProfilePage() {
       <div className="px-4 pt-4">
         <button
           type="button"
-          className="w-full rounded-2xl bg-[#17181c] border border-white/5 hover:bg-[#1d1e23] transition-colors px-4 py-4 flex items-center justify-between"
+          onClick={async () => {
+            try {
+              await logoutUser().unwrap();
+              dispatch(logOut());
+              navigate("/login", { replace: true });
+            } catch {
+              // Even if the API fails, clear local auth state to avoid being stuck.
+              dispatch(logOut());
+              navigate("/login", { replace: true });
+            }
+          }}
+          disabled={isLoggingOut}
+          className="w-full rounded-2xl bg-[#17181c] border border-white/5 hover:bg-[#1d1e23] transition-colors px-4 py-4 flex items-center justify-between disabled:opacity-60 disabled:cursor-not-allowed"
+          aria-busy={isLoggingOut}
         >
           <div className="flex items-center gap-3">
             <LogOut size={18} className="text-[#9a9aa3]" />
-            <p className="text-[15px] font-bold text-white">Log out</p>
+            <p className="text-[15px] font-bold text-white">
+              {isLoggingOut ? "Logging out..." : "Log out"}
+            </p>
           </div>
           <ChevronRight size={18} className="text-[#5c5e68] shrink-0" />
         </button>
