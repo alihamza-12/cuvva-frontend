@@ -38,6 +38,8 @@ import ProfilePage from "../components/customer/ProfilePage";
 // NOTE: aliased to avoid clashing with the Super Admin's PolicyDetailPage
 // imported above — these are two DIFFERENT components.
 import CustomerPolicyDetailPage from "../components/customer/PolicyDetailPage";
+import MakeAClaimPage from "../components/customer/MakeAClaimPage";
+import PolicyReceiptPage from "../components/customer/PolicyReceiptPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -183,6 +185,8 @@ export default function AppRouter() {
           path="/customer/policies/detail"
           element={<CustomerPolicyDetailPage />}
         />
+        <Route path="/customer/policies/receipt" element={<PolicyReceiptPage />} />
+        <Route path="/customer/policies/claim" element={<MakeAClaimPage />} />
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route

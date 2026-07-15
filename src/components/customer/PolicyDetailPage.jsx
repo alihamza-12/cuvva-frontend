@@ -53,7 +53,8 @@ export default function PolicyDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-8 text-center text-white bg-black">
         <p className="text-[15px] text-[#9497a1]">
-          We couldn't load this policy's details. Please go back and try again.
+          We couldn't load this policy's details. Please go back and try
+          again.
         </p>
         <button
           type="button"
@@ -155,6 +156,14 @@ export default function PolicyDetailPage() {
     console.log(`${label} tapped — not wired up yet.`);
   };
 
+  const handleReceipt = () => {
+    navigate("/customer/policies/receipt", { state: { policy } });
+  };
+
+  const handleMakeAClaim = () => {
+    navigate("/customer/policies/claim", { state: { policy } });
+  };
+
   return (
     <div className="min-h-screen text-white bg-black">
       {/* Header */}
@@ -184,21 +193,9 @@ export default function PolicyDetailPage() {
 
         {/* Quick actions */}
         <div className="flex items-start justify-center gap-10 px-4 mt-6">
-          <QuickAction
-            icon={FileText}
-            label="Policy docs"
-            onClick={handlePolicyDocs}
-          />
-          <QuickAction
-            icon={Ticket}
-            label="Receipt"
-            onClick={() => handleNotWiredUp("Receipt")}
-          />
-          <QuickAction
-            icon={ShieldAlert}
-            label="Make a claim"
-            onClick={() => handleNotWiredUp("Make a claim")}
-          />
+          <QuickAction icon={FileText} label="Policy docs" onClick={handlePolicyDocs} />
+          <QuickAction icon={Ticket} label="Receipt" onClick={handleReceipt} />
+          <QuickAction icon={ShieldAlert} label="Make a claim" onClick={handleMakeAClaim} />
         </div>
 
         {/* Start / End card */}
@@ -245,11 +242,7 @@ export default function PolicyDetailPage() {
             value={
               <span className="flex items-center gap-2">
                 {policy?.policyNumber || "—"}
-                <button
-                  type="button"
-                  onClick={handleCopyPolicyNumber}
-                  aria-label="Copy policy number"
-                >
+                <button type="button" onClick={handleCopyPolicyNumber} aria-label="Copy policy number">
                   <Copy size={14} className="text-[#9497a1]" />
                 </button>
               </span>
@@ -319,7 +312,7 @@ export default function PolicyDetailPage() {
 
           <button
             type="button"
-            onClick={() => handleNotWiredUp("Receipt")}
+            onClick={handleReceipt}
             className="w-full flex items-center gap-3 px-4 py-4 border-t border-white/5 hover:bg-white/[0.03] transition-colors"
           >
             <Ticket size={17} className="text-[#c8c9d1] shrink-0" />
@@ -336,27 +329,10 @@ export default function PolicyDetailPage() {
             <h2 className="text-[16px] font-bold text-white">Get help</h2>
           </div>
 
-          <HelpRow
-            icon={ShieldAlert}
-            label="Make a claim"
-            onClick={() => handleNotWiredUp("Make a claim")}
-          />
-          <HelpRow
-            icon={Wrench}
-            label="Book a mechanic"
-            onClick={() => handleNotWiredUp("Book a mechanic")}
-          />
-          <HelpRow
-            icon={MessageCircle}
-            label="Chat to us"
-            onClick={() => handleNotWiredUp("Chat to us")}
-          />
-          <HelpRow
-            icon={HelpCircle}
-            label="Visit the help centre"
-            onClick={() => handleNotWiredUp("Help centre")}
-            isLast
-          />
+          <HelpRow icon={ShieldAlert} label="Make a claim" onClick={handleMakeAClaim} />
+          <HelpRow icon={Wrench} label="Book a mechanic" onClick={() => handleNotWiredUp("Book a mechanic")} />
+          <HelpRow icon={MessageCircle} label="Chat to us" onClick={() => handleNotWiredUp("Chat to us")} />
+          <HelpRow icon={HelpCircle} label="Visit the help centre" onClick={() => handleNotWiredUp("Help centre")} isLast />
         </div>
       </div>
 
