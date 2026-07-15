@@ -23,6 +23,16 @@ import claimcar from "/claimcar.png";
  * no backend claims-submission endpoint exists yet (nothing in
  * policies.js handles claims). Wire these once that flow exists;
  * flagging so it's not silently mistaken for a working submission.
+ *
+ * DEBUG NOTE: back button was found to receive zero click events
+ * (nothing logs on click) — this means something else is intercepting
+ * the click, not a logic bug. Removed the `-mt-10` negative margin on
+ * the content block below (which was pulling the illustration/content
+ * up and could overlap the header depending on image height) and
+ * pinned the header with `relative z-20` + `pointer-events-auto` as a
+ * belt-and-braces fix. If the button still doesn't respond after this,
+ * the cause is external to this file (see chat for the console
+ * diagnostic to run: document.elementFromPoint on the button's rect).
  */
 export default function MakeAClaimPage() {
   const navigate = useNavigate();
@@ -41,42 +51,40 @@ export default function MakeAClaimPage() {
     console.log("How claims work tapped — not wired up yet.");
   };
 
-  // navigate(-1) only works if this page was reached via an in-app SPA
-  // navigation (i.e. there's a history entry to pop). If the page was
-  // opened directly/refreshed (location.key === "default"), there's no
-  // SPA history to go back to and navigate(-1) silently no-ops — so we
-  // fall back to a known-good route instead.
   const handleBack = () => {
-    if (location.key === "default") {
-      navigate("/customer/policies", { replace: true });
-    } else {
+    console.log("Back Button");
+    if (window.history.length > 1) {
       navigate(-1);
+    } else {
+      navigate("/customer/policies", { replace: true });
     }
   };
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4">
+      {/* Header — relative + z-20 so nothing below can ever cover it */}
+      <div className="relative z-20 flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
+          className="relative z-20 flex items-center justify-center w-10 h-10 border rounded-full pointer-events-auto bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
         <button
           type="button"
           aria-label="Help"
-          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
+          className="relative z-20 flex items-center justify-center w-10 h-10 border rounded-full pointer-events-auto bg-white/5 border-white/10"
         >
           <HelpCircle size={18} className="text-white" />
         </button>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col items-center justify-center flex-1 px-8 -mt-10 text-center">
+      {/* Content — removed the -mt-10 negative margin that was pulling
+          this block up (and could overlap the header row above it
+          depending on the illustration's rendered height) */}
+      <div className="flex flex-col items-center justify-center flex-1 px-8 mt-4 text-center">
         <img
           src={claimcar}
           alt="Damaged car"
