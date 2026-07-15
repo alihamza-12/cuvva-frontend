@@ -35,6 +35,9 @@ import VehicleCameraCapturePage from "../components/customer/VehicleCameraCaptur
 import CarClubsPage from "../components/customer/CarClubsPage";
 import PoliciesPage from "../components/customer/PoliciesPage";
 import ProfilePage from "../components/customer/ProfilePage";
+// NOTE: aliased to avoid clashing with the Super Admin's PolicyDetailPage
+// imported above — these are two DIFFERENT components.
+import CustomerPolicyDetailPage from "../components/customer/PolicyDetailPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -126,12 +129,11 @@ export default function AppRouter() {
 
         {/* ================= SECURE CUSTOMER WORKSPACE ================= */}
         {/*
-          FIX: car-clubs / policies / profile now live INSIDE this block
-          as children (relative paths), alongside `index`. This makes
+          car-clubs / policies / profile live INSIDE this block as
+          children (relative paths), alongside `index`. This makes
           them:
             1. Actually reachable at /customer/car-clubs, /customer/policies,
-               /customer/profile (previously they were registered as
-               /car-clubs, /policies, /profile — wrong URLs entirely).
+               /customer/profile.
             2. Rendered inside CustomerLayout's <Outlet/>, so
                CustomerBottomNav shows on them.
             3. Protected by the same role check as the rest of /customer.
@@ -177,6 +179,10 @@ export default function AppRouter() {
           path="/customer/policies/photos/:step/camera"
           element={<VehicleCameraCapturePage />}
         />
+        <Route
+          path="/customer/policies/detail"
+          element={<CustomerPolicyDetailPage />}
+        />
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route
@@ -204,11 +210,10 @@ export default function AppRouter() {
         </Route>
 
         {/*
-          FIX: Catch-All Fallback moved to the VERY END. React Router
-          matches sibling routes in declaration order — having `*` first
-          meant it swallowed EVERY navigation (including your bottom nav
-          clicks) before any later route could ever match. It must
-          always be the last route in the list.
+          Catch-All Fallback stays at the VERY END. React Router matches
+          sibling routes in declaration order — having `*` earlier would
+          swallow EVERY navigation (including bottom nav clicks) before
+          any later route could ever match.
         */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
