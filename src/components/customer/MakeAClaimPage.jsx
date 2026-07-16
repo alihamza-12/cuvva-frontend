@@ -49,6 +49,18 @@ export default function MakeAClaimPage() {
 
   const handleHowClaimsWork = () => {
     console.log("How claims work tapped — not wired up yet.");
+    const url =
+      "https://support.cuvva.com/en/articles/89942-reporting-an-accident-theft-or-damage-to-your-vehicle-what-to-do-and-how-to-make-a-claim";
+
+    // If running inside your mobile app wrapper
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ action: "OPEN_SYSTEM_BROWSER", url }),
+      );
+    } else {
+      // Standard web browser fallback
+      window.location.href = url;
+    }
   };
 
   const handleBack = () => {
