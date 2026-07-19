@@ -40,6 +40,7 @@ import ProfilePage from "../components/customer/ProfilePage";
 import CustomerPolicyDetailPage from "../components/customer/PolicyDetailPage";
 import MakeAClaimPage from "../components/customer/MakeAClaimPage";
 import PolicyReceiptPage from "../components/customer/PolicyReceiptPage";
+import BookMechanicPage from "../components/customer/BookMechanicPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -187,6 +188,7 @@ export default function AppRouter() {
         />
         <Route path="/customer/policies/receipt" element={<PolicyReceiptPage />} />
         <Route path="/customer/policies/claim" element={<MakeAClaimPage />} />
+        <Route path="/customer/policies/mechanic" element={<BookMechanicPage />} />
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route
