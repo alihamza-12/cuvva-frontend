@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, HelpCircle, ChevronRight, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, HelpCircle, ChevronRight, Check } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
 import { useDeleteMyAccountMutation } from "../../app/api/profileApi";
 
@@ -172,7 +172,11 @@ function InfoRow({ label, value, verified, onClick, isLast, disabled, danger }) 
         {label}
       </span>
       <span className="flex items-center gap-2 shrink-0">
-        {verified && <CheckCircle2 size={16} className="text-[#3ecf8e]" fill="#3ecf8e" />}
+        {verified && (
+          <span className="w-[18px] h-[18px] rounded-full bg-[#3ecf8e] flex items-center justify-center shrink-0">
+            <Check size={12} className="text-white" strokeWidth={3.5} />
+          </span>
+        )}
         {value && <span className="text-[14px] text-[#c8c9d1]">{value}</span>}
         {!danger && <ChevronRight size={18} className="text-[#5c5e68]" />}
       </span>
