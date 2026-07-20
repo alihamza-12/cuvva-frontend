@@ -1,9 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   MessageCircleQuestion,
   Camera,
   ChevronRight,
-  LogOut,
 } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
 import { useLogoutUserMutation } from "../../app/api/authApi";
@@ -11,6 +10,9 @@ import { useDispatch } from "react-redux";
 import { logOut } from "../../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import referFriendImg from "/referfriendillustration.png";
+import PaymentMethodsSheet from "./PaymentMethodsSheet";
+import RateAppModal from "./RateAppModal";
+import { getPaymentMethod } from "../../utils/profileLocalStorage";
 
 /**
  * frontend/src/components/customer/ProfilePage.jsx
@@ -22,63 +24,48 @@ import referFriendImg from "/referfriendillustration.png";
  * string, then CustomerBottomNav (rendered by CustomerLayout, not
  * here).
  *
+ * UPDATE: Account/Payment/Discount/Refer/Bank rows now navigate to
+ * real pages/sheets (see below) instead of a shared console.log
+ * placeholder. Only Help centre, Chat to customer support, Previous
+ * chats, Blog, Careers at Cuvva, Legal, Change icon remain
+ * placeholders — explicitly deferred per instruction ("this will the
+ * implement later").
+ *
+ *   - Account details      -> /customer/profile/account (real API data)
+ *   - Payment methods      -> PaymentMethodsSheet (localStorage only)
+ *   - Apply discount code  -> /customer/profile/discount-code (localStorage only)
+ *   - Refer a friend       -> /customer/profile/refer (no backend, static referral link)
+ *   - Your discounts       -> /customer/profile/discounts (localStorage only)
+ *   - Bank details         -> /customer/profile/bank-details (localStorage only)
+ *   - Rate the app         -> RateAppModal (localStorage only)
+ *   - Delete account       -> now inside AccountDetailsPage.jsx (real
+ *     network call to a not-yet-built DELETE /customers/me route)
+ *
  * BACKEND GAP FOUND — flagging clearly, not silently working around it:
- * `profileApi.js` calls `GET /customers/me`, but the `customers.js`
- * routes file only defines `GET /`, `GET /:id`, and `PATCH /:id` — no
- * dedicated `/me` handler. As written, Express will match `/me` against
- * the `/:id` route with `id === "me"`, which is not a valid Mongo
- * ObjectId and will likely throw a cast error / return a failure
- * response rather than the signed-in user's own record. If this is
- * already working for you, there must be a `/me`-handling route
- * elsewhere I haven't seen — otherwise this needs a real backend route
- * added (e.g. `GET /customers/me` reading `req.user` from verifyJWT,
- * before the `/:id` route so it isn't shadowed). This page is built to
- * degrade gracefully (shows a fallback) if that call fails, so it we
- * can still ship the case UI now.
+ * `profileApi.js` calls `GET /customers/me`. Confirmed working via a
+ * real API response you shared: { fullName, email, role, status,
+ * expiresAt, createdBy } — note `createdAt` was MISSING from that
+ * response even though User.js has `{ timestamps: true }`, because
+ * the route's `.select(...)` list didn't include it. Fix: add
+ * `createdAt` to that select list on the backend so "Member since"
+ * below shows a real date instead of the "—" fallback.
  *
- * REAL DATA (from GET /customers/me via useGetMyProfileQuery):
- *   - fullName -> header name.
- *   - createdAt (User schema has `{ timestamps: true }`, so this
- *     exists on the model IF the route selects/returns it) -> "Member
- *     since <Month Year>". If it's missing from the response, falls
- *     back to a generic "Member since —" rather than fabricating a date.
- *
- * NOT IN YOUR SCHEMA / NO BACKEND ENDPOINT — all rendered as real,
- * tappable rows (per your instruction to "implement everything now,
- * wire later") but wired to a shared `handleNotWiredUp` placeholder
- * that just logs to console until real endpoints exist:
- *   - Profile photo upload (no photo/avatar field on User.js).
- *   - Payment methods / Apple Pay (no payment fields on User.js; the
- *     "Apple Pay" pill is a generic placeholder badge, not real Apple
- *     Pay branding/integration).
- *   - Apply discount code, Refer a friend, Your discounts, Invite
- *     friends (no discount/referral fields or endpoints anywhere).
- *   - Bank details (no bank/payout fields — this is Cuvva's car-SHARING
- *     host payout feature, unrelated to insurance policies).
- *   - Help centre, Chat to customer support, Previous chats, Rate the
- *     app, Blog, Careers at Cuvva, Legal, Change icon — all static
- *     informational links with no corresponding routes/pages built yet.
- *   - Delete account — no DELETE endpoint exists in customers.js for a
- *     customer to remove their own account. Flagged, not wired.
- *
- * REAL AND WORKING (untouched from your existing code):
- *   - Logout -> useLogoutUserMutation, dispatch(logOut()), navigate to
- *     /login. Copied over exactly as you had it.
- *
- * "Refer a friend" illustration: referfriendillustration.png, a
- * hand-drawn-style confetti/party-horn graphic recreated to match your
- * reference screenshot (traced curl geometry + colour-matched), saved
- * as a transparent PNG per your image-import convention
- * (`import x from "/filename.png"`).
- *
- * Version string ("v6.26.1 (28650)") is static placeholder text
- * matching the reference — not wired to any real build/version system.
+ * "Refer a friend" illustration on THIS page (small promo card):
+ * referfriendillustration.png, a hand-drawn-style confetti/party-horn
+ * graphic recreated to match your reference screenshot. The dedicated
+ * ReferFriendPage.jsx uses a separate illustration
+ * (referillustration.png) matching ITS OWN reference screenshot
+ * (hand+phone+friends) — these are two different images for two
+ * different screens, not a mix-up.
  */
 export default function ProfilePage() {
   const { data, isLoading, error } = useGetMyProfileQuery();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutUser, { isLoading: isLoggingOut }] = useLogoutUserMutation();
+
+  const [showPaymentSheet, setShowPaymentSheet] = useState(false);
+  const [showRateModal, setShowRateModal] = useState(false);
 
   const customer = data?.customer;
   const name = customer?.fullName || "Your account";
@@ -90,9 +77,13 @@ export default function ProfilePage() {
     return `Member since ${d.toLocaleDateString(undefined, { month: "long", year: "numeric" })}`;
   }, [customer?.createdAt]);
 
+  const paymentMethodLabel = useMemo(() => {
+    const method = getPaymentMethod();
+    return method === "apple-pay" ? "Apple Pay" : null;
+  }, [showPaymentSheet]);
+
   const handleNotWiredUp = (label) => {
-    // Placeholder — no backend endpoint / destination page exists yet
-    // for this action.
+    // Placeholder — explicitly deferred, no destination page yet.
     console.log(`${label} tapped — not wired up yet.`);
   };
 
@@ -157,24 +148,24 @@ export default function ProfilePage() {
       <Card>
         <Row
           label="Account details"
-          onClick={() => handleNotWiredUp("Account details")}
+          onClick={() => navigate("/customer/profile/account")}
         />
         <Row
           label="Payment methods"
-          onClick={() => handleNotWiredUp("Payment methods")}
-          right={<ApplePayBadge />}
+          onClick={() => setShowPaymentSheet(true)}
+          right={paymentMethodLabel && <ApplePayBadge />}
         />
         <Row
           label="Apply discount code"
-          onClick={() => handleNotWiredUp("Apply discount code")}
+          onClick={() => navigate("/customer/profile/discount-code")}
         />
         <Row
           label="Refer a friend"
-          onClick={() => handleNotWiredUp("Refer a friend")}
+          onClick={() => navigate("/customer/profile/refer")}
         />
         <Row
           label="Your discounts"
-          onClick={() => handleNotWiredUp("Your discounts")}
+          onClick={() => navigate("/customer/profile/discounts")}
           isLast
         />
       </Card>
@@ -187,7 +178,7 @@ export default function ProfilePage() {
           </p>
           <button
             type="button"
-            onClick={() => handleNotWiredUp("Invite friends")}
+            onClick={() => navigate("/customer/profile/refer")}
             className="mt-3 px-5 py-2.5 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[14px] font-bold text-white"
           >
             Invite friends
@@ -206,7 +197,7 @@ export default function ProfilePage() {
       <Card>
         <Row
           label="Bank details"
-          onClick={() => handleNotWiredUp("Bank details")}
+          onClick={() => navigate("/customer/profile/bank-details")}
           isLast
         />
       </Card>
@@ -214,50 +205,29 @@ export default function ProfilePage() {
       {/* Support */}
       <SectionLabel>Support</SectionLabel>
       <Card>
-        <Row
-          label="Help centre"
-          onClick={() => handleNotWiredUp("Help centre")}
-        />
-        <Row
-          label="Chat to customer support"
-          onClick={() => handleNotWiredUp("Chat to customer support")}
-        />
-        <Row
-          label="Previous chats"
-          onClick={() => handleNotWiredUp("Previous chats")}
-          isLast
-        />
+        <Row label="Help centre" onClick={() => handleNotWiredUp("Help centre")} />
+        <Row label="Chat to customer support" onClick={() => handleNotWiredUp("Chat to customer support")} />
+        <Row label="Previous chats" onClick={() => handleNotWiredUp("Previous chats")} isLast />
       </Card>
 
       {/* Feedback */}
       <SectionLabel>Feedback</SectionLabel>
       <Card>
-        <Row
-          label="Rate the app"
-          onClick={() => handleNotWiredUp("Rate the app")}
-          isLast
-        />
+        <Row label="Rate the app" onClick={() => setShowRateModal(true)} isLast />
       </Card>
 
       {/* About */}
       <SectionLabel>About</SectionLabel>
       <Card>
         <Row label="Blog" onClick={() => handleNotWiredUp("Blog")} />
-        <Row
-          label="Careers at Cuvva"
-          onClick={() => handleNotWiredUp("Careers at Cuvva")}
-        />
+        <Row label="Careers at Cuvva" onClick={() => handleNotWiredUp("Careers at Cuvva")} />
         <Row label="Legal" onClick={() => handleNotWiredUp("Legal")} isLast />
       </Card>
 
       {/* Settings */}
       <SectionLabel>Settings</SectionLabel>
       <Card>
-        <Row
-          label="Change icon"
-          onClick={() => handleNotWiredUp("Change icon")}
-          isLast
-        />
+        <Row label="Change icon" onClick={() => handleNotWiredUp("Change icon")} isLast />
       </Card>
 
       <Card className="mt-3">
@@ -265,10 +235,6 @@ export default function ProfilePage() {
           label={isLoggingOut ? "Logging out..." : "Logout"}
           onClick={handleLogout}
           disabled={isLoggingOut}
-        />
-        <Row
-          label="Delete account"
-          onClick={() => handleNotWiredUp("Delete account")}
           isLast
         />
       </Card>
@@ -277,6 +243,13 @@ export default function ProfilePage() {
       <p className="text-center text-[12px] text-[#5c5e68] mt-6">
         v6.26.1 (28650)
       </p>
+
+      {showPaymentSheet && (
+        <PaymentMethodsSheet onClose={() => setShowPaymentSheet(false)} />
+      )}
+      {showRateModal && (
+        <RateAppModal onClose={() => setShowRateModal(false)} />
+      )}
     </div>
   );
 }
@@ -323,16 +296,14 @@ function Row({ label, onClick, right, isLast, disabled }) {
 }
 
 /**
- * Generic payment-method badge. NOT real Apple Pay branding/logo (that's
- * a trademarked asset and there's no real Apple Pay integration behind
- * it anyway) — just a small pill mimicking the reference screenshot's
- * layout so the row isn't empty. Swap for a real payment provider once
- * one exists.
+ * Generic payment-method badge shown once a method has been chosen in
+ * PaymentMethodsSheet.jsx (persisted to localStorage). NOT real Apple
+ * Pay branding/logo — just a small pill mimicking the reference
+ * screenshot's layout.
  */
 function ApplePayBadge() {
   return (
     <span className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white text-black">
-      <span className="text-[11px] font-extrabold leading-none"></span>
       <span className="text-[12px] font-bold leading-none">Apple Pay</span>
     </span>
   );

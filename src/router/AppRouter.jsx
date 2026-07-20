@@ -35,12 +35,21 @@ import VehicleCameraCapturePage from "../components/customer/VehicleCameraCaptur
 import CarClubsPage from "../components/customer/CarClubsPage";
 import PoliciesPage from "../components/customer/PoliciesPage";
 import ProfilePage from "../components/customer/ProfilePage";
+
 // NOTE: aliased to avoid clashing with the Super Admin's PolicyDetailPage
 // imported above — these are two DIFFERENT components.
 import CustomerPolicyDetailPage from "../components/customer/PolicyDetailPage";
 import MakeAClaimPage from "../components/customer/MakeAClaimPage";
 import PolicyReceiptPage from "../components/customer/PolicyReceiptPage";
 import BookMechanicPage from "../components/customer/BookMechanicPage";
+
+// Profile sub-pages (Account details, Bank details, Discount code,
+// Your discounts, Refer a friend) — added for the Profile rebuild.
+import AccountDetailsPage from "../components/customer/AccountDetailsPage";
+import BankAccountDetailsPage from "../components/customer/BankAccountDetailsPage";
+import DiscountCodePage from "../components/customer/DiscountCodePage";
+import YourDiscountsPage from "../components/customer/YourDiscountsPage";
+import ReferFriendPage from "../components/customer/ReferFriendPage";
 
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
@@ -189,6 +198,17 @@ export default function AppRouter() {
         <Route path="/customer/policies/receipt" element={<PolicyReceiptPage />} />
         <Route path="/customer/policies/claim" element={<MakeAClaimPage />} />
         <Route path="/customer/policies/mechanic" element={<BookMechanicPage />} />
+
+        {/*
+          Profile sub-pages — same full-screen pattern as the purchase
+          flow above (outside CustomerLayout, bottom nav hidden,
+          X/back-to-close style).
+        */}
+        <Route path="/customer/profile/account" element={<AccountDetailsPage />} />
+        <Route path="/customer/profile/bank-details" element={<BankAccountDetailsPage />} />
+        <Route path="/customer/profile/discount-code" element={<DiscountCodePage />} />
+        <Route path="/customer/profile/discounts" element={<YourDiscountsPage />} />
+        <Route path="/customer/profile/refer" element={<ReferFriendPage />} />
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route
