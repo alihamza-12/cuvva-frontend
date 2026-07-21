@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import referFriendImg from "/referfriendillustration.png";
 import PaymentMethodsSheet from "./PaymentMethodsSheet";
 import RateAppModal from "./RateAppModal";
-import { getPaymentMethod } from "../../utils/profileLocalStorage";
+import { getPaymentMethod, getPreferredName } from "../../utils/profileLocalStorage";
 
 /**
  * frontend/src/components/customer/ProfilePage.jsx
@@ -23,6 +23,15 @@ import { getPaymentMethod } from "../../utils/profileLocalStorage";
  * Support card, Feedback card, About card, Settings cards, version
  * string, then CustomerBottomNav (rendered by CustomerLayout, not
  * here).
+ *
+ * UPDATE: header name now shows the saved PREFERRED name instead of
+ * always showing the real fullName — same priority order used by
+ * AccountDetailsPage.jsx / PreferredNamePage.jsx: server
+ * customer.preferredName (once the backend returns it) > localStorage
+ * override (saved by PreferredNamePage.jsx) > real fullName. Without
+ * this, editing your preferred name on PreferredNamePage.jsx updated
+ * AccountDetailsPage.jsx but NOT this header, since this component
+ * never read preferredName/localStorage at all before.
  *
  * UPDATE: Account/Payment/Discount/Refer/Bank rows now navigate to
  * real pages/sheets (see below) instead of a shared console.log
@@ -68,7 +77,24 @@ export default function ProfilePage() {
   const [showRateModal, setShowRateModal] = useState(false);
 
   const customer = data?.customer;
-  const name = customer?.fullName || "Your account";
+
+  // Header name: prefer the saved preferred name (server value first,
+  // then the localStorage fallback saved by PreferredNamePage.jsx),
+  // falling back to the real fullName, then a generic placeholder.
+  // Only replaces the FIRST word of fullName with the preferred name
+  // (matching how "Preferred first name" is scoped everywhere else in
+  // this app) rather than replacing the whole name.
+  const name = useMemo(() => {
+    const fullName = customer?.fullName;
+    if (!fullName) return "Your account";
+
+    const preferred = customer?.preferredName || getPreferredName();
+    if (!preferred) return fullName;
+
+    const parts = fullName.trim().split(/\s+/);
+    const rest = parts.slice(1).join(" ");
+    return rest ? `${preferred} ${rest}` : preferred;
+  }, [customer?.fullName, customer?.preferredName]);
 
   const memberSinceLabel = useMemo(() => {
     if (!customer?.createdAt) return "Member since —";

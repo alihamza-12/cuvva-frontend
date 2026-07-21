@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 // RTK Query API for customer profile
 export const profileApi = createApi({
   reducerPath: "profileApi",
+  tagTypes: ["Profile"],
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env?.VITE_API_BASE_URL || "http://localhost:3000"}/api`,
     credentials: "include",
@@ -14,6 +15,7 @@ export const profileApi = createApi({
         url: "/customers/me",
         method: "GET",
       }),
+      providesTags: ["Profile"],
     }),
     // Added for AccountDetailsPage.jsx's "Delete your account" row.
     // NOTE: there is currently no matching `DELETE /customers/me`
@@ -28,7 +30,22 @@ export const profileApi = createApi({
         method: "DELETE",
       }),
     }),
+    // Self-service: Customer updates their own preferredName.
+    // Invalidates the Profile cache so getMyProfile refetches
+    // and AccountDetailsPage / ProfilePage show the new name.
+    updatePreferredName: builder.mutation({
+      query: (preferredName) => ({
+        url: "/customers/me",
+        method: "PATCH",
+        body: { preferredName },
+      }),
+      invalidatesTags: ["Profile"],
+    }),
   }),
 });
 
-export const { useGetMyProfileQuery, useDeleteMyAccountMutation } = profileApi;
+export const {
+  useGetMyProfileQuery,
+  useDeleteMyAccountMutation,
+  useUpdatePreferredNameMutation,
+} = profileApi;

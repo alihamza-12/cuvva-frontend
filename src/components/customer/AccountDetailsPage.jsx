@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle, ChevronRight, Check } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
+import { getPreferredName } from "../../utils/profileLocalStorage";
 
 /**
  * frontend/src/components/customer/AccountDetailsPage.jsx
@@ -60,7 +61,15 @@ export default function AccountDetailsPage() {
   const { data } = useGetMyProfileQuery();
 
   const customer = data?.customer;
-  const preferredFirstName = customer?.fullName?.trim()?.split(/\s+/)?.[0] || "—";
+  const realFirstName = customer?.fullName?.trim()?.split(/\s+/)?.[0] || "—";
+  // Same priority order as PreferredNamePage.jsx: server preferredName
+  // (if the backend has been updated to return it) > localStorage
+  // override (saved by PreferredNamePage.jsx) > real fullName's first
+  // word. Previously this always showed realFirstName only, so a
+  // saved preferred name never appeared here — fixed by reading it
+  // the same way PreferredNamePage.jsx does.
+  const preferredFirstName =
+    customer?.preferredName || getPreferredName() || realFirstName;
   const email = customer?.email || "—";
   const fullName = customer?.fullName || "—";
 
