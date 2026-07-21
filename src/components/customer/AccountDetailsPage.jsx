@@ -74,7 +74,7 @@ export default function AccountDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-10">
+    <div className="min-h-screen bg-black text-white pb-40">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4">
         <button

@@ -46,7 +46,7 @@ export default function MyIdentityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-10">
+    <div className="min-h-screen bg-black text-white pb-40">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"

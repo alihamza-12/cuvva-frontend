@@ -53,7 +53,12 @@ export default function ResidentialAddressPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    // The "Done" button is placed inline, right after the last input
+    // (normal document flow, not `fixed`/`mt-auto`) — this guarantees
+    // it always renders directly below the fields with a fixed gap,
+    // never on top of them, and pb-40 on the outer wrapper keeps it
+    // clear of the bottom nav.
+    <div className="min-h-screen bg-black text-white pb-40">
       <div className="flex items-center px-4 pt-4">
         <button
           type="button"
@@ -65,7 +70,7 @@ export default function ResidentialAddressPage() {
         </button>
       </div>
 
-      <div className="flex-1 px-4 pt-4 pb-32">
+      <div className="px-4 pt-4">
         <h1 className="text-[24px] font-extrabold text-white leading-tight">
           Residential address
         </h1>
@@ -92,19 +97,16 @@ export default function ResidentialAddressPage() {
             onChange={handleChange("postcode")}
           />
         </div>
-      </div>
 
-      {/* Sticky footer — offset above CustomerBottomNav (bottom-24)
-          rather than bottom-0, since this page now renders inside
-          CustomerLayout (bottom nav visible) instead of full-screen. */}
-      <div className="fixed bottom-24 left-4 right-4 z-40">
-        <button
-          type="button"
-          onClick={handleDone}
-          className="w-full py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
-        >
-          Done
-        </button>
+        <div className="mt-8">
+          <button
+            type="button"
+            onClick={handleDone}
+            className="w-full py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white"
+          >
+            Done
+          </button>
+        </div>
       </div>
     </div>
   );
