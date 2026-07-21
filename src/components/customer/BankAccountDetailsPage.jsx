@@ -131,13 +131,15 @@ export default function BankAccountDetailsPage() {
         )}
       </div>
 
-      {/* Sticky footer */}
-      <div className="fixed bottom-0 left-0 right-0 px-4 pt-3 pb-8 bg-black">
+      {/* Sticky footer — offset above CustomerBottomNav (bottom-24)
+          rather than bottom-0, since this page now renders inside
+          CustomerLayout (bottom nav visible) instead of full-screen. */}
+      <div className="fixed bottom-24 left-4 right-4 z-40">
         <button
           type="button"
           onClick={handleSave}
           disabled={!canSave}
-          className="w-full py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+          className="w-full py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
         >
           Save details
         </button>

@@ -51,6 +51,18 @@ import DiscountCodePage from "../components/customer/DiscountCodePage";
 import YourDiscountsPage from "../components/customer/YourDiscountsPage";
 import ReferFriendPage from "../components/customer/ReferFriendPage";
 
+// Account details sub-pages (Preferred name, Email, Mobile, Connected
+// accounts, My identity, Residential address, Marketing preferences,
+// Delete account info screen).
+import PreferredNamePage from "../components/customer/PreferredNamePage";
+import EmailAddressPage from "../components/customer/EmailAddressPage";
+import MobileNumberPage from "../components/customer/MobileNumberPage";
+import ConnectedAccountsPage from "../components/customer/ConnectedAccountsPage";
+import MyIdentityPage from "../components/customer/MyIdentityPage";
+import ResidentialAddressPage from "../components/customer/ResidentialAddressPage";
+import MarketingPreferencesPage from "../components/customer/MarketingPreferencesPage";
+import DeleteAccountInfoPage from "../components/customer/DeleteAccountInfoPage";
+
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">
@@ -149,6 +161,14 @@ export default function AppRouter() {
             2. Rendered inside CustomerLayout's <Outlet/>, so
                CustomerBottomNav shows on them.
             3. Protected by the same role check as the rest of /customer.
+
+          Profile sub-pages (Account details + all its child screens,
+          Bank details, Discount code, Your discounts, Refer a friend)
+          are ALSO nested here now (relative paths), so the bottom nav
+          stays visible on them too — they were previously declared as
+          standalone absolute routes outside CustomerLayout (grouped
+          with the full-screen purchase flow), which hid the bottom
+          nav on every one of them.
         */}
         <Route
           path="/customer"
@@ -162,6 +182,22 @@ export default function AppRouter() {
           <Route path="car-clubs" element={<CarClubsPage />} />
           <Route path="policies" element={<PoliciesPage />} />
           <Route path="profile" element={<ProfilePage />} />
+
+          <Route path="profile/account" element={<AccountDetailsPage />} />
+          <Route path="profile/bank-details" element={<BankAccountDetailsPage />} />
+          <Route path="profile/discount-code" element={<DiscountCodePage />} />
+          <Route path="profile/discounts" element={<YourDiscountsPage />} />
+          <Route path="profile/refer" element={<ReferFriendPage />} />
+
+          {/* Account details sub-pages */}
+          <Route path="profile/account/preferred-name" element={<PreferredNamePage />} />
+          <Route path="profile/account/email" element={<EmailAddressPage />} />
+          <Route path="profile/account/mobile" element={<MobileNumberPage />} />
+          <Route path="profile/account/connected" element={<ConnectedAccountsPage />} />
+          <Route path="profile/account/identity" element={<MyIdentityPage />} />
+          <Route path="profile/account/address" element={<ResidentialAddressPage />} />
+          <Route path="profile/account/marketing" element={<MarketingPreferencesPage />} />
+          <Route path="profile/account/delete" element={<DeleteAccountInfoPage />} />
         </Route>
 
         {/*
@@ -198,17 +234,6 @@ export default function AppRouter() {
         <Route path="/customer/policies/receipt" element={<PolicyReceiptPage />} />
         <Route path="/customer/policies/claim" element={<MakeAClaimPage />} />
         <Route path="/customer/policies/mechanic" element={<BookMechanicPage />} />
-
-        {/*
-          Profile sub-pages — same full-screen pattern as the purchase
-          flow above (outside CustomerLayout, bottom nav hidden,
-          X/back-to-close style).
-        */}
-        <Route path="/customer/profile/account" element={<AccountDetailsPage />} />
-        <Route path="/customer/profile/bank-details" element={<BankAccountDetailsPage />} />
-        <Route path="/customer/profile/discount-code" element={<DiscountCodePage />} />
-        <Route path="/customer/profile/discounts" element={<YourDiscountsPage />} />
-        <Route path="/customer/profile/refer" element={<ReferFriendPage />} />
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route
