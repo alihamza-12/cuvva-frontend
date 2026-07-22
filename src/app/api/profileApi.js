@@ -41,6 +41,16 @@ export const profileApi = createApi({
       }),
       invalidatesTags: ["Profile"],
     }),
+    // Self-service: Customer adds an additional email address.
+    // Invalidates the Profile cache so EmailAddressPage shows the updated list.
+    addAdditionalEmail: builder.mutation({
+      query: (additionalEmail) => ({
+        url: "/customers/me",
+        method: "PATCH",
+        body: { additionalEmail },
+      }),
+      invalidatesTags: ["Profile"],
+    }),
   }),
 });
 
@@ -48,4 +58,5 @@ export const {
   useGetMyProfileQuery,
   useDeleteMyAccountMutation,
   useUpdatePreferredNameMutation,
+  useAddAdditionalEmailMutation,
 } = profileApi;

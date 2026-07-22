@@ -56,6 +56,7 @@ import ReferFriendPage from "../components/customer/ReferFriendPage";
 // Delete account info screen).
 import PreferredNamePage from "../components/customer/PreferredNamePage";
 import EmailAddressPage from "../components/customer/EmailAddressPage";
+import AddEmailPage from "../components/customer/AddEmailPage";
 import MobileNumberPage from "../components/customer/MobileNumberPage";
 import ConnectedAccountsPage from "../components/customer/ConnectedAccountsPage";
 import MyIdentityPage from "../components/customer/MyIdentityPage";
@@ -192,6 +193,7 @@ export default function AppRouter() {
           {/* Account details sub-pages */}
           <Route path="profile/account/preferred-name" element={<PreferredNamePage />} />
           <Route path="profile/account/email" element={<EmailAddressPage />} />
+          <Route path="profile/account/email/add" element={<AddEmailPage />} />
           <Route path="profile/account/mobile" element={<MobileNumberPage />} />
           <Route path="profile/account/connected" element={<ConnectedAccountsPage />} />
           <Route path="profile/account/identity" element={<MyIdentityPage />} />

@@ -8,22 +8,28 @@ import { useGetMyProfileQuery } from "../../app/api/profileApi";
  * "Your email address" — opened from AccountDetailsPage.jsx's "Email"
  * row. Matches reference: header, "Main email" section showing the
  * real verified email with a green "Verified" checkmark, "Your other
- * email addresses" section with an "Add another email address" row.
+ * email addresses" section listing any additional saved addresses,
+ * plus an "Add another email address" row that now navigates to a
+ * dedicated AddEmailPage.jsx (matching its own reference screenshot)
+ * instead of a plain window.prompt().
  *
- * REAL DATA: customer.email from GET /customers/me (same query
- * already used elsewhere — RTK Query dedupes it, no second network
- * call). The "Verified" checkmark is a static visual matching the
- * reference — there's no real `emailVerified` flag on User.js, so
- * this is NOT based on actual verification state. Flagged, not faked.
+ * REAL DATA: customer.email and customer.additionalEmails from
+ * GET /customers/me (same query already used elsewhere — RTK Query
+ * dedupes it, no second network call). The "Verified" checkmark is a
+ * static visual matching the reference — there's no real
+ * `emailVerified` flag on User.js, so this is NOT based on actual
+ * verification state. Flagged, not faked.
  *
- * "Add another email address" — no backend support for multiple
- * emails per account exists on User.js (email is a single unique
- * field). Placeholder only.
+ * Additional emails are stored in the database in the
+ * `additionalEmails` array on the User model — added via
+ * AddEmailPage.jsx's real backend call (useAddAdditionalEmailMutation).
  */
 export default function EmailAddressPage() {
   const navigate = useNavigate();
   const { data } = useGetMyProfileQuery();
+
   const email = data?.customer?.email || "—";
+  const additionalEmails = data?.customer?.additionalEmails || [];
 
   const handleBack = () => {
     if (window.history.length > 1) navigate(-1);
@@ -84,9 +90,22 @@ export default function EmailAddressPage() {
           You can sign in with these email addresses too.
         </p>
 
+        {additionalEmails.length > 0 && (
+          <div className="mt-2">
+            {additionalEmails.map((addr, index) => (
+              <div
+                key={index}
+                className="w-full flex items-center justify-between py-3.5 border-b border-white/5"
+              >
+                <span className="text-[15px] text-white">{addr}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Add another email address")}
+          onClick={() => navigate("/customer/profile/account/email/add")}
           className="w-full flex items-center justify-between mt-4 py-3.5 border-b border-white/5"
         >
           <span className="text-[15px] font-semibold text-[#7c6bff]">
