@@ -22,6 +22,9 @@ export default function CreateCustomerPage() {
     email: "",
     password: "",
     phone: "",
+    dateOfBirth: "",
+    gender: "",
+    drivingLicenceNumber: "",
     // address (flat)
     line1: "",
     line2: "",
@@ -43,6 +46,9 @@ export default function CreateCustomerPage() {
     if (!form.fullName.trim()) return false;
     if (!form.email.trim()) return false;
     if (!form.password.trim() || form.password.trim().length < 6) return false;
+    if (!form.dateOfBirth) return false;
+    if (!form.gender) return false;
+    if (!form.drivingLicenceNumber.trim()) return false;
     if (form.useDurationDays) {
       const n = Number(form.durationDays);
       if (!Number.isFinite(n) || n <= 0) return false;
@@ -75,6 +81,9 @@ export default function CreateCustomerPage() {
         email: form.email.trim(),
         password: form.password,
         phone: form.phone?.trim() || undefined,
+        dateOfBirth: form.dateOfBirth,
+        gender: form.gender,
+        drivingLicenceNumber: form.drivingLicenceNumber.trim(),
         // backend accepts either durationDays or expiresAt
         durationDays: form.useDurationDays
           ? Number(form.durationDays)
@@ -208,6 +217,38 @@ export default function CreateCustomerPage() {
                 placeholder="e.g. +44..."
               />
             </Field>
+
+            <Field label="Date of birth (required)">
+              <input
+                value={form.dateOfBirth}
+                onChange={handleChange("dateOfBirth")}
+                type="date"
+                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+              />
+            </Field>
+
+            <Field label="Gender (required)">
+              <select
+                value={form.gender}
+                onChange={handleChange("gender")}
+                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+              >
+                <option value="">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </Field>
+
+            <Field label="Driving licence (required)">
+              <input
+                value={form.drivingLicenceNumber}
+                onChange={handleChange("drivingLicenceNumber")}
+                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                placeholder="e.g. SMITH••••J99AB"
+              />
+            </Field>
           </div>
 
           <div className="mt-8">
@@ -337,6 +378,9 @@ export default function CreateCustomerPage() {
                   email: "",
                   password: "",
                   phone: "",
+                  dateOfBirth: "",
+                  gender: "",
+                  drivingLicenceNumber: "",
                   line1: "",
                   line2: "",
                   city: "",

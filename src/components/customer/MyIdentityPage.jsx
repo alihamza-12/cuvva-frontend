@@ -10,18 +10,34 @@ import { useGetMyProfileQuery } from "../../app/api/profileApi";
  * me" card (Date of birth / Name / Gender / Driving licence, each
  * with a small green dot), "chat to us" link for licence updates,
  * "Verification photos" card (Driving licence / Selfie, each showing
- * "Taken").
+ * "Taken"). UI is unchanged — same rows, same layout, same
+ * "Not provided"/"Not taken" fallback pattern as before.
  *
- * REAL DATA: fullName from GET /customers/me (customer.fullName).
+ * REAL DATA (from GET /customers/me):
+ *   - "Name" -> customer.fullName.
+ *   - "Date of birth" -> customer.dateOfBirth, formatted via
+ *     formatDob(). Falls back to "Not provided" if null/missing on a
+ *     given customer's record.
+ *   - "Gender" -> customer.gender. Falls back to "Not provided" if
+ *     null/missing.
+ *   - "Driving licence" -> customer.drivingLicenceNumber. Falls back
+ *     to "Not provided" if null/missing.
  *
- * NOT IN SCHEMA — dateOfBirth exists as a field on User.js, but is
- * NOT returned by the current /customers/me `.select(...)` list
- * (only "fullName email role status expiresAt createdBy createdAt"),
- * so it shows "Not provided" rather than a fabricated date. Gender,
- * driving licence number, and verification-photo status (Taken/Not
- * taken) do not exist anywhere in the schema at all — shown as
- * "Not provided" / "Not taken" placeholders, NOT real data. Nothing
- * here is faked to look like a genuine identity-verification record.
+ * UPDATE: all 4 fields above are now REAL backend data — the
+ * create-customer flow (Super Admin's CreateUser.jsx and Sub Admin's
+ * CreateCustomerPage.jsx) now collects and requires
+ * dateOfBirth/gender/drivingLicenceNumber when a customer is created,
+ * User.js's schema has gender/drivingLicenceNumber added, and
+ * GET /customers/me's `.select(...)` list includes both. So any
+ * customer created going forward will have real values for all 4
+ * fields; any "Not provided" shown here for an OLDER customer account
+ * (created before these fields existed) is accurate — that record
+ * genuinely has no value stored for it, not a frontend gap.
+ *
+ * "Verification photos" (Driving licence / Selfie "Taken" status) —
+ * no such concept exists anywhere in the schema (no file-upload/
+ * verification-status collection) — left as static "Not taken"
+ * placeholders, NOT real data.
  */
 export default function MyIdentityPage() {
   const navigate = useNavigate();
@@ -76,10 +92,27 @@ export default function MyIdentityPage() {
 
       <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-1">About me</p>
       <div className="px-4 space-y-px">
-        <IdentityRow label="Date of birth" value={formatDob(customer?.dateOfBirth)} onClick={() => handleNotWiredUp("Date of birth")} />
-        <IdentityRow label="Name" value={fullName} onClick={() => handleNotWiredUp("Name")} />
-        <IdentityRow label="Gender" value="Not provided" onClick={() => handleNotWiredUp("Gender")} />
-        <IdentityRow label="Driving licence" value="Not provided" onClick={() => handleNotWiredUp("Driving licence")} isLast />
+        <IdentityRow
+          label="Date of birth"
+          value={formatDob(customer?.dateOfBirth)}
+          onClick={() => handleNotWiredUp("Date of birth")}
+        />
+        <IdentityRow
+          label="Name"
+          value={fullName}
+          onClick={() => handleNotWiredUp("Name")}
+        />
+        <IdentityRow
+          label="Gender"
+          value={customer?.gender || "Not provided"}
+          onClick={() => handleNotWiredUp("Gender")}
+        />
+        <IdentityRow
+          label="Driving licence"
+          value={customer?.drivingLicenceNumber || "Not provided"}
+          onClick={() => handleNotWiredUp("Driving licence")}
+          isLast
+        />
       </div>
 
       <p className="text-[14px] text-[#9497a1] px-4 mt-4">

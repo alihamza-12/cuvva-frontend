@@ -8,6 +8,9 @@ export default function CreateUser({ axiosInstance, onCreated }) {
     password: "",
     role: "Sub Admin",
     durationDays: "",
+    dateOfBirth: "",
+    gender: "",
+    drivingLicenceNumber: "",
   });
 
   const [error, setError] = useState("");
@@ -32,6 +35,12 @@ export default function CreateUser({ axiosInstance, onCreated }) {
         payload.durationDays = parseInt(formData.durationDays, 10);
       }
 
+      if (formData.role === "Customer") {
+        payload.dateOfBirth = formData.dateOfBirth;
+        payload.gender = formData.gender;
+        payload.drivingLicenceNumber = formData.drivingLicenceNumber.trim();
+      }
+
       const response = await axiosInstance.post("/api/auth/register", payload);
 
       setSuccess(response.data?.message || `User created as ${payload.role}.`);
@@ -41,6 +50,9 @@ export default function CreateUser({ axiosInstance, onCreated }) {
         password: "",
         role: formData.role,
         durationDays: "",
+        dateOfBirth: "",
+        gender: "",
+        drivingLicenceNumber: "",
       });
 
       if (onCreated) onCreated();
@@ -144,6 +156,64 @@ export default function CreateUser({ axiosInstance, onCreated }) {
               <option value="Customer">Customer</option>
             </select>
           </div>
+
+          {formData.role === "Customer" && (
+            <>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={formData.dateOfBirth}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dateOfBirth: e.target.value })
+                  }
+                  className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
+                  Gender
+                </label>
+                <select
+                  required
+                  value={formData.gender}
+                  onChange={(e) =>
+                    setFormData({ ...formData, gender: e.target.value })
+                  }
+                  className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff] transition-colors"
+                >
+                  <option value="">Select gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
+                  Driving Licence
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. SMITH••••J99AB"
+                  value={formData.drivingLicenceNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      drivingLicenceNumber: e.target.value,
+                    })
+                  }
+                  className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+                />
+              </div>
+            </>
+          )}
 
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
