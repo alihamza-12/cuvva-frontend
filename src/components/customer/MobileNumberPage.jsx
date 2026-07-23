@@ -19,8 +19,9 @@ import { useGetMyProfileQuery } from "../../app/api/profileApi";
  * static visual matching the reference — there's no real
  * `phoneVerified` flag on the schema.
  *
- * "Add another mobile number" — no backend support for multiple
- * phone numbers per account exists on User.js. Placeholder only.
+ * "Add another mobile number" navigates to AddMobileNumberPage.jsx,
+ * which makes the real PATCH /customers/me call to save it (see that
+ * file for the actual UK-mobile-format validation + backend wiring).
  */
 export default function MobileNumberPage() {
   const navigate = useNavigate();
@@ -33,6 +34,9 @@ export default function MobileNumberPage() {
   };
 
   const handleNotWiredUp = (label) => {
+    // Was mangled to `console.log\`${label}...\`)` (missing opening
+    // parenthesis) in a previous paste — fixed to a normal function
+    // call, which would otherwise throw the moment this ran.
     console.log(`${label} tapped — not wired up yet.`);
   };
 
@@ -93,7 +97,7 @@ export default function MobileNumberPage() {
 
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Add another mobile number")}
+          onClick={() => navigate("/customer/profile/account/mobile/add")}
           className="w-full flex items-center justify-between mt-4 py-3.5 border-b border-white/5"
         >
           <span className="text-[15px] font-semibold text-[#7c6bff]">

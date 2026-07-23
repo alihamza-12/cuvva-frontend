@@ -51,6 +51,17 @@ export const profileApi = createApi({
       }),
       invalidatesTags: ["Profile"],
     }),
+    // Self-service: Customer updates their phone number.
+    // Invalidates the Profile cache so MobileNumberPage and AccountDetailsPage
+    // show the updated phone number immediately.
+    updatePhoneNumber: builder.mutation({
+      query: (phone) => ({
+        url: "/customers/me",
+        method: "PATCH",
+        body: { phone },
+      }),
+      invalidatesTags: ["Profile"],
+    }),
   }),
 });
 
@@ -59,4 +70,5 @@ export const {
   useDeleteMyAccountMutation,
   useUpdatePreferredNameMutation,
   useAddAdditionalEmailMutation,
+  useUpdatePhoneNumberMutation,
 } = profileApi;

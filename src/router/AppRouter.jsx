@@ -58,6 +58,7 @@ import PreferredNamePage from "../components/customer/PreferredNamePage";
 import EmailAddressPage from "../components/customer/EmailAddressPage";
 import AddEmailPage from "../components/customer/AddEmailPage";
 import MobileNumberPage from "../components/customer/MobileNumberPage";
+import AddMobileNumberPage from "../components/customer/AddMobileNumberPage";
 import ConnectedAccountsPage from "../components/customer/ConnectedAccountsPage";
 import MyIdentityPage from "../components/customer/MyIdentityPage";
 import ResidentialAddressPage from "../components/customer/ResidentialAddressPage";
@@ -185,21 +186,43 @@ export default function AppRouter() {
           <Route path="profile" element={<ProfilePage />} />
 
           <Route path="profile/account" element={<AccountDetailsPage />} />
-          <Route path="profile/bank-details" element={<BankAccountDetailsPage />} />
+          <Route
+            path="profile/bank-details"
+            element={<BankAccountDetailsPage />}
+          />
           <Route path="profile/discount-code" element={<DiscountCodePage />} />
           <Route path="profile/discounts" element={<YourDiscountsPage />} />
           <Route path="profile/refer" element={<ReferFriendPage />} />
 
           {/* Account details sub-pages */}
-          <Route path="profile/account/preferred-name" element={<PreferredNamePage />} />
+          <Route
+            path="profile/account/preferred-name"
+            element={<PreferredNamePage />}
+          />
           <Route path="profile/account/email" element={<EmailAddressPage />} />
           <Route path="profile/account/email/add" element={<AddEmailPage />} />
           <Route path="profile/account/mobile" element={<MobileNumberPage />} />
-          <Route path="profile/account/connected" element={<ConnectedAccountsPage />} />
+          <Route
+            path="profile/account/mobile/add"
+            element={<AddMobileNumberPage />}
+          />
+          <Route
+            path="profile/account/connected"
+            element={<ConnectedAccountsPage />}
+          />
           <Route path="profile/account/identity" element={<MyIdentityPage />} />
-          <Route path="profile/account/address" element={<ResidentialAddressPage />} />
-          <Route path="profile/account/marketing" element={<MarketingPreferencesPage />} />
-          <Route path="profile/account/delete" element={<DeleteAccountInfoPage />} />
+          <Route
+            path="profile/account/address"
+            element={<ResidentialAddressPage />}
+          />
+          <Route
+            path="profile/account/marketing"
+            element={<MarketingPreferencesPage />}
+          />
+          <Route
+            path="profile/account/delete"
+            element={<DeleteAccountInfoPage />}
+          />
         </Route>
 
         {/*
@@ -233,9 +256,15 @@ export default function AppRouter() {
           path="/customer/policies/detail"
           element={<CustomerPolicyDetailPage />}
         />
-        <Route path="/customer/policies/receipt" element={<PolicyReceiptPage />} />
+        <Route
+          path="/customer/policies/receipt"
+          element={<PolicyReceiptPage />}
+        />
         <Route path="/customer/policies/claim" element={<MakeAClaimPage />} />
-        <Route path="/customer/policies/mechanic" element={<BookMechanicPage />} />
+        <Route
+          path="/customer/policies/mechanic"
+          element={<BookMechanicPage />}
+        />
 
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route
