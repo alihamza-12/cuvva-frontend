@@ -24,6 +24,20 @@ import { ChevronsUpDown } from "lucide-react";
  *  - onChange: (value: string) => void
  *  - open: boolean — controlled expand/collapse state
  *  - onToggle: () => void
+ *
+ * SELECTION IS TAP-ONLY (by explicit instruction) — scrolling the
+ * wheel is purely for browsing/previewing options, it never fires
+ * onChange by itself. Earlier version auto-selected whatever option
+ * ended up centered ~90ms after scroll momentum stopped, which caused
+ * two bugs: (1) values got selected accidentally just from scrolling
+ * past them, and (2) that auto-select's own corrective
+ * `scrollTo({behavior:"smooth"})` call was still animating when the
+ * user's next tap landed, so the tap on a different option got
+ * swallowed/ignored — making it look like you "couldn't reselect".
+ * Removing the scroll-driven onChange fixes both: there's no
+ * competing programmatic scroll animation to race against a tap
+ * anymore, so every tap (first selection or changing your mind
+ * afterwards) registers immediately and reliably.
  */
 const ITEM_HEIGHT = 44;
 
@@ -37,7 +51,6 @@ export default function InlineWheelField({
   onToggle,
 }) {
   const scrollRef = useRef(null);
-  const scrollTimeout = useRef(null);
   const selectedIndex = Math.max(
     0,
     options.findIndex((o) => o.value === value),
@@ -54,15 +67,16 @@ export default function InlineWheelField({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const handleScroll = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    scrollTimeout.current = setTimeout(() => {
-      if (!scrollRef.current) return;
-      const index = Math.round(scrollRef.current.scrollTop / ITEM_HEIGHT);
-      const clamped = Math.min(Math.max(index, 0), options.length - 1);
-      onChange(options[clamped].value);
-      scrollRef.current.scrollTo({ top: clamped * ITEM_HEIGHT, behavior: "smooth" });
-    }, 90);
+  // Tap-to-select: this is the ONLY place onChange is ever called.
+  // Also gently re-centers the wheel on the tapped option — since
+  // this scrollTo is triggered directly by the same user tap (not a
+  // separate debounced timer racing the next interaction), it can't
+  // block or swallow a subsequent tap the way the old auto-select did.
+  const handleSelect = (opt, index) => {
+    onChange(opt.value);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: index * ITEM_HEIGHT, behavior: "smooth" });
+    }
   };
 
   return (
@@ -102,16 +116,15 @@ export default function InlineWheelField({
 
           <div
             ref={scrollRef}
-            onScroll={handleScroll}
             className="relative overflow-y-scroll snap-y snap-mandatory wheel-scrollbar-hide"
             style={{ height: ITEM_HEIGHT * 3, scrollBehavior: "smooth" }}
           >
             <div style={{ height: ITEM_HEIGHT }} />
-            {options.map((opt) => (
+            {options.map((opt, index) => (
               <button
                 type="button"
                 key={opt.value}
-                onClick={() => onChange(opt.value)}
+                onClick={() => handleSelect(opt, index)}
                 className="snap-center w-full flex items-center justify-center"
                 style={{ height: ITEM_HEIGHT }}
               >
