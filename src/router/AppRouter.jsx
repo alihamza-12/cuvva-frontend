@@ -7,22 +7,18 @@ import {
   Outlet,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
-
 import Login from "../pages/auth/LoginPage";
 import { selectCurrentUser } from "../features/authSlice";
 import ProtectedRoute from "./ProtectedRoute";
-
 import SuperAdminDashboard from "../pages/super-admin/Dashboard";
 import CustomerDetailPage from "../pages/super-admin/details/CustomerDetailPage";
 import VehicleDetailPage from "../pages/super-admin/details/VehicleDetailPage";
 import SubAdminDetailPage from "../pages/super-admin/details/SubAdminDetailPage";
 import PolicyDetailPage from "../pages/super-admin/details/PolicyDetailPage";
-
 import { SubAdminHome } from "../pages/sub-admin/SubAdminHome";
 import VehicleDetailPageSubAdmin from "../pages/sub-admin/VehicleDetailPage";
 import CustomerDetailPageSubAdmin from "../pages/sub-admin/CustomerDetailPage";
 import PolicyDetailPageSubAdmin from "../pages/sub-admin/PolicyDetailPage";
-
 import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 import CustomerHome from "../pages/customer/CustomerHome";
 import CustomerLayout from "../components/layout/CustomerLayout";
@@ -35,14 +31,12 @@ import VehicleCameraCapturePage from "../components/customer/VehicleCameraCaptur
 import CarClubsPage from "../components/customer/CarClubsPage";
 import PoliciesPage from "../components/customer/PoliciesPage";
 import ProfilePage from "../components/customer/ProfilePage";
-
 // NOTE: aliased to avoid clashing with the Super Admin's PolicyDetailPage
 // imported above — these are two DIFFERENT components.
 import CustomerPolicyDetailPage from "../components/customer/PolicyDetailPage";
 import MakeAClaimPage from "../components/customer/MakeAClaimPage";
 import PolicyReceiptPage from "../components/customer/PolicyReceiptPage";
 import BookMechanicPage from "../components/customer/BookMechanicPage";
-
 // Profile sub-pages (Account details, Bank details, Discount code,
 // Your discounts, Refer a friend) — added for the Profile rebuild.
 import AccountDetailsPage from "../components/customer/AccountDetailsPage";
@@ -50,7 +44,6 @@ import BankAccountDetailsPage from "../components/customer/BankAccountDetailsPag
 import DiscountCodePage from "../components/customer/DiscountCodePage";
 import YourDiscountsPage from "../components/customer/YourDiscountsPage";
 import ReferFriendPage from "../components/customer/ReferFriendPage";
-
 // Account details sub-pages (Preferred name, Email, Mobile, Connected
 // accounts, My identity, Residential address, Marketing preferences,
 // Delete account info screen).
@@ -64,7 +57,8 @@ import MyIdentityPage from "../components/customer/MyIdentityPage";
 import ResidentialAddressPage from "../components/customer/ResidentialAddressPage";
 import MarketingPreferencesPage from "../components/customer/MarketingPreferencesPage";
 import DeleteAccountInfoPage from "../components/customer/DeleteAccountInfoPage";
-
+import PreviousIncidentsPage from "../components/customer/PreviousIncidentsPage";
+import AddIncidentPage from "../components/customer/AddIncidentPage";
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">
@@ -73,7 +67,6 @@ const TempForgot = () => (
     </div>
   </div>
 );
-
 const TempSubAdminLayout = () => (
   <div className="flex min-h-screen bg-[#060814]">
     <div className="w-64 p-5 border-r bg-[#0d0f1d] border-[#1e2238] flex flex-col gap-6">
@@ -92,7 +85,6 @@ const TempSubAdminLayout = () => (
     </div>
   </div>
 );
-
 const TempSubDash = () => (
   <div className="text-2xl font-bold text-white">
     Agent Operational Live Pipeline
@@ -102,13 +94,10 @@ const TempSubDash = () => (
     </p>
   </div>
 );
-
 // --- HANDLES AUTOMATIC TRAFFIC REDIRECTION BASED ON ROLE ACCOUNTS ---
 const RoleRedirect = () => {
   const user = useSelector(selectCurrentUser);
-
   if (!user) return <Navigate to="/login" replace />;
-
   if (user.role === "Super Admin") {
     return <Navigate to="/admin/dashboard" replace />;
   }
@@ -118,10 +107,8 @@ const RoleRedirect = () => {
   if (user.role === "Customer") {
     return <Navigate to="/customer" replace />;
   }
-
   return <Navigate to="/login" replace />;
 };
-
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -129,10 +116,8 @@ export default function AppRouter() {
         {/* ================= OPEN PUBLIC ACCESS CHANNELS ================= */}
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<TempForgot />} />
-
         {/* Dynamic Entry Connection Point */}
         <Route path="/" element={<RoleRedirect />} />
-
         {/* ================= SECURE SUPER ADMIN WORKSPACE ================= */}
         <Route
           path="/admin"
@@ -152,7 +137,6 @@ export default function AppRouter() {
           <Route path="sub-admins/:id" element={<SubAdminDetailPage />} />
           <Route path="policies/:id" element={<PolicyDetailPage />} />
         </Route>
-
         {/* ================= SECURE CUSTOMER WORKSPACE ================= */}
         {/*
           car-clubs / policies / profile live INSIDE this block as
@@ -163,7 +147,6 @@ export default function AppRouter() {
             2. Rendered inside CustomerLayout's <Outlet/>, so
                CustomerBottomNav shows on them.
             3. Protected by the same role check as the rest of /customer.
-
           Profile sub-pages (Account details + all its child screens,
           Bank details, Discount code, Your discounts, Refer a friend)
           are ALSO nested here now (relative paths), so the bottom nav
@@ -184,7 +167,6 @@ export default function AppRouter() {
           <Route path="car-clubs" element={<CarClubsPage />} />
           <Route path="policies" element={<PoliciesPage />} />
           <Route path="profile" element={<ProfilePage />} />
-
           <Route path="profile/account" element={<AccountDetailsPage />} />
           <Route
             path="profile/bank-details"
@@ -193,7 +175,6 @@ export default function AppRouter() {
           <Route path="profile/discount-code" element={<DiscountCodePage />} />
           <Route path="profile/discounts" element={<YourDiscountsPage />} />
           <Route path="profile/refer" element={<ReferFriendPage />} />
-
           {/* Account details sub-pages */}
           <Route
             path="profile/account/preferred-name"
@@ -223,8 +204,11 @@ export default function AppRouter() {
             path="profile/account/delete"
             element={<DeleteAccountInfoPage />}
           />
+          <Route
+            path="profile/account/incidents"
+            element={<PreviousIncidentsPage />}
+          />
         </Route>
-
         {/*
           Full-screen purchase flow — deliberately OUTSIDE CustomerLayout
           so the bottom nav stays hidden on these (X-to-close pattern).
@@ -265,7 +249,16 @@ export default function AppRouter() {
           path="/customer/policies/mechanic"
           element={<BookMechanicPage />}
         />
-
+        {/*
+          Add incident — also OUTSIDE CustomerLayout so the bottom nav
+          is hidden on this screen and everything reachable from it
+          (calendar/wheel steps, confirmation sheet). Only the incidents
+          LIST page (profile/account/incidents) keeps the nav.
+        */}
+        <Route
+          path="/customer/profile/account/incidents/add"
+          element={<AddIncidentPage />}
+        />
         {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
         <Route
           path="/dashboard"
@@ -276,10 +269,8 @@ export default function AppRouter() {
           }
         >
           <Route index element={<SubAdminHome />} />
-
           {/* Feeds already use /dashboard/policies/:id */}
           <Route path="policies/:id" element={<PolicyDetailPageSubAdmin />} />
-
           {/* Dedicated Sub Admin detail pages for vehicle + customer */}
           <Route
             path="vehicles/:registration"
@@ -290,7 +281,6 @@ export default function AppRouter() {
             element={<CustomerDetailPageSubAdmin />}
           />
         </Route>
-
         {/*
           Catch-All Fallback stays at the VERY END. React Router matches
           sibling routes in declaration order — having `*` earlier would

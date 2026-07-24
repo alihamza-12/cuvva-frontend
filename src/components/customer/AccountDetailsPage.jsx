@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle, ChevronRight, Check } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
-import { getPreferredName } from "../../utils/profileLocalStorage";
+import { getPreferredName, getPreviousIncidents } from "../../utils/profileLocalStorage";
 
 /**
  * frontend/src/components/customer/AccountDetailsPage.jsx
@@ -50,15 +51,28 @@ import { getPreferredName } from "../../utils/profileLocalStorage";
  *   - Connected accounts — no OAuth/social sign-in exists in auth.js.
  *   - Residential address — User.js HAS an `address` object, but no
  *     route exposes/edits it for a Customer yet; localStorage only.
- *   - Previous incidents — hardcoded "0" — no incidents/claims
- *     collection exists anywhere in the schema. LEFT AS-IS, not
- *     wired to a page yet per your instruction.
+ *   - Previous incidents — now navigates to PreviousIncidentsPage.jsx
+ *     -> AddIncidentPage.jsx. No incidents/claims collection exists
+ *     anywhere in the backend schema, so this whole feature (list,
+ *     add form, count) is 100% localStorage per instruction — see
+ *     profileLocalStorage.js's incidents section. The count shown
+ *     here is read fresh every time this page mounts (e.g. coming
+ *     back from PreviousIncidentsPage.jsx after adding one), so it
+ *     stays in sync without needing a shared global state store.
  *   - Marketing preferences — no such field on User.js; localStorage
  *     only.
  */
 export default function AccountDetailsPage() {
   const navigate = useNavigate();
   const { data } = useGetMyProfileQuery();
+  const [incidentCount, setIncidentCount] = useState(0);
+
+  // Re-read on every mount (including when navigating back from
+  // PreviousIncidentsPage.jsx / AddIncidentPage.jsx) so the count
+  // shown here is always current.
+  useEffect(() => {
+    setIncidentCount(getPreviousIncidents().length);
+  }, []);
 
   const customer = data?.customer;
   const realFirstName = customer?.fullName?.trim()?.split(/\s+/)?.[0] || "—";
@@ -148,12 +162,10 @@ export default function AccountDetailsPage() {
 
       <SectionLabel>Incidents</SectionLabel>
       <div className="px-4 space-y-px">
-        {/* Explicitly deferred per instruction — left as a placeholder
-            row, no dedicated page built yet. */}
         <InfoRow
           label="Previous incidents"
-          value="0"
-          onClick={() => handleNotWiredUp("Previous incidents")}
+          value={String(incidentCount)}
+          onClick={() => navigate("/customer/profile/account/incidents")}
           isLast
         />
       </div>

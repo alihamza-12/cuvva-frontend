@@ -23,6 +23,8 @@ const KEYS = {
   RESIDENTIAL_ADDRESS: "cuvva_residential_address",
   MARKETING_PREFERENCES: "cuvva_marketing_preferences",
   IDENTITY_EXTRA: "cuvva_identity_extra",
+  PREVIOUS_INCIDENTS: "cuvva_previous_incidents",
+  INCIDENTS_DECLARATION_DONE: "cuvva_incidents_declaration_done",
 };
 
 function safeGet(key, fallback) {
@@ -86,3 +88,27 @@ export const saveMarketingPreferences = (prefs) => safeSet(KEYS.MARKETING_PREFER
 // show/edit until a real identity-verification backend exists.
 export const getIdentityExtra = () => safeGet(KEYS.IDENTITY_EXTRA, null);
 export const saveIdentityExtra = (extra) => safeSet(KEYS.IDENTITY_EXTRA, extra);
+
+// --- Previous incidents (AccountDetailsPage.jsx "Previous incidents" row) ---
+// No incidents/claims collection exists anywhere in the backend schema
+// (Policy.js/User.js) — this whole feature is 100% client-side/
+// localStorage per instruction, purely so the UI can be built and
+// demoed now. Each incident, once added, is permanently locked (no
+// edit/delete) to match the reference app's real behavior ("Once you
+// add an incident, it's not possible to edit or delete it.").
+export const getPreviousIncidents = () => safeGet(KEYS.PREVIOUS_INCIDENTS, []);
+export const savePreviousIncidents = (list) => safeSet(KEYS.PREVIOUS_INCIDENTS, list);
+export const addPreviousIncident = (incident) => {
+  const existing = getPreviousIncidents();
+  const next = [...existing, incident];
+  savePreviousIncidents(next);
+  return next;
+};
+
+// Whether the customer has confirmed "I've declared all incidents" or
+// "No incidents to declare" at least once — drives whether the
+// declaration confirmation sheet needs to show again.
+export const getIncidentsDeclarationDone = () =>
+  safeGet(KEYS.INCIDENTS_DECLARATION_DONE, false);
+export const saveIncidentsDeclarationDone = (done) =>
+  safeSet(KEYS.INCIDENTS_DECLARATION_DONE, done);
