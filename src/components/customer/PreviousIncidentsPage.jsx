@@ -133,8 +133,10 @@ export default function PreviousIncidentsPage() {
         </button>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-4 pt-4 pb-32">
+      {/* Content — scrolls normally. pb-40 reserves clearance at the
+          bottom so the last row/text is never hidden behind the fixed
+          "Done" button below. */}
+      <div className="flex-1 px-4 pt-4 pb-40">
         <h1 className="text-[22px] font-extrabold text-white leading-tight">
           Add any incidents you've been involved in over the last 3 years
         </h1>
@@ -202,22 +204,10 @@ export default function PreviousIncidentsPage() {
         )}
       </div>
 
-      {/* Sticky footer
-          NOT a plain `bottom-24` fixed offset — on real devices with a
-          home-indicator safe area (notched iPhones), CustomerBottomNav's
-          own height grows via `max(0.75rem, env(safe-area-inset-bottom))`,
-          but a hardcoded 96px offset here does NOT grow with it, so the
-          button's bottom edge can sit UNDER the nav's top edge once the
-          safe area is added — producing the overlap reported on-device
-          even though a desktop/no-safe-area preview looks fine. Adding
-          env(safe-area-inset-bottom) here keeps this button's clearance
-          in sync with the nav's real footprint on any device, plus a
-          little extra buffer (6.5rem base instead of 6rem/bottom-24).
-          CustomerBottomNav.jsx / CustomerLayout.jsx are untouched. */}
-      <div
-        className="fixed left-4 right-4 z-40"
-        style={{ bottom: "calc(6.5rem + env(safe-area-inset-bottom, 0px))" }}
-      >
+      {/* "Done" / "No incidents to declare" — fixed, always sitting
+          right above CustomerBottomNav, exactly like every other
+          Account-details page's sticky action button. */}
+      <div className="fixed bottom-24 left-4 right-4 z-40">
         <button
           type="button"
           onClick={handleMainButtonTap}
