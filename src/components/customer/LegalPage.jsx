@@ -10,16 +10,13 @@ import { ChevronLeft, ChevronRight, FileText, MessageCircleQuestion } from "luci
  * centered "Legal" title, help icon, single rounded card grouping 3
  * rows (Privacy / Terms / FON), each with a document icon + chevron.
  *
- * Only "Privacy" is wired to a real document page (PrivacyPolicyPage.jsx)
- * per instruction — "Terms" and "FON" (Fair Obtaining Notice) are
- * flagged as placeholders below since no content/reference screenshots
- * were provided for them yet. Ask for their text/screenshots the same
- * way Privacy's were provided, and they can be built the same way.
+ * All three items are now wired to real document pages
+ * (PrivacyPolicyPage.jsx / TermsPage.jsx / FonPage.jsx).
  */
 const LEGAL_ITEMS = [
   { label: "Privacy", to: "/customer/profile/legal/privacy", ready: true },
-  { label: "Terms", to: null, ready: false },
-  { label: "FON", to: null, ready: false },
+  { label: "Terms", to: "/customer/profile/legal/terms", ready: true },
+  { label: "FON", to: "/customer/profile/legal/fon", ready: true },
 ];
 
 export default function LegalPage() {
