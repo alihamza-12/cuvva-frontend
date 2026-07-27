@@ -143,7 +143,7 @@ export default function ProfilePage() {
           type="button"
           onClick={() => handleNotWiredUp("Help")}
           aria-label="Help"
-          className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center border rounded-full w-9 h-9 bg-white/5 border-white/10"
         >
           <MessageCircleQuestion size={17} className="text-white" />
         </button>
@@ -247,7 +247,7 @@ export default function ProfilePage() {
       <Card>
         <Row label="Blog" onClick={() => handleNotWiredUp("Blog")} />
         <Row label="Careers at Cuvva" onClick={() => handleNotWiredUp("Careers at Cuvva")} />
-        <Row label="Legal" onClick={() => handleNotWiredUp("Legal")} isLast />
+        <Row label="Legal" onClick={() => navigate("/customer/profile/legal")} isLast />
       </Card>
 
       {/* Settings */}

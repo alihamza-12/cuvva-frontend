@@ -59,6 +59,8 @@ import MarketingPreferencesPage from "../components/customer/MarketingPreference
 import DeleteAccountInfoPage from "../components/customer/DeleteAccountInfoPage";
 import PreviousIncidentsPage from "../components/customer/PreviousIncidentsPage";
 import AddIncidentPage from "../components/customer/AddIncidentPage";
+import LegalPage from "../components/customer/LegalPage";
+import PrivacyPolicyPage from "../components/customer/PrivacyPolicyPage";
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">
@@ -208,6 +210,8 @@ export default function AppRouter() {
             path="profile/account/incidents"
             element={<PreviousIncidentsPage />}
           />
+          <Route path="profile/legal" element={<LegalPage />} />
+          <Route path="profile/legal/privacy" element={<PrivacyPolicyPage />} />
         </Route>
         {/*
           Full-screen purchase flow — deliberately OUTSIDE CustomerLayout
