@@ -245,8 +245,8 @@ export default function ProfilePage() {
       {/* About */}
       <SectionLabel>About</SectionLabel>
       <Card>
-        <Row label="Blog" onClick={() => handleNotWiredUp("Blog")} />
-        <Row label="Careers at Cuvva" onClick={() => handleNotWiredUp("Careers at Cuvva")} />
+        <Row label="Blog" href="https://www.cuvva.com/news" />
+        <Row label="Careers at Cuvva" href="https://www.cuvva.com/careers" />
         <Row label="Legal" onClick={() => navigate("/customer/profile/legal")} isLast />
       </Card>
 
@@ -300,23 +300,57 @@ function Card({ children, className = "" }) {
   );
 }
 
-/** Single tappable row: label left, optional right-side content, chevron. */
-function Row({ label, onClick, right, isLast, disabled }) {
+/**
+ * Single tappable row: label left, optional right-side content,
+ * chevron. Renders as a plain <button> for in-app navigation/actions,
+ * OR — when `href` is given — as a real anchor tag opening in a new
+ * tab (used for Blog / Careers at Cuvva, both real outbound links to
+ * cuvva.com). Matches the pattern already established in
+ * BookMechanicPage.jsx's "Continue to ClickMechanic" link: an <a
+ * target="_blank" rel="noopener noreferrer"> is used instead of a
+ * window.open() call inside an onClick handler, because anchor-tag
+ * navigation is treated as a genuine user-initiated action by mobile
+ * browsers (iOS Safari in particular) and reliably opens a new tab,
+ * whereas script-triggered window.open() can get silently blocked as
+ * a popup on some mobile browsers/webviews.
+ */
+function Row({ label, onClick, href, right, isLast, disabled }) {
+  const sharedClassName = `w-full flex items-center justify-between gap-3 px-4 py-4 hover:bg-white/[0.03] transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+    !isLast ? "border-b border-white/5" : ""
+  }`;
+
+  const content = (
+    <>
+      <span className="text-[15px] text-white text-left">{label}</span>
+      <span className="flex items-center gap-2 shrink-0">
+        {right}
+        <ChevronRight size={18} className="text-[#5c5e68]" />
+      </span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={sharedClassName}
+      >
+        {content}
+      </a>
+    );
+  }
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
       aria-busy={disabled}
-      className={`w-full flex items-center justify-between gap-3 px-4 py-4 hover:bg-white/[0.03] transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
-        !isLast ? "border-b border-white/5" : ""
-      }`}
+      className={sharedClassName}
     >
-      <span className="text-[15px] text-white text-left">{label}</span>
-      <span className="flex items-center gap-2 shrink-0">
-        {right}
-        <ChevronRight size={18} className="text-[#5c5e68]" />
-      </span>
+      {content}
     </button>
   );
 }
