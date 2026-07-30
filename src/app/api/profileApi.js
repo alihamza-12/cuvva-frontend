@@ -62,6 +62,25 @@ export const profileApi = createApi({
       }),
       invalidatesTags: ["Profile"],
     }),
+    // NEW — saves a Cloudinary secure_url onto the customer's account.
+    // Does NOT upload the image itself — the actual file upload
+    // happens entirely on the frontend, directly to Cloudinary, via
+    // utils/uploadToCloudinary.js, BEFORE this mutation is ever
+    // called. By the time this fires we already have Cloudinary's
+    // permanent secure_url string in hand; this mutation's only job
+    // is to PATCH that URL onto /customers/me (which now accepts an
+    // optional `profilePhotoUrl` field alongside preferredName /
+    // additionalEmail / phone). Invalidates the Profile cache so
+    // ProfilePage (and anywhere else customer data is shown) refetches
+    // and shows the new photo immediately.
+    updateProfilePhoto: builder.mutation({
+      query: (profilePhotoUrl) => ({
+        url: "/customers/me",
+        method: "PATCH",
+        body: { profilePhotoUrl },
+      }),
+      invalidatesTags: ["Profile"],
+    }),
   }),
 });
 
@@ -71,4 +90,5 @@ export const {
   useUpdatePreferredNameMutation,
   useAddAdditionalEmailMutation,
   useUpdatePhoneNumberMutation,
+  useUpdateProfilePhotoMutation,
 } = profileApi;

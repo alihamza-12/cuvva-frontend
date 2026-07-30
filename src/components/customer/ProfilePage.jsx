@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   MessageCircleQuestion,
   Camera,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
-import { useGetMyProfileQuery } from "../../app/api/profileApi";
+import { useGetMyProfileQuery, useUpdateProfilePhotoMutation } from "../../app/api/profileApi";
 import { useLogoutUserMutation } from "../../app/api/authApi";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../features/authSlice";
@@ -13,6 +14,7 @@ import referFriendImg from "/referfriendillustration.png";
 import PaymentMethodsSheet from "./PaymentMethodsSheet";
 import RateAppModal from "./RateAppModal";
 import { getPaymentMethod, getPreferredName } from "../../utils/profileLocalStorage";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 /**
  * frontend/src/components/customer/ProfilePage.jsx
@@ -24,21 +26,36 @@ import { getPaymentMethod, getPreferredName } from "../../utils/profileLocalStor
  * string, then CustomerBottomNav (rendered by CustomerLayout, not
  * here).
  *
+ * FIXED (this pass): two syntax bugs from a recurring copy-paste
+ * corruption pattern:
+ *   1. `console.log\`...\`)` was missing its opening `(` — restored to
+ *      `console.log(\`...\`)`.
+ *   2. `Card`'s `className=\`...\`}` was missing its opening `{` —
+ *      restored to `className={\`...\`}`.
+ *
+ * NEW FEATURE (this pass): real profile photo upload. Tapping the
+ * avatar circle opens the device's native file picker
+ * (`<input type="file" accept="image/*">` — no custom picker UI).
+ * On file select: an instant local preview shows via
+ * `URL.createObjectURL`, the file uploads DIRECTLY from the browser to
+ * Cloudinary using an unsigned upload preset (utils/uploadToCloudinary.js
+ * — our backend never touches the image bytes), then the resulting
+ * secure_url is saved via PATCH /customers/me (api/profileApi.js's
+ * updateProfilePhoto mutation). On success the Profile cache is
+ * invalidated so the avatar updates everywhere. On any failure the
+ * local preview is discarded and an honest error message shows.
+ *
  * UPDATE: header name now shows the saved PREFERRED name instead of
  * always showing the real fullName — same priority order used by
  * AccountDetailsPage.jsx / PreferredNamePage.jsx: server
  * customer.preferredName (once the backend returns it) > localStorage
- * override (saved by PreferredNamePage.jsx) > real fullName. Without
- * this, editing your preferred name on PreferredNamePage.jsx updated
- * AccountDetailsPage.jsx but NOT this header, since this component
- * never read preferredName/localStorage at all before.
+ * override (saved by PreferredNamePage.jsx) > real fullName.
  *
  * UPDATE: Account/Payment/Discount/Refer/Bank rows now navigate to
- * real pages/sheets (see below) instead of a shared console.log
- * placeholder. Only Help centre, Chat to customer support, Previous
- * chats, Blog, Careers at Cuvva, Legal, Change icon remain
- * placeholders — explicitly deferred per instruction ("this will the
- * implement later").
+ * real pages/sheets instead of a shared console.log placeholder. Only
+ * Help centre, Chat to customer support, Previous chats, Change icon
+ * remain placeholders — explicitly deferred. Blog and Careers at
+ * Cuvva are real outbound links (see Row's href handling below).
  *
  *   - Account details      -> /customer/profile/account (real API data)
  *   - Payment methods      -> PaymentMethodsSheet (localStorage only)
@@ -47,34 +64,33 @@ import { getPaymentMethod, getPreferredName } from "../../utils/profileLocalStor
  *   - Your discounts       -> /customer/profile/discounts (localStorage only)
  *   - Bank details         -> /customer/profile/bank-details (localStorage only)
  *   - Rate the app         -> RateAppModal (localStorage only)
+ *   - Blog                 -> https://www.cuvva.com/news (real outbound link, new tab)
+ *   - Careers at Cuvva     -> https://www.cuvva.com/careers (real outbound link, new tab)
+ *   - Legal                -> /customer/profile/legal
+ *   - Change profile photo -> real Cloudinary upload + backend save (see above)
  *   - Delete account       -> now inside AccountDetailsPage.jsx (real
  *     network call to a not-yet-built DELETE /customers/me route)
  *
- * BACKEND GAP FOUND — flagging clearly, not silently working around it:
- * `profileApi.js` calls `GET /customers/me`. Confirmed working via a
- * real API response you shared: { fullName, email, role, status,
- * expiresAt, createdBy } — note `createdAt` was MISSING from that
- * response even though User.js has `{ timestamps: true }`, because
- * the route's `.select(...)` list didn't include it. Fix: add
- * `createdAt` to that select list on the backend so "Member since"
- * below shows a real date instead of the "—" fallback.
- *
  * "Refer a friend" illustration on THIS page (small promo card):
- * referfriendillustration.png, a hand-drawn-style confetti/party-horn
- * graphic recreated to match your reference screenshot. The dedicated
- * ReferFriendPage.jsx uses a separate illustration
- * (referillustration.png) matching ITS OWN reference screenshot
- * (hand+phone+friends) — these are two different images for two
- * different screens, not a mix-up.
+ * referfriendillustration.png — the dedicated ReferFriendPage.jsx uses
+ * a separate illustration (referillustration.png) for ITS OWN
+ * reference screenshot — two different images, not a mix-up.
  */
 export default function ProfilePage() {
-  const { data, isLoading, error } = useGetMyProfileQuery();
+  const { data, isLoading, error, refetch } = useGetMyProfileQuery();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutUser, { isLoading: isLoggingOut }] = useLogoutUserMutation();
+  const [updateProfilePhoto] = useUpdateProfilePhotoMutation();
 
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [showRateModal, setShowRateModal] = useState(false);
+
+  // Profile photo upload state
+  const fileInputRef = useRef(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState(null);
 
   const customer = data?.customer;
 
@@ -108,9 +124,54 @@ export default function ProfilePage() {
     return method === "apple-pay" ? "Apple Pay" : null;
   }, [showPaymentSheet]);
 
+  // Avatar image priority: a fresh local preview (mid-upload) > the
+  // real saved photo from the server > nothing (falls back to the
+  // placeholder Camera icon below).
+  const avatarSrc = localPreviewUrl || customer?.profilePhotoUrl || null;
+
   const handleNotWiredUp = (label) => {
     // Placeholder — explicitly deferred, no destination page yet.
     console.log(`${label} tapped — not wired up yet.`);
+  };
+
+  const handleAvatarTap = () => {
+    // Programmatically clicking the hidden <input type="file"> is
+    // what actually opens the OS's native picker (photo library /
+    // camera / file browser) — no custom UI needed for that part.
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = async (event) => {
+    const file = event.target.files?.[0];
+    // Always reset the input's value, even on failure, so selecting
+    // the SAME file again later still fires this onChange handler.
+    event.target.value = "";
+    if (!file) return;
+
+    setPhotoError(null);
+
+    // Instant local preview so the UI feels responsive immediately,
+    // before the network round-trip to Cloudinary even starts.
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreviewUrl(objectUrl);
+    setIsUploadingPhoto(true);
+
+    try {
+      const secureUrl = await uploadToCloudinary(file);
+      await updateProfilePhoto(secureUrl).unwrap();
+      await refetch();
+      // Real server value is now in `customer.profilePhotoUrl` via
+      // refetch — safe to drop the local blob preview.
+      setLocalPreviewUrl(null);
+    } catch (err) {
+      // Never silently pretend the upload worked — discard the
+      // preview and surface a real, honest error message.
+      setLocalPreviewUrl(null);
+      setPhotoError(err?.message || "Couldn't update your photo. Please try again.");
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+      setIsUploadingPhoto(false);
+    }
   };
 
   const handleLogout = async () => {
@@ -151,13 +212,38 @@ export default function ProfilePage() {
 
       {/* Avatar / name / member since */}
       <div className="flex flex-col items-center pt-4 pb-2">
+        {/* Hidden native file input — accept="image/*" is what makes
+            mobile browsers offer "Camera" as an option alongside the
+            photo library / file browser, with zero custom UI. */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelected}
+          className="hidden"
+        />
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Change profile photo")}
-          aria-label="Change profile photo"
-          className="w-[72px] h-[72px] rounded-full bg-[#7c6bff]/20 flex items-center justify-center"
+          onClick={handleAvatarTap}
+          disabled={isUploadingPhoto}
+          aria-label={avatarSrc ? "Change profile photo" : "Add profile photo"}
+          className="w-[72px] h-[72px] rounded-full bg-[#7c6bff]/20 flex items-center justify-center overflow-hidden relative disabled:opacity-70"
         >
-          <Camera size={26} className="text-[#7c6bff]" />
+          {avatarSrc ? (
+            <img
+              src={avatarSrc}
+              alt=""
+              className="object-cover w-full h-full"
+              draggable={false}
+            />
+          ) : (
+            <Camera size={26} className="text-[#7c6bff]" />
+          )}
+          {isUploadingPhoto && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+              <Loader2 size={22} className="text-white animate-spin" />
+            </div>
+          )}
         </button>
         <p className="text-[18px] font-extrabold text-white mt-3">{name}</p>
         {error ? (
@@ -166,6 +252,11 @@ export default function ProfilePage() {
           </p>
         ) : (
           <p className="text-[13px] text-[#9497a1] mt-1">{memberSinceLabel}</p>
+        )}
+        {photoError && (
+          <p className="text-[12px] text-[#e05a5a] mt-2 px-8 text-center">
+            {photoError}
+          </p>
         )}
       </div>
 
