@@ -1,0 +1,422 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ChevronLeft, MessageCircleQuestion, User, ChevronRight, MessageCircle, X } from "lucide-react";
+import carClubsData from "../../data/carClubsData.json";
+import { addJoinedCarClub, isCarClubJoined } from "../../utils/profileLocalStorage";
+import { useGetMyProfileQuery } from "../../app/api/profileApi";
+import joinedIcon from "/car-club-joined-icon.png";
+
+/**
+ * frontend/src/components/customer/CarClubDetailPage.jsx
+ *
+ * "Car club detail" — opened by tapping any club row on CarClubsPage.jsx
+ * (route: /customer/car-clubs/:clubId). Handles THREE distinct visual
+ * states, matching join1.jpeg / join2.jpeg / group1.jpeg / group2.jpeg:
+ *
+ *   STATE A — Not yet joined: page loads with the "Join <Club Name>"
+ *   bottom sheet already open on top (matches join1.jpeg — note the
+ *   club name in that sheet is DYNAMIC, driven by whichever club was
+ *   tapped, not hardcoded to "Virk"). Tapping the X closes the sheet
+ *   and takes you back to CarClubsPage.jsx (nothing was joined).
+ *   Tapping "Join the club" saves this club's ID to localStorage,
+ *   swaps the sheet content in place (no navigation) to the
+ *   "You're in the club" confirmation (matches join2.jpeg), and the
+ *   page underneath already shows the full member-list content ready
+ *   to reveal once the sheet closes. Tapping "Let's go" OR tapping
+ *   anywhere else on that confirmation sheet (per instruction) closes
+ *   it, revealing the group detail page underneath.
+ *
+ *   STATE B — Already joined, and it's the club the user CREATED
+ *   themselves (currently only ever "Macks Car Club" in this data set,
+ *   since real club creation isn't built yet) — matches group1.jpeg:
+ *   "1 member" (just the logged-in user), a "Cars" section with the
+ *   admin's car, a "Members" section listing every member INCLUDING
+ *   the logged-in user, but NO "Chat" section at all (you can't chat
+ *   with yourself, and as the sole member there's nobody else to
+ *   chat with yet).
+ *
+ *   STATE C — Already joined a REAL local club with other real
+ *   members (Virk, Faisal's, Ashok's, Vasile's, Mohammed's) — matches
+ *   group2.jpeg: same "Cars" section, but instead of "Members" there's
+ *   a "Chat" section listing every OTHER member except the logged-in
+ *   user (never yourself), each with a chat bubble icon. The admin is
+ *   always listed first, labelled "(Admin)". Tapping any member's row
+ *   opens the "You can't start a chat yet" modal (see below) — this
+ *   is universal for every member since the user "just joined" the
+ *   club in all cases per your instruction.
+ *
+ * "You can't start a chat yet" modal: matches your description —
+ * tapping any chat-enabled member shows an info modal explaining you
+ * can't message this member yet because you only just joined, with a
+ * close button. Not tied to any specific screenshot filename, built
+ * purely from your written description.
+ *
+ * MEMBER AVATARS/CAR PHOTOS are the SAME hardcoded URLs used on
+ * CarClubsPage.jsx's list rows (from carClubsData.json) — so a club's
+ * car/member photos never change between the list and detail views,
+ * and never change over time (no Unsplash randomizing endpoint used
+ * anywhere).
+ */
+export default function CarClubDetailPage() {
+  const navigate = useNavigate();
+  const { clubId } = useParams();
+  const club = carClubsData.clubs.find((c) => c.id === clubId);
+
+  // Real logged-in user's name/photo — same source ProfilePage.jsx
+  // uses (GET /customers/me, with the Cloudinary profilePhotoUrl once
+  // uploaded). Fixes the bug where "You" showed no name and no
+  // uploaded picture: previously this file never read the real
+  // customer at all, so every "You" row was a hardcoded, nameless,
+  // photo-less placeholder.
+  const { data: profileData } = useGetMyProfileQuery();
+  const myName = profileData?.customer?.fullName || "You";
+  const myPhoto = profileData?.customer?.profilePhotoUrl || null;
+
+  const [alreadyJoined, setAlreadyJoined] = useState(false);
+  const [sheetStage, setSheetStage] = useState("join"); // "join" | "welcome" | "closed"
+  const [showChatBlockedModal, setShowChatBlockedModal] = useState(false);
+
+  useEffect(() => {
+    if (!club) return;
+    const joined = isCarClubJoined(club.id);
+    setAlreadyJoined(joined);
+    setSheetStage(joined ? "closed" : "join");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clubId]);
+
+  if (!club) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center pb-32">
+        <p className="text-[15px] text-[#9497a1]">Club not found.</p>
+      </div>
+    );
+  }
+
+  const handleBack = () => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate("/customer/car-clubs", { replace: true });
+  };
+
+  const handleJoinTap = () => {
+    addJoinedCarClub(club.id);
+    setAlreadyJoined(true);
+    setSheetStage("welcome");
+  };
+
+  const handleCloseWelcome = () => {
+    setSheetStage("closed");
+  };
+
+  // Whether THIS specific club is the one the logged-in user created
+  // themselves — only "Macks Car Club" in this data set, since real
+  // club creation isn't wired up yet (see CreateCarClubPage.jsx).
+  const isOwnClub = club.id === "macks-car-club";
+  const memberCount = alreadyJoined ? club.baseMemberCount + 1 : club.baseMemberCount;
+
+  return (
+    <div className="min-h-screen bg-black text-white pb-32">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 pt-4">
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label="Back"
+          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+        >
+          <ChevronLeft size={20} className="text-white" />
+        </button>
+        <button
+          type="button"
+          onClick={() => console.log("Help tapped — not wired up yet.")}
+          aria-label="Help"
+          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+        >
+          <MessageCircleQuestion size={18} className="text-white" />
+        </button>
+      </div>
+
+      {/* Member count row */}
+      <div className="flex items-center gap-2 px-4 pt-4">
+        <span className="w-6 h-6 rounded-full bg-[#3a3b40] flex items-center justify-center">
+          <User size={14} className="text-[#9497a1]" />
+        </span>
+        <span className="text-[15px] text-[#9497a1]">
+          {memberCount} member{memberCount === 1 ? "" : "s"}
+        </span>
+      </div>
+
+      {/* Cars */}
+      <p className="text-[13px] text-[#9497a1] px-4 pt-6 pb-2">Cars</p>
+      <div className="mx-4 rounded-2xl bg-[#17181c] border border-white/5 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => console.log("Car row tapped — not wired up yet.")}
+          className="w-full flex items-center gap-3 px-4 py-4"
+        >
+          <img
+            src={club.carPhoto}
+            alt=""
+            className="w-11 h-11 rounded-xl object-cover shrink-0"
+            draggable={false}
+          />
+          <span className="flex-1 min-w-0 text-left">
+            <span className="block text-[15px] font-semibold text-white">
+              {club.carOwnerName}&rsquo;s {club.carMake}
+            </span>
+            <span className="block text-[13px] text-[#9497a1] mt-0.5">{club.carPlate}</span>
+          </span>
+          <ChevronRight size={18} className="text-[#5c5e68] shrink-0" />
+        </button>
+      </div>
+
+      {/* Members (own club) OR Chat (joined a real club with others) */}
+      {alreadyJoined && (
+        <>
+          <p className="text-[13px] text-[#9497a1] px-4 pt-6 pb-2">
+            {isOwnClub ? "Members" : "Chat"}
+          </p>
+          <div className="mx-4 rounded-2xl bg-[#17181c] border border-white/5 overflow-hidden">
+            {isOwnClub ? (
+              // Own club: list every member INCLUDING the logged-in
+              // user, no chat affordance at all. "You" now uses your
+              // REAL name + uploaded profile photo (was previously a
+              // hardcoded, nameless, photo-less placeholder — bug fix).
+              <>
+                <MemberRow name={club.adminName} avatar={club.adminAvatar} isLast={false} />
+                <MemberRow name={myName} avatar={myPhoto} isLast={true} />
+              </>
+            ) : (
+              // Joined a real club: "You" (real name/photo) FIRST, no
+              // chat icon (you can't chat with yourself — this row
+              // was missing entirely before, which is why the
+              // reported bug showed no "You" row at all). Then the
+              // admin (labelled "(Admin)"), then every OTHER named
+              // member — each of THOSE rows has a chat bubble icon.
+              <>
+                <MemberRow name={myName} avatar={myPhoto} subtitle="You" isLast={false} />
+                <MemberRow
+                  name={`${club.adminName} (Admin)`}
+                  avatar={club.adminAvatar}
+                  subtitle="Start a chat"
+                  showChat
+                  onClick={() => setShowChatBlockedModal(true)}
+                  isLast={club.otherMembers.length === 0}
+                />
+                {club.otherMembers.map((m, i) => (
+                  <MemberRow
+                    key={m.name}
+                    name={m.name}
+                    avatar={m.avatar}
+                    subtitle="Start a chat"
+                    showChat
+                    onClick={() => setShowChatBlockedModal(true)}
+                    isLast={i === club.otherMembers.length - 1}
+                  />
+                ))}
+              </>
+            )}
+          </div>
+          {/* Honest disclosure of the gap between the displayed
+              member COUNT (85, matching the reference screenshots'
+              large local-club sizes) and the small number of NAMED
+              rows actually rendered above. There is no car-club
+              backend at all (no schema exists for clubs/members
+              anywhere), so only a handful of named members per club
+              are hardcoded — showing this caption instead of silently
+              pretending all 85 real member profiles exist. */}
+          {!isOwnClub && (
+            <p className="text-[13px] text-[#9497a1] px-4 pt-3 leading-relaxed">
+              Showing {club.otherMembers.length + 2} of {memberCount} members. The rest aren&rsquo;t
+              shown here yet — this is a local-only demo, there&rsquo;s no real member directory
+              backend for car clubs.
+            </p>
+          )}
+        </>
+      )}
+
+      {/* "Join <Club Name>" sheet — matches join1.jpeg. Club name is
+          dynamic (club.name), not hardcoded.
+          z-[60], NOT z-50 — CustomerBottomNav.jsx (untouched, per
+          standing instruction) is itself `fixed` at z-50. All three
+          overlays below (join sheet, welcome sheet, chat-blocked
+          modal) need to render ABOVE that nav, or their action
+          buttons get visually covered by / are unclickable behind
+          the nav bar (confirmed via live browser test — the "Join
+          the club" button was completely hidden under the nav until
+          this fix). CreateCarClubPage.jsx's "can't create yet" modal
+          has the same z-[60] fix for the same reason. */}
+      {sheetStage === "join" && (
+        <div className="fixed inset-0 z-[60] flex items-end">
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="relative w-full bg-[#1b1c21] rounded-t-3xl px-5 pt-4 pb-8 z-10">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleBack}
+                aria-label="Close"
+                className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center"
+              >
+                <X size={18} className="text-white" />
+              </button>
+            </div>
+            <div className="flex flex-col items-center text-center mt-1">
+              <img
+                src={club.carPhoto}
+                alt=""
+                className="w-16 h-16 rounded-full object-cover mb-3 border-2 border-white/10"
+                draggable={false}
+              />
+              <h2 className="text-[20px] font-extrabold text-white">Join {club.name}</h2>
+              <p className="text-[14px] text-[#9497a1] leading-relaxed mt-2 px-4">
+                Hop in to see more about vehicles in this club.
+              </p>
+              <button
+                type="button"
+                onClick={handleJoinTap}
+                className="w-full mt-6 py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white"
+              >
+                Join the club
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* "You're in the club" welcome sheet — matches join2.jpeg.
+          Tapping ANYWHERE on it (backdrop or card) closes it, per
+          instruction — implemented as a full-screen backdrop button
+          UNDER a non-interactive card, rather than nesting a real
+          <button> for "Let's go" inside an outer <button> (invalid
+          HTML — nested interactive elements). The card sits on top of
+          the backdrop button with a higher z-index, so any tap that
+          lands on the card's own background (not on the "Let's go"
+          button itself) falls through to trigger the card's own
+          onClick, which also closes the sheet — giving the same
+          "tap anywhere closes it" behavior without invalid markup. */}
+      {sheetStage === "welcome" && (
+        <div className="fixed inset-0 z-[60] flex items-end">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={handleCloseWelcome}
+            className="absolute inset-0 bg-black/70"
+          />
+          <div
+            onClick={handleCloseWelcome}
+            className="relative w-full bg-[#1b1c21] rounded-t-3xl px-5 pt-3 pb-8 z-10"
+          >
+            <div className="flex justify-center pb-3">
+              <div className="w-9 h-1 rounded-full bg-white/20" />
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <img src={joinedIcon} alt="" className="w-20 h-20 mb-4" draggable={false} />
+              <h2 className="text-[22px] font-extrabold text-white">You&rsquo;re in the club</h2>
+              <p className="text-[14px] text-[#9497a1] leading-relaxed mt-3 px-2">
+                Welcome to {club.name}! You&rsquo;re now a member and can view cars in this club.
+              </p>
+              <p className="text-[14px] text-[#9497a1] leading-relaxed mt-3 px-2">
+                If you&rsquo;re new to Cuvva, you&rsquo;ll automatically get £10 off your first trip. Your discount is valid for 3 months.
+              </p>
+              <button
+                type="button"
+                onClick={handleCloseWelcome}
+                className="w-full mt-6 py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white"
+              >
+                Let&rsquo;s go
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* "You can't start a chat yet" modal */}
+      {showChatBlockedModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center px-6">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => setShowChatBlockedModal(false)}
+            className="absolute inset-0 bg-black/70"
+          />
+          <div className="relative w-full max-w-[320px] bg-[#1b1c21] rounded-3xl px-6 pt-6 pb-6 text-center">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowChatBlockedModal(false)}
+                aria-label="Close"
+                className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center -mt-1 -mr-1"
+              >
+                <X size={16} className="text-white" />
+              </button>
+            </div>
+            <div className="flex justify-center -mt-2">
+              <span className="w-14 h-14 rounded-full bg-[#7c6bff]/15 flex items-center justify-center">
+                <MessageCircle size={26} className="text-[#7c6bff]" />
+              </span>
+            </div>
+            <h2 className="text-[18px] font-extrabold text-white mt-4">
+              You can&rsquo;t start a chat yet
+            </h2>
+            <p className="text-[14px] text-[#9497a1] leading-relaxed mt-2">
+              You just joined this club, so chat isn&rsquo;t available with this member right now. Try chatting again in a few hours.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowChatBlockedModal(false)}
+              className="w-full mt-5 py-3.5 bg-[#242429] hover:bg-[#2c2c33] active:scale-[0.98] transition-all rounded-full text-[15px] font-bold text-white"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Single member row — with or without a chat affordance. */
+function MemberRow({ name, avatar, subtitle, showChat, onClick, isLast }) {
+  const initials = name
+    .replace(" (Admin)", "")
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const rowContent = (
+    <>
+      {avatar ? (
+        <img
+          src={avatar}
+          alt=""
+          className="w-9 h-9 rounded-full object-cover shrink-0"
+          draggable={false}
+        />
+      ) : (
+        <span className="w-9 h-9 rounded-full bg-[#4a3aa8] flex items-center justify-center shrink-0 text-[12px] font-bold text-white">
+          {initials}
+        </span>
+      )}
+      <span className="flex-1 min-w-0 text-left">
+        <span className="block text-[15px] text-white">{name}</span>
+        {subtitle && <span className="block text-[13px] text-[#9497a1] mt-0.5">{subtitle}</span>}
+      </span>
+      {showChat && <MessageCircle size={18} className="text-[#5c5e68] shrink-0" />}
+    </>
+  );
+
+  const className = `w-full flex items-center gap-3 px-4 py-4 ${
+    !isLast ? "border-b border-white/5" : ""
+  }`;
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={className}>
+        {rowContent}
+      </button>
+    );
+  }
+
+  return <div className={className}>{rowContent}</div>;
+}

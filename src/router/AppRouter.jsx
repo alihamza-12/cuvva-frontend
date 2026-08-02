@@ -63,6 +63,8 @@ import LegalPage from "../components/customer/LegalPage";
 import PrivacyPolicyPage from "../components/customer/PrivacyPolicyPage";
 import TermsPage from "../components/customer/TermsPage";
 import FonPage from "../components/customer/FonPage";
+import CarClubDetailPage from "../components/customer/CarClubDetailPage";
+import CreateCarClubPage from "../components/customer/CreateCarClubPage";
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">
@@ -169,6 +171,8 @@ export default function AppRouter() {
         >
           <Route index element={<CustomerHome />} />
           <Route path="car-clubs" element={<CarClubsPage />} />
+          <Route path="car-clubs/create" element={<CreateCarClubPage />} />
+          <Route path="car-clubs/:clubId" element={<CarClubDetailPage />} />
           <Route path="policies" element={<PoliciesPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="profile/account" element={<AccountDetailsPage />} />

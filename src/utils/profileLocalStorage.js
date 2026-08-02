@@ -25,6 +25,8 @@ const KEYS = {
   IDENTITY_EXTRA: "cuvva_identity_extra",
   PREVIOUS_INCIDENTS: "cuvva_previous_incidents",
   INCIDENTS_DECLARATION_DONE: "cuvva_incidents_declaration_done",
+  JOINED_CAR_CLUBS: "cuvva_joined_car_clubs",
+  CREATED_CAR_CLUBS: "cuvva_created_car_clubs",
 };
 
 function safeGet(key, fallback) {
@@ -112,3 +114,33 @@ export const getIncidentsDeclarationDone = () =>
   safeGet(KEYS.INCIDENTS_DECLARATION_DONE, false);
 export const saveIncidentsDeclarationDone = (done) =>
   safeSet(KEYS.INCIDENTS_DECLARATION_DONE, done);
+
+// --- Car clubs (CarClubsPage.jsx and its sub-screens) ---
+// No car-club/ownership/lending schema exists anywhere in the backend
+// (Policy.js/Vehicle.js/User.js) — this whole feature is 100%
+// client-side/localStorage, same reasoning as Previous incidents
+// above. Two independent lists are tracked:
+//   1. JOINED_CAR_CLUBS — array of local-club IDs (from
+//      carClubsData.json's "localClubs") that this user has tapped
+//      "Join the club" on. Drives whether CarClubsPage shows the
+//      "Your clubs" section (joined clubs) vs. the empty-state
+//      "Share your car" hero card (skipped once ANY club — created OR
+//      joined — exists).
+//   2. CREATED_CAR_CLUBS — array of clubs this user created themselves
+//      via "Create your Cuvva car club" (currently gated behind a
+//      "You can't create a car club yet" info modal per instruction,
+//      so this list stays empty for now, but the read/write helpers
+//      exist ready for when that flow is really built out).
+export const getJoinedCarClubIds = () => safeGet(KEYS.JOINED_CAR_CLUBS, []);
+export const saveJoinedCarClubIds = (ids) => safeSet(KEYS.JOINED_CAR_CLUBS, ids);
+export const addJoinedCarClub = (clubId) => {
+  const existing = getJoinedCarClubIds();
+  if (existing.includes(clubId)) return existing;
+  const next = [...existing, clubId];
+  saveJoinedCarClubIds(next);
+  return next;
+};
+export const isCarClubJoined = (clubId) => getJoinedCarClubIds().includes(clubId);
+
+export const getCreatedCarClubs = () => safeGet(KEYS.CREATED_CAR_CLUBS, []);
+export const saveCreatedCarClubs = (clubs) => safeSet(KEYS.CREATED_CAR_CLUBS, clubs);

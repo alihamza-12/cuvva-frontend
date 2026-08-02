@@ -1,0 +1,156 @@
+{
+  "clubs": [
+    {
+      "id": "macks-car-club",
+      "name": "Macks Car Club",
+      "distance": "0.15 miles",
+      "isNew": true,
+      "baseMemberCount": 0,
+      "avatarType": "initials",
+      "initials": "MC",
+      "avatarColor": "#7c5bff",
+      "memberAvatarsBeforeJoin": [],
+      "carPhoto": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&q=80",
+      "carOwnerName": "Rory Mandella",
+      "carMake": "Vauxhall Zafira",
+      "carPlate": "DY65 OUX",
+      "adminName": "Rory Mandella",
+      "adminAvatar": "https://i.pravatar.cc/150?img=14",
+      "otherMembers": []
+    },
+    {
+      "id": "virk",
+      "name": "Virk",
+      "distance": "0.69 miles",
+      "isNew": false,
+      "baseMemberCount": 84,
+      "avatarType": "initials",
+      "initials": "V",
+      "avatarColor": "#7c5bff",
+      "memberAvatarsBeforeJoin": [
+        "https://i.pravatar.cc/150?img=12",
+        "https://i.pravatar.cc/150?img=33",
+        null
+      ],
+      "carPhoto": "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=400&q=80",
+      "carOwnerName": "Virk",
+      "carMake": "Ford Focus",
+      "carPlate": "VK16 ZZR",
+      "adminName": "Virk",
+      "adminAvatar": "https://i.pravatar.cc/150?img=12",
+      "otherMembers": [
+        { "name": "Priya Kaur", "avatar": "https://i.pravatar.cc/150?img=33" },
+        { "name": "Sam Patel", "avatar": null }
+      ]
+    },
+    {
+      "id": "faisal",
+      "name": "Faisal's car club",
+      "distance": "0.7 miles",
+      "isNew": false,
+      "baseMemberCount": 23,
+      "avatarType": "photo",
+      "clubPhoto": "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=400&q=80",
+      "memberAvatarsBeforeJoin": [null, null, null],
+      "carPhoto": "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=400&q=80",
+      "carOwnerName": "Faisal",
+      "carMake": "Ferrari 812",
+      "carPlate": "FS23 CLB",
+      "adminName": "Faisal",
+      "adminAvatar": null,
+      "otherMembers": [
+        { "name": "Amir Khan", "avatar": null },
+        { "name": "Leah Cross", "avatar": null }
+      ]
+    },
+    {
+      "id": "ashok",
+      "name": "Ashok's car club",
+      "distance": "0.74 miles",
+      "isNew": false,
+      "baseMemberCount": 16,
+      "avatarType": "initials",
+      "initials": "AC",
+      "avatarColor": "#7c5bff",
+      "memberAvatarsBeforeJoin": [
+        "https://i.pravatar.cc/150?img=47",
+        null,
+        null
+      ],
+      "carPhoto": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&q=80",
+      "carOwnerName": "Ashok",
+      "carMake": "BMW 2 Series",
+      "carPlate": "AC74 BMW",
+      "adminName": "Ashok",
+      "adminAvatar": "https://i.pravatar.cc/150?img=47",
+      "otherMembers": [
+        { "name": "Diane Cole", "avatar": null },
+        { "name": "Marcus Webb", "avatar": null }
+      ]
+    },
+    {
+      "id": "vasile",
+      "name": "Vasile's car club",
+      "distance": "0.89 miles",
+      "isNew": false,
+      "baseMemberCount": 41,
+      "avatarType": "photo",
+      "clubPhoto": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&q=80",
+      "memberAvatarsBeforeJoin": [
+        "https://i.pravatar.cc/150?img=68",
+        "https://i.pravatar.cc/150?img=9",
+        null
+      ],
+      "carPhoto": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&q=80",
+      "carOwnerName": "Vasile",
+      "carMake": "Volkswagen Polo",
+      "carPlate": "LX61 LWE",
+      "adminName": "Vasile",
+      "adminAvatar": "https://i.pravatar.cc/150?img=68",
+      "otherMembers": [
+        { "name": "Ionut Rusu", "avatar": "https://i.pravatar.cc/150?img=9" },
+        { "name": "Bogdan Ilie", "avatar": null }
+      ]
+    },
+    {
+      "id": "mohammed",
+      "name": "Mohammed's car club",
+      "distance": "0.92 miles",
+      "isNew": false,
+      "baseMemberCount": 12,
+      "avatarType": "initials",
+      "initials": "MC",
+      "avatarColor": "#7c5bff",
+      "memberAvatarsBeforeJoin": [null, null, null],
+      "carPhoto": "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=400&q=80",
+      "carOwnerName": "Mohammed",
+      "carMake": "Kia Picanto",
+      "carPlate": "MH92 KPT",
+      "adminName": "Mohammed",
+      "adminAvatar": null,
+      "otherMembers": [
+        { "name": "Yusuf Ali", "avatar": null }
+      ]
+    }
+  ],
+  "tips": [
+    {
+      "id": "whats-covered",
+      "title": "What's covered?",
+      "subtitle": "From insurance, to damage, to fines and parking tickets",
+      "image": "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=200&q=80"
+    },
+    {
+      "id": "tips-sharing",
+      "title": "Tips for sharing your car",
+      "subtitle": "How to get set up for a smooth car sharing experience",
+      "image": "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=200&q=80"
+    },
+    {
+      "id": "choosing-charge",
+      "title": "Choosing what to charge",
+      "subtitle": "Earn money by charging people to borrow your car",
+      "image": "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=200&q=80"
+    }
+  ]
+}
