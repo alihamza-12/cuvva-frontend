@@ -36,6 +36,7 @@ import VehicleCameraCapturePage from "../components/customer/VehicleCameraCaptur
 import CarClubsPage from "../components/customer/CarClubsPage";
 import CarClubDetailPage from "../components/customer/CarClubDetailPage";
 import CreateCarClubPage from "../components/customer/CreateCarClubPage";
+import CarClubResourcePage from "../components/customer/CarClubResourcePage";
 import PoliciesPage from "../components/customer/PoliciesPage";
 import ProfilePage from "../components/customer/ProfilePage";
 import CustomerPolicyDetailPage from "../components/customer/PolicyDetailPage";
@@ -81,16 +82,13 @@ const TempSubAdminLayout = () => (
       <div className="text-lg font-extrabold text-[#00f0ff] uppercase tracking-wider">
         ⚡ AGENT HQ
       </div>
-
       <div className="text-xs font-bold text-[#6b7280] uppercase tracking-wider">
         Navigation
       </div>
-
       <div className="px-4 py-3 bg-[#644aff]/10 text-white font-semibold rounded-xl text-sm">
         My Workspace
       </div>
     </div>
-
     <div className="flex-1 p-10">
       <Outlet />
     </div>
@@ -101,35 +99,22 @@ const TempSubDash = () => (
   <div className="text-2xl font-bold text-white">
     Agent Operational Live Pipeline
     <p className="text-sm font-normal text-[#6b7280] mt-2">
-      This workspace is restricted to provisioned Sub-Admin authorization
-      levels.
+      This workspace is restricted to provisioned Sub-Admin authorization levels.
     </p>
   </div>
 );
 
 const RoleRedirect = () => {
   const user = useSelector(selectCurrentUser);
-
   if (!user) return <Navigate to="/login" replace />;
-
-  if (user.role === "Super Admin") {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
-
-  if (user.role === "Sub Admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  if (user.role === "Customer") {
-    return <Navigate to="/customer" replace />;
-  }
-
+  if (user.role === "Super Admin") return <Navigate to="/admin/dashboard" replace />;
+  if (user.role === "Sub Admin") return <Navigate to="/dashboard" replace />;
+  if (user.role === "Customer") return <Navigate to="/customer" replace />;
   return <Navigate to="/login" replace />;
 };
 
 const CarClubDetailRoute = () => {
   const { clubId } = useParams();
-
   return <CarClubDetailPage key={clubId} />;
 };
 
@@ -152,14 +137,8 @@ export default function AppRouter() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<SuperAdminDashboard />} />
           <Route path="customers/:id" element={<CustomerDetailPage />} />
-          <Route
-            path="vehicles/:registration"
-            element={<VehicleDetailPage />}
-          />
-          <Route
-            path="sub-admins/:id"
-            element={<SubAdminDetailPage />}
-          />
+          <Route path="vehicles/:registration" element={<VehicleDetailPage />} />
+          <Route path="sub-admins/:id" element={<SubAdminDetailPage />} />
           <Route path="policies/:id" element={<PolicyDetailPage />} />
         </Route>
 
@@ -172,145 +151,51 @@ export default function AppRouter() {
           }
         >
           <Route index element={<CustomerHome />} />
-
           <Route path="car-clubs" element={<CarClubsPage />} />
+          <Route path="car-clubs/create" element={<CreateCarClubPage />} />
+
+          {/* Added only for the new CarClubResourcePage. */}
           <Route
-            path="car-clubs/create"
-            element={<CreateCarClubPage />}
-          />
-          <Route
-            path="car-clubs/:clubId"
-            element={<CarClubDetailRoute />}
+            path="car-clubs/resources/:resourceId"
+            element={<CarClubResourcePage />}
           />
 
+          <Route path="car-clubs/:clubId" element={<CarClubDetailRoute />} />
           <Route path="policies" element={<PoliciesPage />} />
           <Route path="profile" element={<ProfilePage />} />
-
-          <Route
-            path="profile/account"
-            element={<AccountDetailsPage />}
-          />
-          <Route
-            path="profile/bank-details"
-            element={<BankAccountDetailsPage />}
-          />
-          <Route
-            path="profile/discount-code"
-            element={<DiscountCodePage />}
-          />
-          <Route
-            path="profile/discounts"
-            element={<YourDiscountsPage />}
-          />
-          <Route
-            path="profile/refer"
-            element={<ReferFriendPage />}
-          />
-
-          <Route
-            path="profile/account/preferred-name"
-            element={<PreferredNamePage />}
-          />
-          <Route
-            path="profile/account/email"
-            element={<EmailAddressPage />}
-          />
-          <Route
-            path="profile/account/email/add"
-            element={<AddEmailPage />}
-          />
-          <Route
-            path="profile/account/mobile"
-            element={<MobileNumberPage />}
-          />
-          <Route
-            path="profile/account/mobile/add"
-            element={<AddMobileNumberPage />}
-          />
-          <Route
-            path="profile/account/connected"
-            element={<ConnectedAccountsPage />}
-          />
-          <Route
-            path="profile/account/identity"
-            element={<MyIdentityPage />}
-          />
-          <Route
-            path="profile/account/address"
-            element={<ResidentialAddressPage />}
-          />
-          <Route
-            path="profile/account/marketing"
-            element={<MarketingPreferencesPage />}
-          />
-          <Route
-            path="profile/account/delete"
-            element={<DeleteAccountInfoPage />}
-          />
-          <Route
-            path="profile/account/incidents"
-            element={<PreviousIncidentsPage />}
-          />
-
+          <Route path="profile/account" element={<AccountDetailsPage />} />
+          <Route path="profile/bank-details" element={<BankAccountDetailsPage />} />
+          <Route path="profile/discount-code" element={<DiscountCodePage />} />
+          <Route path="profile/discounts" element={<YourDiscountsPage />} />
+          <Route path="profile/refer" element={<ReferFriendPage />} />
+          <Route path="profile/account/preferred-name" element={<PreferredNamePage />} />
+          <Route path="profile/account/email" element={<EmailAddressPage />} />
+          <Route path="profile/account/email/add" element={<AddEmailPage />} />
+          <Route path="profile/account/mobile" element={<MobileNumberPage />} />
+          <Route path="profile/account/mobile/add" element={<AddMobileNumberPage />} />
+          <Route path="profile/account/connected" element={<ConnectedAccountsPage />} />
+          <Route path="profile/account/identity" element={<MyIdentityPage />} />
+          <Route path="profile/account/address" element={<ResidentialAddressPage />} />
+          <Route path="profile/account/marketing" element={<MarketingPreferencesPage />} />
+          <Route path="profile/account/delete" element={<DeleteAccountInfoPage />} />
+          <Route path="profile/account/incidents" element={<PreviousIncidentsPage />} />
           <Route path="profile/legal" element={<LegalPage />} />
-          <Route
-            path="profile/legal/privacy"
-            element={<PrivacyPolicyPage />}
-          />
-          <Route
-            path="profile/legal/terms"
-            element={<TermsPage />}
-          />
-          <Route
-            path="profile/legal/fon"
-            element={<FonPage />}
-          />
+          <Route path="profile/legal/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="profile/legal/terms" element={<TermsPage />} />
+          <Route path="profile/legal/fon" element={<FonPage />} />
         </Route>
 
-        <Route
-          path="/customer/policies/new"
-          element={<PolicyQuotePage />}
-        />
-        <Route
-          path="/customer/policies/documents"
-          element={<PolicyDocumentsPage />}
-        />
-        <Route
-          path="/customer/policies/documents/ipid"
-          element={<InsuranceSummaryPage />}
-        />
-        <Route
-          path="/customer/policies/documents/wording"
-          element={<PolicyWordingPage />}
-        />
-        <Route
-          path="/customer/policies/photos/:step"
-          element={<VehiclePhotoCapturePage />}
-        />
-        <Route
-          path="/customer/policies/photos/:step/camera"
-          element={<VehicleCameraCapturePage />}
-        />
-        <Route
-          path="/customer/policies/detail"
-          element={<CustomerPolicyDetailPage />}
-        />
-        <Route
-          path="/customer/policies/receipt"
-          element={<PolicyReceiptPage />}
-        />
-        <Route
-          path="/customer/policies/claim"
-          element={<MakeAClaimPage />}
-        />
-        <Route
-          path="/customer/policies/mechanic"
-          element={<BookMechanicPage />}
-        />
-        <Route
-          path="/customer/profile/account/incidents/add"
-          element={<AddIncidentPage />}
-        />
+        <Route path="/customer/policies/new" element={<PolicyQuotePage />} />
+        <Route path="/customer/policies/documents" element={<PolicyDocumentsPage />} />
+        <Route path="/customer/policies/documents/ipid" element={<InsuranceSummaryPage />} />
+        <Route path="/customer/policies/documents/wording" element={<PolicyWordingPage />} />
+        <Route path="/customer/policies/photos/:step" element={<VehiclePhotoCapturePage />} />
+        <Route path="/customer/policies/photos/:step/camera" element={<VehicleCameraCapturePage />} />
+        <Route path="/customer/policies/detail" element={<CustomerPolicyDetailPage />} />
+        <Route path="/customer/policies/receipt" element={<PolicyReceiptPage />} />
+        <Route path="/customer/policies/claim" element={<MakeAClaimPage />} />
+        <Route path="/customer/policies/mechanic" element={<BookMechanicPage />} />
+        <Route path="/customer/profile/account/incidents/add" element={<AddIncidentPage />} />
 
         <Route
           path="/dashboard"
@@ -321,18 +206,9 @@ export default function AppRouter() {
           }
         >
           <Route index element={<SubAdminHome />} />
-          <Route
-            path="policies/:id"
-            element={<PolicyDetailPageSubAdmin />}
-          />
-          <Route
-            path="vehicles/:registration"
-            element={<VehicleDetailPageSubAdmin />}
-          />
-          <Route
-            path="customers/:id"
-            element={<CustomerDetailPageSubAdmin />}
-          />
+          <Route path="policies/:id" element={<PolicyDetailPageSubAdmin />} />
+          <Route path="vehicles/:registration" element={<VehicleDetailPageSubAdmin />} />
+          <Route path="customers/:id" element={<CustomerDetailPageSubAdmin />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
