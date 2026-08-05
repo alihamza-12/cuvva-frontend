@@ -226,6 +226,15 @@ export default function CarClubsPage() {
         </>
       )}
 
+      {/* "Tips and resources" — ALL 4 rows now link to
+          CarClubResourcePage.jsx, passing the tip's own id as the
+          :resourceId route param. CarClubResourcePage.jsx already has
+          matching content for all 3 real tip ids ("tips-sharing",
+          "whats-covered", "choosing-charge") in its resourceContent
+          map — no new content needed, just the navigation wiring.
+          "All car sharing resources" has no distinct article of its
+          own, so it opens the same "tips-sharing" article as a
+          reasonable default landing page. */}
       <p className="px-4 pb-2 pt-6 text-[13px] text-[#9497a1]">
         Tips and resources
       </p>
@@ -235,11 +244,7 @@ export default function CarClubsPage() {
           <button
             key={tip.id}
             type="button"
-            onClick={() =>
-              tip.id === "tips-sharing"
-                ? navigate(`/customer/car-clubs/resources/${tip.id}`)
-                : handleNotWiredUp(tip.title)
-            }
+            onClick={() => navigate(`/customer/car-clubs/resources/${tip.id}`)}
             className={`flex w-full items-center gap-3 px-4 py-4 ${
               index !== carClubsData.tips.length - 1
                 ? "border-b border-white/5"
@@ -268,7 +273,7 @@ export default function CarClubsPage() {
 
         <button
           type="button"
-          onClick={() => handleNotWiredUp("All car sharing resources")}
+          onClick={() => navigate("/customer/car-clubs/resources/tips-sharing")}
           className="flex w-full items-center justify-between border-t border-white/5 px-4 py-4"
         >
           <span className="text-[15px] font-semibold text-white">
