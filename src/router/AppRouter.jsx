@@ -66,6 +66,7 @@ import FonPage from "../components/customer/FonPage";
 import CarClubDetailPage from "../components/customer/CarClubDetailPage";
 import CreateCarClubPage from "../components/customer/CreateCarClubPage";
 import CarClubResourcePage from "../components/customer/CarClubResourcePage";
+import ChatSupportPage from "../components/customer/ChatSupportPage";
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">
@@ -258,6 +259,17 @@ export default function AppRouter() {
           path="/customer/car-clubs/resources/:resourceId"
           element={<CarClubResourcePage />}
         />
+        {/* Chat Support — reachable from ANY page/icon in the app via
+            navigate("/customer/support"), per instruction ("register
+            the chat support in the app router file with the url so
+            when i need that chat support in any url then i call that
+            url"). Full-screen X-to-close overlay (hub / messages /
+            conversation / help articles / terms all live inside
+            ChatSupportWidget.jsx, switched via internal state, not
+            sub-routes) — stays OUTSIDE CustomerLayout, same as
+            CarClubResourcePage.jsx above, so the bottom nav doesn't
+            show underneath it. */}
+        <Route path="/customer/support" element={<ChatSupportPage />} />
         <Route
           path="/customer/policies/detail"
           element={<CustomerPolicyDetailPage />}
