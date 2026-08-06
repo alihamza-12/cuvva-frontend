@@ -1,0 +1,36 @@
+{
+  "_comment": "frontend/src/data/chatBotRepliesData.json — canned reply text for the 'Cuvva Support Bot' chat screen (ChatConversationPage.jsx). NO real AI/backend — per instruction, each of the 5 quick-reply buttons shown in chat3.jpeg has its own hand-written canned answer here. Any freely-typed message that doesn't match a quick-reply is met with one of the entries in 'fallbackReplies' (a random pick, per instruction: 'if the user ask any other question then just show a random answer only').",
+  "quickReplies": [
+    {
+      "id": "have-a-question",
+      "label": "I have a question",
+      "reply": "Sure, what would you like to know? You can also search our help centre above for a quick answer, or just type your question here and I'll do my best to help."
+    },
+    {
+      "id": "cancel-policy",
+      "label": "I would like to cancel my policy",
+      "reply": "Sorry to hear you want to cancel. You can cancel a policy any time from the Policies tab in the app. If you're within the 14-day cooling-off period, cancellation is usually free — after that, a cancellation fee may apply depending on your policy type."
+    },
+    {
+      "id": "delete-account",
+      "label": "I want to delete my account",
+      "reply": "You can request account deletion from Profile > Account details > Delete your account. If you have an active policy, you may need to wait until it ends before we can fully delete your account."
+    },
+    {
+      "id": "make-a-claim",
+      "label": "I need to make a claim",
+      "reply": "Sorry to hear that. Please report the incident as soon as possible via the Claims section in the app, even if you're not sure you'll need to claim. Our claims team is on hand to help you through the process."
+    },
+    {
+      "id": "financial-concern",
+      "label": "I have a financial, medical/mental health or language concern to talk about",
+      "reply": "Thank you for letting us know — we take this seriously. A member of our human support team will follow up with you directly. In the meantime, if you need urgent help, please contact the relevant emergency or support services in your area."
+    }
+  ],
+  "fallbackReplies": [
+    "Thanks for your message! I'm just a simple demo bot right now, so I can't give a specific answer to that — but you can search the help centre above, or try one of the quick options.",
+    "I don't have a specific answer for that yet, but our real customer support team would be happy to help with this once live chat is connected.",
+    "Good question! I'm not able to answer that in this preview, but you can find lots of helpful articles by searching the help centre above.",
+    "I'm still learning! For now, try searching the help centre above, or pick one of the quick reply options to get started."
+  ]
+}

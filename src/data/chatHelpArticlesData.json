@@ -1,0 +1,201 @@
+{
+  "_comment": "frontend/src/data/chatHelpArticlesData.json — the 3 help articles reachable from the Chat Support hub's 'Search for help' list (chat1.jpeg): 'Taking a vehicle photo for your Cuvva policy' (chat4-7.jpeg), 'How to contact customer support or leave feedback' (chat8-10.jpeg), 'Vehicle modifications' (chat11-13.jpeg). Same content-block schema as termsData.json/fonData.json (p/list/sublabel) so ChatArticlePage.jsx can reuse the exact same renderer already proven by TermsPage.jsx/FonPage.jsx.",
+  "articles": {
+    "vehicle-photo": {
+      "title": "Taking a vehicle photo for your Cuvva policy",
+      "subtitle": "How to nail your Cuvva vehicle photo",
+      "date": "April 29, 2026",
+      "sections": [
+        {
+          "content": [
+            { "type": "p", "text": "When you get a temporary car insurance policy with Cuvva, we'll usually ask you to take a quick photo of your vehicle 🚗" }
+          ]
+        },
+        {
+          "heading": "Why we need a vehicle photo",
+          "content": [
+            { "type": "p", "text": "We ask for a photo so that we can see the vehicle's condition at the start of your policy." },
+            { "type": "p", "text": "This helps us get the fairest possible outcome for you if you need to make a claim, and gives you total peace of mind." }
+          ]
+        },
+        {
+          "heading": "How to take your vehicle photo",
+          "content": [
+            { "type": "p", "text": "Follow these easy tips to make sure your photo does the job:" },
+            {
+              "type": "list",
+              "items": [
+                "Take it from the front of the car. This gives us the clearest possible view of the car's conditions. We can't accept photos taken from the back of the car.",
+                "Don't stand too close or zoom in. Make sure the wheels, number plate, wing mirrors, windscreen, and bonnet (closed) are all visible.",
+                "Use the in-app camera. The photo must be \u201clive\u201d — we can't accept old photos, screenshots, or photos of a photo.",
+                "Make sure it's clear and well lit. Avoid blurry or dark photos. If it's nighttime, use the flash. If you're struggling, switch on the car's dipped headlights or interior lights for some extra illumination."
+              ]
+            },
+            { "type": "p", "text": "Here's a nice example below:" },
+            { "type": "image", "src": "/vehicle-photo-example-front.png", "caption": "Entire front of car" }
+          ]
+        },
+        {
+          "heading": "If your photo isn't clear enough",
+          "content": [
+            { "type": "p", "text": "Uploading a photo that doesn't meet our requirements could affect your price or temporarily freeze your account." },
+            { "type": "p", "text": "Don't worry, your policy won't be cancelled and you'll still be insured." },
+            { "type": "p", "text": "But if you needed to make a claim, unclear photos that don't show the car's original condition can make it harder to get you the fairest outcome." },
+            { "type": "p", "text": "If it keeps happening, you might eventually lose access to Cuvva." }
+          ]
+        },
+        {
+          "heading": "Camera trouble? Try this",
+          "content": [
+            { "type": "p", "text": "Phones can be unpredictable, so here are some quick troubleshooting tips." },
+            {
+              "type": "list",
+              "items": [
+                "If one of your phone's cameras doesn't work, try triple-tapping the screen to switch between cameras (ie from the front camera to the back or vice-versa).",
+                "If your phone has no working camera, you can log into your Cuvva account on someone else's phone and take the photo there."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Book-ahead policies work a bit differently",
+          "content": [
+            { "type": "p", "text": "If you're booking a policy that starts in the future, we'll ask where your trip will begin." },
+            { "type": "p", "text": "You won't need to take a photo at that point, because your policy may not start for hours, days or weeks." },
+            { "type": "p", "text": "When the policy is about to start, we'll usually ask for a photo. The car will need to be in the location you told us the trip would begin." },
+            { "type": "p", "text": "Just so you know: you won't always be asked for a photo with book-ahead policies, so don't worry if it doesn't come up." }
+          ]
+        },
+        {
+          "content": [
+            { "type": "divider" },
+            { "type": "p", "text": "If you have any questions, just search the help centre for a quick answer or reach out to our customer support team. Happy driving!" }
+          ]
+        }
+      ]
+    },
+    "contact-support": {
+      "title": "How to contact customer support or leave feedback",
+      "subtitle": "If you need help, want to share feedback, or need to report something, you can do it all quickly through the app.",
+      "date": "April 30, 2026",
+      "sections": [
+        {
+          "content": [
+            { "type": "calloutBox", "text": "Want to chat to customer support? Just tap the speech bubble in the corner of the screen on the app or website. Support hours are 9am to 9pm from Monday to Saturday, and 9am to 6pm on Sundays." }
+          ]
+        },
+        {
+          "heading": "Had an accident or need to make a claim?",
+          "content": [
+            { "type": "p", "text": "If something's happened, even if you aren't going to claim, you should report it as soon as possible." },
+            { "type": "p", "text": "For everything else, here's how to chat to Cuvva's customer support team, leave feedback, or make a complaint 👇" }
+          ]
+        },
+        {
+          "heading": "Via the app",
+          "content": [
+            { "type": "p", "text": "The fastest way to get your questions answered is through the app." },
+            {
+              "type": "orderedList",
+              "items": [
+                "Open the Cuvva app.",
+                "Tap the speech bubble in the top right.",
+                "Search for a help article, or start a chat with our team."
+              ]
+            },
+            { "type": "p", "text": "Cuvva's customer support hours are:" },
+            {
+              "type": "list",
+              "items": [
+                "Monday to Saturday: 9am to 9pm",
+                "Sunday: 9am to 6pm",
+                "Christmas Day and Boxing Day: 9am to 6pm"
+              ]
+            },
+            { "type": "p", "text": "We usually reply within a few minutes." }
+          ]
+        },
+        {
+          "heading": "By email",
+          "content": [
+            { "type": "divider" },
+            { "type": "p", "text": "You can also reach us at: support@cuvva.com" }
+          ]
+        },
+        {
+          "heading": "Why we don't offer phone support",
+          "content": [
+            { "type": "divider" },
+            { "type": "p", "text": "We don't have a general support phone line." },
+            { "type": "p", "text": "That's because we can help you faster online:" },
+            {
+              "type": "list",
+              "items": [
+                "No waiting on hold",
+                "No security questions when you're logged in",
+                "Quicker replies, often within minutes"
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Leaving feedback",
+          "content": [
+            { "type": "divider" },
+            { "type": "p", "text": "We're always looking to improve, and your feedback helps us do that." },
+            { "type": "p", "text": "You can leave reviews on:" },
+            {
+              "type": "list",
+              "items": ["Trustpilot", "The App Store", "Google Play"]
+            },
+            { "type": "p", "text": "If something hasn't gone as expected, you can also make a complaint." }
+          ]
+        }
+      ]
+    },
+    "vehicle-modifications": {
+      "title": "Vehicle modifications",
+      "subtitle": "What is a modification and do we cover them?",
+      "date": "June 25, 2026",
+      "sections": [
+        {
+          "content": [
+            { "type": "p", "text": "Cuvva accepts lots of modifications - including any that aid a disability. Here's a more detailed list." }
+          ]
+        },
+        {
+          "heading": "Modifications we accept:",
+          "content": [
+            {
+              "type": "labelledList",
+              "items": [
+                { "label": "Adaptions for disabilities", "text": "any modification to aid a disability (such as altered pedal configuration or hand controls)" },
+                { "label": "Additional security", "text": "things like alarms, immobilisers, tracking devices, Alpha Dots and locking wheel nuts which have been fitted in accordance with manufacturers guidance" },
+                { "label": "Badges", "text": "when the original badge has been removed, replaced or altered in colour" },
+                { "label": "Dash Camera", "text": "in-car CCTV which has been fitted in accordance with manufacturer's guidance" },
+                { "label": "Front Grill", "text": "when the grill has been replaced with a direct fitment manufacturers/aftermarket grill, or a grill has been altered in colour" },
+                { "label": "Graphics (short-term commercial vehicle only)", "text": "any promotional or advertising decals, or magnetic or painted signs (however: no motor trade or delivery graphics)" },
+                { "label": "Lighting changes", "text": "legal lighting changes, such as upgraded bulbs, fog lights or the addition of light bars" },
+                { "label": "Navigation and Bluetooth", "text": "aftermarket Bluetooth or satellite-navigation equipment which has been fitted in accordance with manufacturers guidance" },
+                { "label": "Parking sensors and cameras", "text": "aftermarket parking sensors or cameras which have been fitted in accordance with manufacturers guidance" },
+                { "label": "Roof racks, roof rails and roof boxes", "text": "aftermarket roof racks, roof rails or roof boxes which have been fitted in accordance with manufacturers guidance" },
+                { "label": "Telematics device", "text": "any plug-in or hardwired telematics device which has been fitted in accordance with manufacturers guidance" },
+                { "label": "Towbars", "text": "towbars which have been fitted in accordance with manufacturer's guidance" },
+                { "label": "Window stickers and sunstrips", "text": "sticker-based sun strips and window stickers (this excludes aftermarket tinted windows)" }
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Modifications we don't accept:",
+          "content": [
+            { "type": "p", "text": "Anything not on the list above." },
+            { "type": "p", "text": "If you're unsure of whether a change is a modification, just think: has it been added to my vehicle since leaving the factory?" },
+            { "type": "p", "text": "Just so you know: you don't need to add or declare a modification to your policy. If it's on the list of approved modifications, you can just buy a policy as usual. If it's not on the list, we can't cover the vehicle." },
+            { "type": "p", "text": "Any questions? Our customer support team are on hand 365 days a year. Just drop them a message in the app or email support@cuvva.com." }
+          ]
+        }
+      ]
+    }
+  }
+}
