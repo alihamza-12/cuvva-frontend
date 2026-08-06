@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   X,
   ChevronLeft,
@@ -15,6 +16,7 @@ import {
   Info,
 } from "lucide-react";
 import chatBotAvatar from "/chat-bot-avatar.png";
+import cuvvaLogo from "/cuvva-logo-white.png"; // If this doesn't show, change to "/cuvva-logo-grey.png"
 import chatBotRepliesData from "../../data/chatBotRepliesData.json";
 import chatHelpArticlesData from "../../data/chatHelpArticlesData.json";
 import termsData from "../../data/termsData.json";
@@ -24,104 +26,10 @@ import {
   getRelativeTimeLabel,
 } from "../../utils/chatLocalStorage";
 
-/**
- * frontend/src/components/customer/ChatSupportWidget.jsx
- *
- * ONE shared, reusable "Chat Support" overlay — built once here, then
- * dropped into any page that needs a chat-support entry point (per
- * instruction: "chat support is in the all components almost so i
- * decide that we build the chat support component in one place and
- * then we use it in the multiple of components where we basically
- * need"). Usage from a consuming page:
- *
- *   const [showChat, setShowChat] = useState(false);
- *   <button onClick={() => setShowChat(true)}>...</button>
- *   {showChat && <ChatSupportWidget onClose={() => setShowChat(false)} />}
- *
- * Exactly which pages/icons should open this is DEFERRED per
- * instruction ("for now you just implement it like what i said then
- * later i will tell you where and which component need that page or
- * icon") — this file is the reusable building block, not yet wired
- * into every page.
- *
- * FIVE internal screens, all matching your reference screenshots
- * pixel-for-pixel, switched via local `screen` state (no routing —
- * this is a self-contained overlay, same pattern as the modals
- * already used elsewhere in this app):
- *
- *   "hub"          — chat1.jpeg: purple gradient header with 3 avatar
- *                    bubbles + close X, "Hey {name} 👋 How can we
- *                    help?", Messages/Help rows, "Search for help"
- *                    (REAL live search across all help article
- *                    titles), "Send us a message" row, operational
- *                    status banner, "Subscribe to updates" button.
- *   "messages"     — chat2.jpeg: back arrow + "Messages" + edit icon
- *                    (per instruction, the edit/new-message icon is
- *                    shown for visual fidelity but does nothing —
- *                    "the edit/new message icon are not show i donot
- *                    want to implement write new message here" is
- *                    read as "don't wire it up", not "hide it",
- *                    since chat2.jpeg clearly shows the icon) + a
- *                    list of conversation threads. Per instruction,
- *                    the hardcoded "Product"/"Steve" sample threads
- *                    from your screenshot are SKIPPED — only the
- *                    real bot conversation (if any messages have
- *                    ever been sent) appears here, with its relative
- *                    time label computed fresh from the real
- *                    timestamp of its last message.
- *   "conversation" — chat3.jpeg / chat45.jpeg: the actual "Cuvva
- *                    Support Bot" chat thread. Loads any previously
- *                    saved messages from localStorage first (so
- *                    returning to an old conversation shows your
- *                    real history), bot messages on the left, user
- *                    messages on the right, quick-reply pills (only
- *                    shown before you've sent your first message,
- *                    matching the screenshot), and a text-only input
- *                    (per instruction: attach/GIF/mic icons are shown
- *                    for visual fidelity but are disabled — text
- *                    only can actually be sent).
- *   "article"      — chat4-13.jpeg: generic help-article renderer
- *                    (title/subtitle/date/body/"Did this answer your
- *                    question?" footer), driven by
- *                    chatHelpArticlesData.json — one component reused
- *                    for all 3 articles ("Taking a vehicle photo",
- *                    "How to contact customer support", "Vehicle
- *                    modifications"), matching your instruction that
- *                    each of chat4-7 / chat8-10 / chat11-13 is one
- *                    continuous scrollable article, not separate
- *                    pages.
- *   "terms"        — chat14-44.jpeg: the FULL real Cuvva terms and
- *                    conditions (29 clauses), reusing the EXACT same
- *                    termsData.json already built for
- *                    TermsPage.jsx — not re-transcribed, since it's
- *                    the identical document. Same content-block
- *                    renderer pattern (major heading / body / list),
- *                    just inside this overlay instead of a full page.
- *
- * BOT REPLIES ARE NOT REAL AI (explicit instruction: "i just only
- * need the UI no need for the proper api integration and the api
- * key"). chatBotRepliesData.json holds one hand-written canned reply
- * per quick-reply button, and a small pool of generic
- * "fallbackReplies" for anything freely typed that doesn't match a
- * quick-reply — one is picked at random, per instruction ("if the
- * user ask any other question then just show a random answer only").
- *
- * PERSISTENCE (explicit instruction): every message (yours + the
- * bot's) is saved to localStorage via chatLocalStorage.js, WITH a
- * real timestamp — so re-opening the conversation later shows the
- * real history, and the "Messages" list's relative-time label ("Nw
- * ago") is computed fresh from that real timestamp on every render,
- * not hardcoded.
- */
-
 const SUPPORT_HOURS_LINE = "We're here 9am - 9pm Mon - Sat and 9am - 6pm on Sundays";
 const AI_DISCLAIMER =
   "Our support combines human expertise with AI assistance. Please note that AI responses may not always be 100% accurate or complete. For definitive information, refer to our policy documents or speak directly with one of our human agents. AI-provided guidance is not formal advice, and we do not take responsibility for any information not provided by a human representative. For details on how your personal data is processed, please see our privacy notice.";
 
-// Flat, searchable list of every help article — powers the hub's
-// live "Search for help" box. Keeping this list here (rather than
-// re-deriving it from chatHelpArticlesData every render) makes the
-// search order match the screenshot's fixed order exactly.
 const HELP_ARTICLES = [
   { id: "vehicle-photo", title: "Taking a vehicle photo for your Cuvva policy" },
   { id: "contact-support", title: "How to contact customer support or leave feedback" },
@@ -130,15 +38,25 @@ const HELP_ARTICLES = [
 ];
 
 export default function ChatSupportWidget({ onClose, customerFirstName = "there" }) {
+  const navigate = useNavigate(); 
   const [screen, setScreen] = useState("hub");
   const [activeArticleId, setActiveArticleId] = useState(null);
+
+  // Guarantee the close button always goes back
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(-1); // Goes back to the previous page
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[100] bg-white text-[#151517] overflow-y-auto">
       {screen === "hub" && (
         <HubScreen
           customerFirstName={customerFirstName}
-          onClose={onClose}
+          onClose={handleClose}
           onOpenMessages={() => setScreen("messages")}
           onOpenConversation={() => setScreen("conversation")}
           onOpenArticle={(id) => {
@@ -151,29 +69,29 @@ export default function ChatSupportWidget({ onClose, customerFirstName = "there"
       {screen === "messages" && (
         <MessagesListScreen
           onBack={() => setScreen("hub")}
-          onClose={onClose}
+          onClose={handleClose}
           onOpenConversation={() => setScreen("conversation")}
         />
       )}
 
       {screen === "conversation" && (
-        <ConversationScreen onClose={() => setScreen("hub")} />
+        <ConversationScreen onClose={handleClose} />
       )}
 
       {screen === "article" && activeArticleId && (
         <ArticleScreen
           articleId={activeArticleId}
-          onClose={() => setScreen("hub")}
+          onClose={handleClose}
         />
       )}
 
-      {screen === "terms" && <TermsScreen onClose={() => setScreen("hub")} />}
+      {screen === "terms" && <TermsScreen onClose={handleClose} />}
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* HUB — chat1.jpeg                                                    */
+/* HUB — chat1.jpeg                                                   */
 /* ------------------------------------------------------------------ */
 
 function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversation, onOpenArticle }) {
@@ -195,7 +113,8 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
         }}
       >
         <div className="flex items-center justify-between">
-          <CuvvaWordmark className="h-6 w-auto text-white" />
+          {/* Cuvva Logo */}
+          <img src={cuvvaLogo} alt="Cuvva" className="h-6 w-auto" draggable={false} />
           <div className="flex items-center">
             <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] border-2 border-[#1c0839] flex items-center justify-center overflow-hidden -mr-2 z-30">
               <img src={chatBotAvatar} alt="" className="w-full h-full object-cover" draggable={false} />
@@ -313,26 +232,22 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
 }
 
 /* ------------------------------------------------------------------ */
-/* MESSAGES LIST — chat2.jpeg                                          */
+/* MESSAGES LIST — chat2.jpeg                                         */
 /* ------------------------------------------------------------------ */
 
 function MessagesListScreen({ onBack, onClose, onOpenConversation }) {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    setMessages(getChatMessages());
+    const stored = getChatMessages();
+    setMessages(Array.isArray(stored) ? stored : []);
   }, []);
 
-  // Only the REAL bot thread — the "Product"/"Steve" sample rows from
-  // the reference screenshot are intentionally not built, per
-  // instruction. If nothing has ever been sent, there's simply
-  // nothing to show yet (an empty state), same as a real messages
-  // inbox would look before your first conversation.
   const lastMessage = messages[messages.length - 1];
 
   return (
     <div className="min-h-screen">
-      <div className="flex items-center justify-between px-4 pt-4 pb-3">
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#f0f0f0]">
         <button
           type="button"
           onClick={onBack}
@@ -343,9 +258,6 @@ function MessagesListScreen({ onBack, onClose, onOpenConversation }) {
         </button>
         <h1 className="text-[17px] font-bold text-[#151517]">Messages</h1>
         <div className="flex items-center gap-1">
-          {/* Matches chat2.jpeg's edit/new-message icon for visual
-              fidelity — per instruction, NOT wired up (no "write new
-              message" flow is being built). */}
           <button
             type="button"
             onClick={() => console.log("New message tapped — not wired up yet.")}
@@ -394,7 +306,7 @@ function MessagesListScreen({ onBack, onClose, onOpenConversation }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* CONVERSATION — chat3.jpeg / chat45.jpeg                             */
+/* CONVERSATION — chat3.jpeg / chat45.jpeg                            */
 /* ------------------------------------------------------------------ */
 
 function ConversationScreen({ onClose }) {
@@ -403,34 +315,33 @@ function ConversationScreen({ onClose }) {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    setMessages(getChatMessages());
+    const stored = getChatMessages();
+    setMessages(Array.isArray(stored) ? stored : []);
   }, []);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, [messages]);
-
-  const hasSentAnyMessage = messages.some((m) => m.sender === "user");
 
   const pushMessage = (sender, text) => {
     const message = { id: `${Date.now()}-${sender}`, sender, text, timestamp: Date.now() };
     const updated = addChatMessage(message);
-    setMessages(updated);
+    setMessages(Array.isArray(updated) ? updated : [message]);
     return message;
   };
 
   const respondAsBot = (userText) => {
-    const matchedQuickReply = chatBotRepliesData.quickReplies.find(
+    // Safe fallbacks added here to prevent crashes if JSON is missing
+    const matchedQuickReply = chatBotRepliesData?.quickReplies?.find(
       (q) => q.label.toLowerCase() === userText.trim().toLowerCase(),
     );
+    const fallbacks = chatBotRepliesData?.fallbackReplies || ["Sorry, I'm having trouble understanding right now."];
     const replyText = matchedQuickReply
       ? matchedQuickReply.reply
-      : chatBotRepliesData.fallbackReplies[
-          Math.floor(Math.random() * chatBotRepliesData.fallbackReplies.length)
-        ];
-    // Small delay so the bot's reply doesn't appear in the exact same
-    // instant as your own message — makes it read like a real chat
-    // rather than an obviously scripted instant-echo.
+      : fallbacks[Math.floor(Math.random() * fallbacks.length)];
+      
     setTimeout(() => pushMessage("bot", replyText), 500);
   };
 
@@ -474,22 +385,18 @@ function ConversationScreen({ onClose }) {
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-4">
         <p className="text-center text-[13px] text-[#a5a5aa] mb-4">{SUPPORT_HOURS_LINE}</p>
 
-        <div className="flex items-start gap-2 rounded-2xl border border-[#e4e4e7] px-4 py-3.5 mb-4">
+        <div className="flex items-start gap-3.5 rounded-2xl border border-[#e4e4e7] px-4 py-3.5 mb-4">
           <Info size={16} className="text-[#a5a5aa] mt-0.5 shrink-0" />
           <p className="text-[13px] text-[#8a8a8f] leading-relaxed">{AI_DISCLAIMER}</p>
         </div>
 
-        {/* Bot's opening message — always shown first, matching the
-            screenshot exactly, regardless of real history below it. */}
+        {/* Bot's opening message */}
         <BotBubble
-          avatarLabel="Cuvva Support Bot • AI Agent"
+          avatarLabel="Cuvva Support Bot 🤖 AI Agent"
           text={"Hello 👋  How can we help?\nChoose an option below or type your message:"}
         />
 
-        {/* Real saved conversation history (if any) renders here,
-            in order, oldest first — bot on the left, user on the
-            right, exactly matching chat3.jpeg's / chat45.jpeg's
-            layout. */}
+        {/* Real saved conversation history */}
         {messages.map((m) =>
           m.sender === "bot" ? (
             <BotBubble key={m.id} text={m.text} />
@@ -498,16 +405,12 @@ function ConversationScreen({ onClose }) {
           ),
         )}
 
-        {/* Quick-reply pills — only shown before the user has sent
-            their first message, matching the reference screenshot
-            (which shows them on a fresh conversation with no history
-            yet). Once you've sent anything, they disappear so they
-            don't clutter an ongoing conversation. */}
-        {!hasSentAnyMessage && (
+        {/* FIXED: Safe optional chaining so it NEVER crashes if JSON is missing */}
+        {chatBotRepliesData?.quickReplies?.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {chatBotRepliesData.quickReplies.map((q) => (
               <button
-                key={q.id}
+                key={q.id || q.label}
                 type="button"
                 onClick={() => handleQuickReply(q)}
                 className="rounded-full border border-[#6337d9] px-4 py-2.5 text-[14px] font-semibold text-[#6337d9] text-left"
@@ -521,10 +424,7 @@ function ConversationScreen({ onClose }) {
         <div ref={scrollRef} />
       </div>
 
-      {/* Text-only input — attach/GIF/mic icons shown for visual
-          fidelity but disabled (per instruction: "on the chat input
-          field i want that i can only send text messages only no
-          picture voice and anything else"). */}
+      {/* Text-only input */}
       <div className="border-t border-[#f0f0f0] px-3 pt-3 pb-4">
         <div className="flex items-center gap-2 rounded-full bg-[#f2f2f2] px-4 py-2.5">
           <input
@@ -592,12 +492,12 @@ function UserBubble({ text }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* ARTICLE — chat4-13.jpeg (shared renderer for all 3 non-terms help   */
-/* articles: vehicle-photo, contact-support, vehicle-modifications)    */
+/* ARTICLE — chat4-13.jpeg (shared renderer for all 3 non-terms help  */
+/* articles: vehicle-photo, contact-support, vehicle-modifications)   */
 /* ------------------------------------------------------------------ */
 
 function ArticleScreen({ articleId, onClose }) {
-  const article = chatHelpArticlesData.articles[articleId];
+  const article = chatHelpArticlesData?.articles?.[articleId];
   if (!article) return null;
 
   return (
@@ -640,9 +540,9 @@ function ArticleScreen({ articleId, onClose }) {
         <section className="mt-10 rounded-3xl bg-[#f3f3f3] px-5 py-8 text-center">
           <p className="text-[16px] text-[#5d6065]">Did this answer your question?</p>
           <div className="mt-4 flex justify-center gap-6 text-[28px]">
-            <button type="button" aria-label="Not helpful">😞</button>
-            <button type="button" aria-label="Partly helpful">😐</button>
-            <button type="button" aria-label="Helpful">😀</button>
+            <button type="button" aria-label="Not helpful">👎</button>
+            <button type="button" aria-label="Partly helpful">😬</button>
+            <button type="button" aria-label="Helpful">👍</button>
           </div>
         </section>
       </div>
@@ -677,7 +577,7 @@ function ArticleBlock({ block }) {
         </ol>
       );
 
-    case "labelledList":
+    case "labeledList":
       return (
         <p className="text-[16px] text-[#151517] leading-relaxed">
           {block.items.map((item, i) => (
@@ -693,8 +593,8 @@ function ArticleBlock({ block }) {
       return (
         <div className="rounded-2xl bg-[#f3f3f3] px-4 py-4">
           <p className="text-[15px] text-[#151517] leading-relaxed">
-            Want to chat to customer support? Just tap the speech bubble in the corner of the screen on the
-            app or website. Support hours are <strong>9am to 9pm from Monday to Saturday, and 9am to 6pm on
+            Want to chat to customer support? Just tap the speech bubble in the corner of the
+            screen on the app or website. Support hours are <strong>9am to 9pm from Monday to Saturday, and 9am to 6pm on
             Sundays</strong>.
           </p>
         </div>
@@ -705,7 +605,7 @@ function ArticleBlock({ block }) {
         <figure className="pt-2">
           {block.caption && (
             <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-[#f1ecff] px-3 py-1.5 text-[13px] font-semibold text-[#6337d9]">
-              🚙 {block.caption}
+              👍 {block.caption}
             </span>
           )}
           <img src={block.src} alt={block.caption || ""} className="w-full rounded-xl" draggable={false} />
@@ -722,12 +622,12 @@ function ArticleBlock({ block }) {
 
 /**
  * Bold-leading-phrase renderer for list items like "Take it from the
- * front of the car. This gives us..." where the first sentence (up to
- * the period) is bold in the reference screenshot, and the rest is
+ * front of the car. This gives us...". The first sentence (up to the
+ * period) is bold in the reference screenshot, and the rest is
  * plain body text.
  */
 function renderWithBoldLead(text) {
-  const match = text.match(/^([^.]+\.)(\s*)(.*)$/s);
+  const match = text.match(/^([^\.]+\.)(\s*)(.*)$/s);
   if (!match) return text;
   const [, boldPart, space, rest] = match;
   return (
@@ -764,7 +664,7 @@ function TermsScreen({ onClose }) {
           Cuvva&rsquo;s terms and conditions
         </h1>
         <p className="mt-3 text-[17px] leading-relaxed text-[#5c5c61]">
-          Here&rsquo;s everything you need to know about our Ts&amp;Cs
+          Here&rsquo;s everything you need to know about our T&Cs
         </p>
         <p className="mt-4 text-[14px] text-[#a5a5aa]">June 25, 2026</p>
 
@@ -772,7 +672,9 @@ function TermsScreen({ onClose }) {
           {termsData.sections.map((section, idx) => (
             <section key={idx}>
               {section.heading && (
-                <h2 className="text-[19px] font-extrabold text-[#151517] mb-2.5">{section.heading}</h2>
+                <h2 className="text-[19px] font-extrabold text-[#151517] mb-2.5">
+                  {section.heading}
+                </h2>
               )}
               <div className="space-y-3">
                 {section.content.map((block, bIdx) => (
@@ -790,9 +692,9 @@ function TermsScreen({ onClose }) {
         <section className="mt-10 rounded-3xl bg-[#f3f3f3] px-5 py-8 text-center">
           <p className="text-[16px] text-[#5d6065]">Did this answer your question?</p>
           <div className="mt-4 flex justify-center gap-6 text-[28px]">
-            <button type="button" aria-label="Not helpful">😞</button>
-            <button type="button" aria-label="Partly helpful">😐</button>
-            <button type="button" aria-label="Helpful">😀</button>
+            <button type="button" aria-label="Not helpful">👎</button>
+            <button type="button" aria-label="Partly helpful">😬</button>
+            <button type="button" aria-label="Helpful">👍</button>
           </div>
         </section>
       </div>
@@ -821,7 +723,7 @@ function TermsBlock({ block }) {
 
 /**
  * Splits paragraph/list-item text on email addresses and renders them
- * in a muted grey-blue, same convention already established in
+ * in a muted gray-blue, same convention already established in
  * TermsPage.jsx / FonPage.jsx / PrivacyPolicyPage.jsx.
  */
 const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
@@ -837,18 +739,5 @@ function renderWithEmailLinks(text) {
     ) : (
       <span key={i}>{part}</span>
     ),
-  );
-}
-
-/** Cuvva wordmark for the hub's dark header — white on the purple/navy gradient. */
-function CuvvaWordmark({ className }) {
-  return (
-    <svg viewBox="0 0 140 32" fill="none" className={className}>
-      <circle cx="15" cy="16" r="13" fill="currentColor" />
-      <rect x="3" y="14.5" width="24" height="4.5" fill="#1c0839" />
-      <text x="34" y="24" fontFamily="Arial, sans-serif" fontWeight="800" fontSize="24" fill="currentColor" letterSpacing="-0.5">
-        Cuvva
-      </text>
-    </svg>
   );
 }
