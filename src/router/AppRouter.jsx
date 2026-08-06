@@ -66,7 +66,7 @@ import FonPage from "../components/customer/FonPage";
 import CarClubDetailPage from "../components/customer/CarClubDetailPage";
 import CreateCarClubPage from "../components/customer/CreateCarClubPage";
 import CarClubResourcePage from "../components/customer/CarClubResourcePage";
-import ChatSupportPage from "../components/customer/ChatSupportPage";
+import ChatSupportPage from "../components/customer/ChatSupportWidget";
 // --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">

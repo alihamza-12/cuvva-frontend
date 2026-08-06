@@ -35,6 +35,10 @@ export default function CreateCarClubPage() {
     setShowComingSoonModal(true);
   };
 
+  const handleHelp = () => {
+    navigate("/customer/support");
+  };
+
   return (
     <div className="min-h-screen bg-black text-white pb-32">
       {/* Header */}
@@ -49,7 +53,7 @@ export default function CreateCarClubPage() {
         </button>
         <button
           type="button"
-          onClick={() => console.log("Help tapped — not wired up yet.")}
+          onClick={handleHelp}
           aria-label="Help"
           className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
         >
