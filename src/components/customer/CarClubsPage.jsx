@@ -50,7 +50,7 @@ export default function CarClubsPage() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => handleNotWiredUp("Info")}
+            onClick={() => navigate("/customer/support")}
             aria-label="Info"
             className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5"
           >
@@ -59,7 +59,7 @@ export default function CarClubsPage() {
 
           <button
             type="button"
-            onClick={() => handleNotWiredUp("Help")}
+            onClick={() => navigate("/customer/support")}
             aria-label="Help"
             className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5"
           >

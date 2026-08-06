@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
 
 import PlateSearchBar from "../../components/customer/PlateSearchBar";
@@ -22,10 +23,19 @@ const MAX_RECENT = 10;
  *    deduping by vehicle — no new backend endpoint needed.
  */
 export default function CustomerHome() {
+  const navigate = useNavigate();
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const [recentlyViewed, setRecentlyViewed] = useState([]);
 
   const [buyAgainVehicles, setBuyAgainVehicles] = useState([]);
   const [buyAgainLoading, setBuyAgainLoading] = useState(true);
+
+  // --- Dropdown Support Navigation ---
+  const handleSupportNav = () => {
+    setShowDropdown(false); // Close dropdown first
+    navigate("/customer/support"); // Then open chat support
+  };
 
   // --- Recently Viewed: read from localStorage on mount ---
   useEffect(() => {
@@ -114,13 +124,48 @@ export default function CustomerHome() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4">
         <h1 className="text-[26px] font-extrabold tracking-tight">Get insured</h1>
-        <button
-          type="button"
-          aria-label="More options"
-          className="w-9 h-9 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center hover:bg-[#1d1e23] transition-colors"
-        >
-          <MoreHorizontal size={18} className="text-white" />
-        </button>
+        
+        {/* 3 Dots Dropdown Container */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowDropdown(!showDropdown)}
+            aria-label="More options"
+            className="w-9 h-9 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center hover:bg-[#1d1e23] transition-colors"
+          >
+            <MoreHorizontal size={18} className="text-white" />
+          </button>
+
+          {/* Dropdown Menu */}
+          {showDropdown && (
+            <>
+              {/* Invisible overlay to close dropdown when clicking outside */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowDropdown(false)}
+              />
+
+              {/* The dark dropdown card matching your screenshot exactly */}
+              <div className="absolute right-0 mt-2 w-44 bg-[#17181c] rounded-xl shadow-2xl py-1.5 z-50 border border-white/10">
+                {/* Option 1: Help centre (No Icon) */}
+                <button
+                  onClick={handleSupportNav}
+                  className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
+                >
+                  <span className="text-[15px] font-semibold text-white">Help centre</span>
+                </button>
+
+                {/* Option 2: Chat to us (No Icon) */}
+                <button
+                  onClick={handleSupportNav}
+                  className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
+                >
+                  <span className="text-[15px] font-semibold text-white">Chat to us</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Search */}
