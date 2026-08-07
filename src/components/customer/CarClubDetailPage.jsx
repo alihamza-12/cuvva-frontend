@@ -48,7 +48,7 @@ export default function CarClubDetailPage() {
 
   if (!club) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center pb-32">
+      <div className="flex items-center justify-center min-h-screen pb-32 text-white bg-black">
         <p className="text-[15px] text-[#9497a1]">
           Club not found.
         </p>
@@ -98,25 +98,23 @@ export default function CarClubDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white pb-32">
+    <div className="min-h-screen pb-32 text-white bg-black">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+          className="flex items-center justify-center w-10 h-10 transition-colors border rounded-full bg-white/5 border-white/10 hover:bg-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
 
         <button
           type="button"
-          onClick={() =>
-            console.log("Help tapped — not wired up yet.")
-          }
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+          className="flex items-center justify-center w-10 h-10 transition-colors border rounded-full bg-white/5 border-white/10 hover:bg-white/10"
         >
           <MessageCircleQuestion
             size={18}
@@ -152,7 +150,7 @@ export default function CarClubDetailPage() {
           <img
             src={club.carPhoto}
             alt=""
-            className="w-11 h-11 rounded-xl object-cover shrink-0"
+            className="object-cover w-11 h-11 rounded-xl shrink-0"
             draggable={false}
           />
 
@@ -256,17 +254,17 @@ export default function CarClubDetailPage() {
                 type="button"
                 onClick={handleBack}
                 aria-label="Close"
-                className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="flex items-center justify-center transition-colors rounded-full w-9 h-9 bg-white/5 hover:bg-white/10"
               >
                 <X size={18} className="text-white" />
               </button>
             </div>
 
-            <div className="flex flex-col items-center text-center mt-1">
+            <div className="flex flex-col items-center mt-1 text-center">
               <img
                 src={club.carPhoto}
                 alt=""
-                className="w-16 h-16 rounded-full object-cover mb-3 border-2 border-white/10"
+                className="object-cover w-16 h-16 mb-3 border-2 rounded-full border-white/10"
                 draggable={false}
               />
 
@@ -305,7 +303,7 @@ export default function CarClubDetailPage() {
             className="relative z-10 w-full bg-[#1b1c21] rounded-t-3xl px-5 pt-3 pb-8"
           >
             <div className="flex justify-center pb-3">
-              <div className="w-9 h-1 rounded-full bg-white/20" />
+              <div className="h-1 rounded-full w-9 bg-white/20" />
             </div>
 
             <div className="flex flex-col items-center text-center">
@@ -359,7 +357,7 @@ export default function CarClubDetailPage() {
                 type="button"
                 onClick={() => setShowChatBlockedModal(false)}
                 aria-label="Close"
-                className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center -mt-1 -mr-1 hover:bg-white/10 transition-colors"
+                className="flex items-center justify-center w-8 h-8 -mt-1 -mr-1 transition-colors rounded-full bg-white/5 hover:bg-white/10"
               >
                 <X size={16} className="text-white" />
               </button>
@@ -425,7 +423,7 @@ function MemberRow({
         <img
           src={avatar}
           alt=""
-          className="w-9 h-9 rounded-full object-cover shrink-0"
+          className="object-cover rounded-full w-9 h-9 shrink-0"
           draggable={false}
         />
       ) : (

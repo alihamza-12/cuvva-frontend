@@ -41,28 +41,28 @@ export default function MobileNumberPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-10">
+    <div className="min-h-screen pb-10 text-white bg-black">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
         <h1 className="text-[16px] font-bold text-white">Your mobile number</h1>
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Help")}
+onClick={() => navigate("/customer/support")}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <HelpCircle size={18} className="text-white" />
         </button>
       </div>
 
-      <div className="border-b border-white/5 mt-2" />
+      <div className="mt-2 border-b border-white/5" />
 
       <div className="px-4">
         <h2 className="text-[17px] font-extrabold text-white mt-5">

@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle } from "lucide-react";
-import { getBankDetails, saveBankDetails } from "../../utils/profileLocalStorage";
+import {
+  getBankDetails,
+  saveBankDetails,
+} from "../../utils/profileLocalStorage";
 
 /**
  * frontend/src/components/customer/BankAccountDetailsPage.jsx
@@ -58,22 +61,22 @@ export default function BankAccountDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="flex flex-col min-h-screen text-white bg-black">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
         <button
           type="button"
-          onClick={() => console.log("Help tapped — not wired up yet.")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <HelpCircle size={18} className="text-white" />
         </button>
@@ -85,8 +88,8 @@ export default function BankAccountDetailsPage() {
           Bank account details
         </h1>
         <p className="text-[15px] text-[#9497a1] leading-relaxed mt-2">
-          Let us know where to send your money when someone books a trip on
-          your car
+          Let us know where to send your money when someone books a trip on your
+          car
         </p>
 
         <div className="mt-6 space-y-3">
@@ -117,7 +120,9 @@ export default function BankAccountDetailsPage() {
 
         <button
           type="button"
-          onClick={() => console.log("How payouts work tapped — not wired up yet.")}
+          onClick={() =>
+            console.log("How payouts work tapped — not wired up yet.")
+          }
           className="flex items-center gap-2 mt-5 text-[15px] font-bold text-[#7c6bff]"
         >
           <HelpCircle size={18} className="text-[#7c6bff]" />
@@ -134,7 +139,7 @@ export default function BankAccountDetailsPage() {
       {/* Sticky footer — offset above CustomerBottomNav (bottom-24)
           rather than bottom-0, since this page now renders inside
           CustomerLayout (bottom nav visible) instead of full-screen. */}
-      <div className="fixed bottom-24 left-4 right-4 z-40">
+      <div className="fixed z-40 bottom-24 left-4 right-4">
         <button
           type="button"
           onClick={handleSave}

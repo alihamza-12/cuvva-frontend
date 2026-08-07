@@ -257,6 +257,7 @@ export default function VehicleCameraCapturePage() {
 
           <button
             type="button"
+            onClick={() => navigate("/customer/support")}
             aria-label="Help"
             style={{
               width: 40,
@@ -366,6 +367,7 @@ export default function VehicleCameraCapturePage() {
         </button>
 
         <button
+          onClick={() => navigate("/customer/support")}
           type="button"
           style={{
             marginTop: 18,
@@ -389,6 +391,7 @@ export default function VehicleCameraCapturePage() {
           result={photoError}
           onClose={() => setPhotoError(null)}
           onOk={() => setPhotoError(null)}
+          onHelp={() => navigate("/customer/support")}
         />
       )}
     </div>

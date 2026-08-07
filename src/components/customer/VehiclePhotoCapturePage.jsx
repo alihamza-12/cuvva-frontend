@@ -39,22 +39,26 @@ import exampleCarImage from "/car.jpeg";
 const STEP_CONFIG = {
   front: {
     title: "Take a photo of the front of the vehicle",
-    subtitle: "This shows us what condition it's in and helps us prevent fraud.",
+    subtitle:
+      "This shows us what condition it's in and helps us prevent fraud.",
     next: "back",
   },
   back: {
     title: "Take a photo of the back of the vehicle",
-    subtitle: "This shows us what condition it's in and helps us prevent fraud.",
+    subtitle:
+      "This shows us what condition it's in and helps us prevent fraud.",
     next: "left",
   },
   left: {
     title: "Take a photo of the left side of the vehicle",
-    subtitle: "This shows us what condition it's in and helps us prevent fraud.",
+    subtitle:
+      "This shows us what condition it's in and helps us prevent fraud.",
     next: "right",
   },
   right: {
     title: "Take a photo of the right side of the vehicle",
-    subtitle: "This shows us what condition it's in and helps us prevent fraud.",
+    subtitle:
+      "This shows us what condition it's in and helps us prevent fraud.",
     next: null,
   },
 };
@@ -67,32 +71,62 @@ export default function VehiclePhotoCapturePage() {
   const config = STEP_CONFIG[step] || STEP_CONFIG.front;
 
   const handleOpenCamera = () => {
-     navigate(`/customer/policies/photos/${step}/camera`, { state: location.state });
+    navigate(`/customer/policies/photos/${step}/camera`, {
+      state: location.state,
+    });
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0e0e12", color: "#fff", display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#0e0e12",
+        color: "#fff",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px",
+        }}
+      >
         <button
           type="button"
           onClick={() => navigate(-1)}
           aria-label="Back"
           style={{
-            width: 40, height: 40, borderRadius: "50%",
-            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
           }}
         >
           <ChevronLeft size={20} color="#ffffff" />
         </button>
         <button
           type="button"
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           style={{
-            width: 40, height: 40, borderRadius: "50%",
-            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
           }}
         >
           <HelpCircle size={18} color="#ffffff" />
@@ -100,16 +134,52 @@ export default function VehiclePhotoCapturePage() {
       </div>
 
       {/* Example cards */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 32px", marginTop: "-24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "40px" }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "0 32px",
+          marginTop: "-24px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "20px",
+            marginBottom: "40px",
+          }}
+        >
           <ExampleCard variant="bad" imageSrc={exampleCarImage} />
           <ExampleCard variant="good" imageSrc={exampleCarImage} />
         </div>
 
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#ffffff", textAlign: "center", lineHeight: 1.3, maxWidth: 280, margin: 0 }}>
+        <h1
+          style={{
+            fontSize: 24,
+            fontWeight: 800,
+            color: "#ffffff",
+            textAlign: "center",
+            lineHeight: 1.3,
+            maxWidth: 280,
+            margin: 0,
+          }}
+        >
           {config.title}
         </h1>
-        <p style={{ fontSize: 14, color: "#9497a1", textAlign: "center", marginTop: 12, maxWidth: 280, lineHeight: 1.5 }}>
+        <p
+          style={{
+            fontSize: 14,
+            color: "#9497a1",
+            textAlign: "center",
+            marginTop: 12,
+            maxWidth: 280,
+            lineHeight: 1.5,
+          }}
+        >
           {config.subtitle}
         </p>
       </div>
@@ -120,11 +190,17 @@ export default function VehiclePhotoCapturePage() {
           type="button"
           onClick={handleOpenCamera}
           style={{
-            width: "100%", padding: "16px", background: "#7c6bff", border: "none",
-            borderRadius: 999, cursor: "pointer",
+            width: "100%",
+            padding: "16px",
+            background: "#7c6bff",
+            border: "none",
+            borderRadius: 999,
+            cursor: "pointer",
           }}
         >
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>Open camera</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>
+            Open camera
+          </span>
         </button>
       </div>
     </div>
@@ -165,7 +241,11 @@ function ExampleCard({ variant, imageSrc }) {
       >
         <img
           src={imageSrc}
-          alt={isGood ? "Correctly framed vehicle example" : "Incorrectly framed vehicle example"}
+          alt={
+            isGood
+              ? "Correctly framed vehicle example"
+              : "Incorrectly framed vehicle example"
+          }
           style={{
             width: "100%",
             height: "100%",
@@ -215,10 +295,46 @@ function CornerBrackets({ color }) {
   };
   return (
     <>
-      <span style={{ ...base, top: 6, left: 6, borderRight: "none", borderBottom: "none", borderTopLeftRadius: 6 }} />
-      <span style={{ ...base, top: 6, right: 6, borderLeft: "none", borderBottom: "none", borderTopRightRadius: 6 }} />
-      <span style={{ ...base, bottom: 6, left: 6, borderRight: "none", borderTop: "none", borderBottomLeftRadius: 6 }} />
-      <span style={{ ...base, bottom: 6, right: 6, borderLeft: "none", borderTop: "none", borderBottomRightRadius: 6 }} />
+      <span
+        style={{
+          ...base,
+          top: 6,
+          left: 6,
+          borderRight: "none",
+          borderBottom: "none",
+          borderTopLeftRadius: 6,
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          top: 6,
+          right: 6,
+          borderLeft: "none",
+          borderBottom: "none",
+          borderTopRightRadius: 6,
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: 6,
+          left: 6,
+          borderRight: "none",
+          borderTop: "none",
+          borderBottomLeftRadius: 6,
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: 6,
+          right: 6,
+          borderLeft: "none",
+          borderTop: "none",
+          borderBottomRightRadius: 6,
+        }}
+      />
     </>
   );
 }

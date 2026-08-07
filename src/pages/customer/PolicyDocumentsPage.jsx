@@ -45,7 +45,7 @@ export default function PolicyDocumentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen text-white bg-black">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <button
@@ -61,6 +61,7 @@ export default function PolicyDocumentsPage() {
 
         <button
           type="button"
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="w-10 h-10 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center"
         >
@@ -86,7 +87,7 @@ export default function PolicyDocumentsPage() {
               <ChevronRight size={18} className="text-[#5c5e68] shrink-0" />
             </button>
             {idx < DOCUMENTS.length - 1 && (
-              <div className="h-px bg-white/5 mx-4" />
+              <div className="h-px mx-4 bg-white/5" />
             )}
           </React.Fragment>
         ))}

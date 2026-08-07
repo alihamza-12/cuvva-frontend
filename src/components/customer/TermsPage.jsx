@@ -54,7 +54,7 @@ export default function TermsPage() {
         </h1>
         <button
           type="button"
-          onClick={() => console.log("Help tapped — not wired up yet.")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="w-9 h-9 rounded-full bg-[#f2f2f2] flex items-center justify-center"
         >

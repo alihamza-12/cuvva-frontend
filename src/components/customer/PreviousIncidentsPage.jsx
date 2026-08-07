@@ -93,7 +93,7 @@ export default function PreviousIncidentsPage() {
   };
 
   const handleContactUs = () => {
-    console.log("Contact us tapped — not wired up yet.");
+    navigate("/customer/support");
   };
 
   const handleAddIncident = () => {
@@ -120,14 +120,14 @@ export default function PreviousIncidentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="flex flex-col min-h-screen text-white bg-black">
       {/* Header */}
       <div className="flex items-center px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
@@ -142,8 +142,8 @@ export default function PreviousIncidentsPage() {
         </h1>
         <p className="text-[15px] text-[#9497a1] leading-relaxed mt-3">
           You need to declare any previous incidents even if you weren't at
-          fault or a claim was never made. This includes car accidents,
-          theft and vehicle damage. Find out{" "}
+          fault or a claim was never made. This includes car accidents, theft
+          and vehicle damage. Find out{" "}
           <button
             type="button"
             onClick={handleWhatCounts}
@@ -158,7 +158,9 @@ export default function PreviousIncidentsPage() {
           onClick={() => navigate("/customer/profile/account/incidents/add")}
           className="w-full flex items-center gap-2 mt-5 py-4 px-5 rounded-full bg-[#17181c] border border-white/5"
         >
-          <span className="text-[20px] font-bold text-[#7c6bff] leading-none">+</span>
+          <span className="text-[20px] font-bold text-[#7c6bff] leading-none">
+            +
+          </span>
           <span className="text-[15px] font-semibold text-[#7c6bff]">
             Add an incident
           </span>
@@ -173,7 +175,9 @@ export default function PreviousIncidentsPage() {
                   <div
                     key={incident.id}
                     className={`w-full flex items-center gap-3 px-4 py-4 ${
-                      i !== incidents.length - 1 ? "border-b border-white/5" : ""
+                      i !== incidents.length - 1
+                        ? "border-b border-white/5"
+                        : ""
                     }`}
                   >
                     <Icon size={22} className="text-[#7c6bff] shrink-0" />
@@ -207,7 +211,7 @@ export default function PreviousIncidentsPage() {
       {/* "Done" / "No incidents to declare" — fixed, always sitting
           right above CustomerBottomNav, exactly like every other
           Account-details page's sticky action button. */}
-      <div className="fixed bottom-24 left-4 right-4 z-40">
+      <div className="fixed z-40 bottom-24 left-4 right-4">
         <button
           type="button"
           onClick={handleMainButtonTap}
@@ -229,7 +233,7 @@ export default function PreviousIncidentsPage() {
           />
           <div className="relative w-full bg-[#17181c] rounded-t-3xl px-5 pt-3 pb-8 z-10">
             <div className="flex justify-center pb-3">
-              <div className="w-9 h-1 rounded-full bg-white/20" />
+              <div className="h-1 rounded-full w-9 bg-white/20" />
             </div>
             <h2 className="text-[22px] font-extrabold text-white">
               Confirm you've declared:
@@ -244,7 +248,9 @@ export default function PreviousIncidentsPage() {
                 "All reported incidents, even if you didn't make a claim",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <span className="text-[16px] text-white shrink-0 mt-0.5">✓</span>
+                  <span className="text-[16px] text-white shrink-0 mt-0.5">
+                    ✓
+                  </span>
                   <span className="text-[15px] text-white leading-relaxed">
                     {item}
                   </span>
@@ -253,8 +259,8 @@ export default function PreviousIncidentsPage() {
             </ul>
 
             <p className="text-[14px] text-[#9497a1] leading-relaxed mt-4">
-              If you've been involved in or reported an incident in the last
-              3 years, you need to declare it now.
+              If you've been involved in or reported an incident in the last 3
+              years, you need to declare it now.
             </p>
 
             <button
@@ -289,7 +295,7 @@ export default function PreviousIncidentsPage() {
               type="button"
               onClick={() => setShowWhatCounts(false)}
               aria-label="Close"
-              className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+              className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
             >
               <X size={20} className="text-white" />
             </button>
@@ -297,13 +303,13 @@ export default function PreviousIncidentsPage() {
               type="button"
               onClick={handleContactUs}
               aria-label="Help"
-              className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+              className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
             >
               <MessageCircleQuestion size={20} className="text-white" />
             </button>
           </div>
 
-          <div className="flex-1 px-4 pt-4 pb-28 overflow-y-auto">
+          <div className="flex-1 px-4 pt-4 overflow-y-auto pb-28">
             <h1 className="text-[22px] font-extrabold text-white leading-tight">
               What counts as an incident
             </h1>
@@ -325,7 +331,9 @@ export default function PreviousIncidentsPage() {
                 "At fault or joint-fault",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <span className="text-[16px] text-white shrink-0 mt-0.5">✓</span>
+                  <span className="text-[16px] text-white shrink-0 mt-0.5">
+                    ✓
+                  </span>
                   <span className="text-[15px] text-white leading-relaxed">
                     {item}
                   </span>

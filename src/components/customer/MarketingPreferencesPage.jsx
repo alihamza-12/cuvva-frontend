@@ -22,7 +22,10 @@ import {
  */
 export default function MarketingPreferencesPage() {
   const navigate = useNavigate();
-  const [prefs, setPrefs] = useState({ cuvvaChoice: "stay-in-loop", toyotaOffers: false });
+  const [prefs, setPrefs] = useState({
+    cuvvaChoice: "stay-in-loop",
+    toyotaOffers: false,
+  });
 
   useEffect(() => {
     setPrefs(getMarketingPreferences());
@@ -49,7 +52,8 @@ export default function MarketingPreferencesPage() {
     {
       id: "all-the-good-stuff",
       title: "All the good stuff",
-      description: "Offers, tips, and the best bits from Cuvva and relevant partners",
+      description:
+        "Offers, tips, and the best bits from Cuvva and relevant partners",
     },
     {
       id: "stay-in-loop",
@@ -64,28 +68,32 @@ export default function MarketingPreferencesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white pb-40">
+    <div className="min-h-screen pb-40 text-white bg-black">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
-        <h1 className="text-[16px] font-bold text-white">Marketing preferences</h1>
+        <h1 className="text-[16px] font-bold text-white">
+          Marketing preferences
+        </h1>
         <button
           type="button"
-          onClick={() => console.log("Help tapped — not wired up yet.")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <HelpCircle size={18} className="text-white" />
         </button>
       </div>
 
-      <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-2">Cuvva</p>
+      <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-2">
+        Cuvva
+      </p>
       <div className="mx-4 rounded-2xl bg-[#17181c] border border-white/5 overflow-hidden">
         {options.map((opt, i) => (
           <button
@@ -107,16 +115,21 @@ export default function MarketingPreferencesPage() {
         ))}
       </div>
 
-      <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-2">Toyota</p>
+      <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-2">
+        Toyota
+      </p>
       <div className="mx-4 rounded-2xl bg-[#17181c] border border-white/5 overflow-hidden">
-        <div className="w-full flex items-start justify-between gap-3 px-4 py-4">
+        <div className="flex items-start justify-between w-full gap-3 px-4 py-4">
           <div>
             <p className="text-[15px] font-bold text-white">Send me offers</p>
             <p className="text-[13px] text-[#9497a1] leading-relaxed mt-0.5">
               Get products and services from Toyota by email and text message
             </p>
           </div>
-          <ToggleSwitch checked={prefs.toyotaOffers} onChange={toggleToyotaOffers} />
+          <ToggleSwitch
+            checked={prefs.toyotaOffers}
+            onChange={toggleToyotaOffers}
+          />
         </div>
       </div>
     </div>
@@ -131,7 +144,14 @@ function RadioDot({ selected }) {
       }`}
     >
       {selected && (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={3.5}>
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          strokeWidth={3.5}
+        >
           <polyline points="20 6 9 17 4 12" />
         </svg>
       )}
@@ -149,7 +169,7 @@ function ToggleSwitch({ checked, onChange }) {
         checked ? "bg-[#7c6bff] justify-end" : "bg-[#3a3a41] justify-start"
       }`}
     >
-      <span className="w-6 h-6 rounded-full bg-white shadow" />
+      <span className="w-6 h-6 bg-white rounded-full shadow" />
     </button>
   );
 }

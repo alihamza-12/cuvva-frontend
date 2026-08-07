@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle, MessageCircleQuestion } from "lucide-react";
-import { getAppliedDiscounts, saveAppliedDiscounts } from "../../utils/profileLocalStorage";
+import {
+  getAppliedDiscounts,
+  saveAppliedDiscounts,
+} from "../../utils/profileLocalStorage";
 import notFoundIcon from "/details-not-found-icon.png";
 
 /**
@@ -72,7 +75,10 @@ export default function DiscountCodePage() {
     // but the UI always shows "Details not found" per instruction,
     // since there's nothing real to validate the code against.
     const existing = getAppliedDiscounts();
-    saveAppliedDiscounts([...existing, { code: trimmed, appliedAt: new Date().toISOString() }]);
+    saveAppliedDiscounts([
+      ...existing,
+      { code: trimmed, appliedAt: new Date().toISOString() },
+    ]);
     setStatus(null);
     setShowNotFound(true);
   };
@@ -89,10 +95,12 @@ export default function DiscountCodePage() {
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
-        <h1 className="text-[16px] font-bold text-white">Apply discount code</h1>
+        <h1 className="text-[16px] font-bold text-white">
+          Apply discount code
+        </h1>
         <button
           type="button"
-          onClick={() => console.log("Help tapped — not wired up yet.")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
@@ -104,8 +112,8 @@ export default function DiscountCodePage() {
           code exactly (no "Chat to our team" here at all). */}
       <div className="relative z-10 px-4 pt-6">
         <p className="text-[15px] text-[#9497a1] leading-relaxed text-center">
-          Enter a discount code if you have been referred by a friend or have
-          a promotional discount code
+          Enter a discount code if you have been referred by a friend or have a
+          promotional discount code
         </p>
 
         <div className="mt-5">
@@ -156,7 +164,11 @@ export default function DiscountCodePage() {
           <div className="absolute z-40 left-4 right-4" style={{ top: "34%" }}>
             <div className="bg-[#1b1c21] rounded-3xl px-6 pt-8 pb-8 text-center shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
               <div className="flex justify-center">
-                <img src={notFoundIcon} alt="" className="w-[92px] h-[92px] object-contain" />
+                <img
+                  src={notFoundIcon}
+                  alt=""
+                  className="w-[92px] h-[92px] object-contain"
+                />
               </div>
               <h2 className="text-[19px] font-extrabold text-white mt-5">
                 Details not found
@@ -182,7 +194,7 @@ export default function DiscountCodePage() {
           <div className="fixed bottom-0 left-0 right-0 z-[60] bg-black flex items-center justify-center min-h-[110px] safe-bottom-replace">
             <button
               type="button"
-              onClick={() => console.log("Chat to our team tapped — not wired up yet.")}
+              onClick={() => navigate("/customer/support")}
               className="flex items-center gap-1.5 text-[14px] font-semibold text-white"
             >
               <MessageCircleQuestion size={16} className="text-white" />

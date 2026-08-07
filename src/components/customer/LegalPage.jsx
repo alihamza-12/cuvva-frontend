@@ -1,5 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, FileText, MessageCircleQuestion } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  MessageCircleQuestion,
+} from "lucide-react";
 
 /**
  * frontend/src/components/customer/LegalPage.jsx
@@ -52,7 +57,7 @@ export default function LegalPage() {
         <h1 className="text-[16px] font-bold text-white">Legal</h1>
         <button
           type="button"
-          onClick={() => console.log("Help tapped — not wired up yet.")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >

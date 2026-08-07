@@ -65,7 +65,7 @@ export default function AddMobileNumberPage() {
   };
 
   const handleHelp = () => {
-    console.log("Help tapped — not wired up yet.");
+    navigate("/customer/support");
   };
 
   const handleNext = async () => {
@@ -103,14 +103,14 @@ export default function AddMobileNumberPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="flex flex-col min-h-screen text-white bg-black">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
@@ -118,7 +118,7 @@ export default function AddMobileNumberPage() {
           type="button"
           onClick={handleHelp}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <MessageCircleQuestion size={18} className="text-white" />
         </button>
@@ -204,7 +204,7 @@ export default function AddMobileNumberPage() {
 
       {/* Sticky footer — button color reflects whether the input has
           a VALID UK mobile number, not just any text. */}
-      <div className="fixed bottom-24 left-4 right-4 z-40">
+      <div className="fixed z-40 bottom-24 left-4 right-4">
         <button
           type="button"
           onClick={handleNext}

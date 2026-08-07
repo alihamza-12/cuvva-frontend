@@ -57,27 +57,27 @@ export default function DeleteAccountInfoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="flex flex-col min-h-screen text-white bg-black">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
         <button
           type="button"
-          onClick={() => console.log("Help tapped — not wired up yet.")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <HelpCircle size={18} className="text-white" />
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center px-8 pt-16 pb-32 text-center">
+      <div className="flex flex-col items-center flex-1 px-8 pt-16 pb-32 text-center">
         <img
           src={deleteAccountIllustration}
           alt=""
@@ -118,7 +118,7 @@ export default function DeleteAccountInfoPage() {
       {/* Sticky footer — offset above CustomerBottomNav (bottom-24)
           rather than bottom-0, since this page now renders inside
           CustomerLayout (bottom nav visible) instead of full-screen. */}
-      <div className="fixed bottom-24 left-4 right-4 z-40">
+      <div className="fixed z-40 bottom-24 left-4 right-4">
         <button
           type="button"
           onClick={handleDeleteAccount}

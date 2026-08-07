@@ -26,6 +26,12 @@ import policyImg from "/policyimg.png";
  */
 export default function PoliciesPage() {
   const navigate = useNavigate();
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleSupportNav = () => {
+    setShowDropdown(false);
+    navigate("/customer/support");
+  };
 
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -139,13 +145,43 @@ export default function PoliciesPage() {
     <div className="min-h-screen pb-32 text-white bg-black">
       {/* Header */}
       <div className="flex items-center justify-end px-4 pt-4">
-        <button
-          type="button"
-          aria-label="More options"
-          className="w-9 h-9 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center hover:bg-[#1d1e23] transition-colors"
-        >
-          <MoreHorizontal size={18} className="text-white" />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowDropdown(!showDropdown)}
+            aria-label="More options"
+            className="w-9 h-9 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center hover:bg-[#1d1e23] transition-colors"
+          >
+            <MoreHorizontal size={18} className="text-white" />
+          </button>
+
+          {showDropdown && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowDropdown(false)}
+              />
+              <div className="absolute right-0 mt-2 w-44 bg-[#17181c] rounded-xl shadow-2xl py-1.5 z-50 border border-white/10">
+                <button
+                  onClick={handleSupportNav}
+                  className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
+                >
+                  <span className="text-[15px] font-semibold text-white">
+                    Help centre
+                  </span>
+                </button>
+                <button
+                  onClick={handleSupportNav}
+                  className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
+                >
+                  <span className="text-[15px] font-semibold text-white">
+                    Chat to us
+                  </span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="px-4 pt-2">

@@ -53,6 +53,12 @@ export default function PolicyQuotePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleSupportNav = () => {
+    setShowDropdown(false);
+    navigate("/customer/support");
+  };
 
   const vehicle = location.state?.prefillVehicle || {
     make: "Vehicle",
@@ -167,9 +173,9 @@ export default function PolicyQuotePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="flex flex-col min-h-screen text-white bg-black">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm flex items-center justify-between px-4 py-3">
+      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-black/95 backdrop-blur-sm">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -186,17 +192,47 @@ export default function PolicyQuotePage() {
             {vehicle.registration}
           </div>
         </div>
-        <button
-          type="button"
-          aria-label="More options"
-          className="w-9 h-9 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center"
-        >
-          <MoreHorizontal size={16} className="text-white" />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowDropdown(!showDropdown)}
+            aria-label="More options"
+            className="w-9 h-9 rounded-full bg-[#17181c] border border-white/5 flex items-center justify-center"
+          >
+            <MoreHorizontal size={16} className="text-white" />
+          </button>
+
+          {showDropdown && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowDropdown(false)}
+              />
+              <div className="absolute right-0 mt-2 w-44 bg-[#17181c] rounded-xl shadow-2xl py-1.5 z-50 border border-white/10">
+                <button
+                  onClick={handleSupportNav}
+                  className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
+                >
+                  <span className="text-[15px] font-semibold text-white">
+                    Help centre
+                  </span>
+                </button>
+                <button
+                  onClick={handleSupportNav}
+                  className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
+                >
+                  <span className="text-[15px] font-semibold text-white">
+                    Chat to us
+                  </span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
+      <div className="flex-1 px-4 pb-4 space-y-3 overflow-y-auto">
         {/* Vehicle identity block */}
         <div className="flex flex-col items-center pt-1 pb-2">
           <CarBrandIcon make={vehicle.make} size={56} />
@@ -227,7 +263,7 @@ export default function PolicyQuotePage() {
             <ChevronRight size={16} className="text-[#5c5e68] ml-2 shrink-0" />
           </button>
 
-          <div className="h-px bg-white/5 mx-4" />
+          <div className="h-px mx-4 bg-white/5" />
 
           <button
             type="button"
@@ -317,7 +353,7 @@ export default function PolicyQuotePage() {
       </div>
 
       {/* Sticky footer: price + continue */}
-      <div className="sticky bottom-0 bg-black border-t border-white/5 px-4 py-4 flex items-center justify-between">
+      <div className="sticky bottom-0 flex items-center justify-between px-4 py-4 bg-black border-t border-white/5">
         <div>
           <div className="text-[22px] font-extrabold text-white">
             £{quote.premiumGBP.toFixed(2)}

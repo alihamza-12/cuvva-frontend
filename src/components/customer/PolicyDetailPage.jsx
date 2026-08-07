@@ -361,12 +361,12 @@ export default function PolicyDetailPage() {
           <HelpRow
             icon={MessageCircle}
             label="Chat to us"
-            onClick={() => handleNotWiredUp("Chat to us")}
+            onClick={() => navigate("/customer/support")}
           />
           <HelpRow
             icon={HelpCircle}
             label="Visit the help centre"
-            onClick={() => handleNotWiredUp("Help centre")}
+            onClick={() => navigate("/customer/support")}
             isLast
           />
         </div>

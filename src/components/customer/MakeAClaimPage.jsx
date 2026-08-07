@@ -86,6 +86,7 @@ export default function MakeAClaimPage() {
         </button>
         <button
           type="button"
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="relative z-20 flex items-center justify-center w-10 h-10 border rounded-full pointer-events-auto bg-white/5 border-white/10"
         >

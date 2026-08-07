@@ -122,7 +122,7 @@ export default function CarClubResourcePage() {
         </button>
         <button
           type="button"
-          onClick={() => setShowChatModal(true)}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-[0_4px_18px_rgba(0,0,0,0.08)]"
         >
@@ -133,12 +133,12 @@ export default function CarClubResourcePage() {
       {/* Navy header block — Cuvva logo, hamburger menu, search bar. */}
       <div className="-mt-[68px] rounded-t-[28px] bg-[#06021f] px-5 pb-7 pt-[84px]">
         <div className="flex items-center justify-between">
-          <img src={cuvvaLogoWhite} alt="Cuvva" className="h-5 w-auto select-none" draggable={false} />
+          <img src={cuvvaLogoWhite} alt="Cuvva" className="w-auto h-5 select-none" draggable={false} />
           <button
             type="button"
             onClick={() => setShowMenu(true)}
             aria-label="Open menu"
-            className="flex h-8 w-8 items-center justify-center"
+            className="flex items-center justify-center w-8 h-8"
           >
             <Menu size={22} className="text-white" />
           </button>
@@ -262,8 +262,8 @@ export default function CarClubResourcePage() {
         {/* Cuvva footer block — matches pict9.jpeg. All product links
             and social icons are inert placeholders (real cuvva.com
             marketing content, not part of this app's own routes). */}
-        <footer className="mt-14 text-center">
-          <img src={cuvvaLogoGrey} alt="Cuvva" className="mx-auto h-6 w-auto select-none" draggable={false} />
+        <footer className="text-center mt-14">
+          <img src={cuvvaLogoGrey} alt="Cuvva" className="w-auto h-6 mx-auto select-none" draggable={false} />
           <p className="mx-auto mt-6 max-w-[320px] text-[15px] leading-relaxed text-[#8b8f96]">
             Cuvva is authorised and regulated by the UK Financial Conduct
             Authority. (#690273)
@@ -306,7 +306,7 @@ export default function CarClubResourcePage() {
               type="button"
               onClick={() => setShowMenu(false)}
               aria-label="Close"
-              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center"
+              className="absolute flex items-center justify-center w-8 h-8 right-4 top-4"
             >
               <X size={20} className="text-black" />
             </button>
@@ -429,7 +429,7 @@ function ArticleContent({ highlightedId }) {
         out-of-action.
       </p>
       <p className="mt-7">Whatever the reason, when you share your car with someone:</p>
-      <ul className="mt-5 list-disc space-y-3 pl-7">
+      <ul className="mt-5 space-y-3 list-disc pl-7">
         <li>it could save them money, rather than taking a taxi or hire car 💰</li>
         <li>it could avoid them needing to buy a car, reducing traffic and parking woes 🌍</li>
       </ul>
@@ -440,7 +440,7 @@ function ArticleContent({ highlightedId }) {
         Start by clicking the &lsquo;Car clubs&rsquo; tab in the Cuvva app. Then you
         can create your car club in 3 easy steps:
       </p>
-      <ol className="mt-5 list-decimal space-y-2 pl-7">
+      <ol className="mt-5 space-y-2 list-decimal pl-7">
         <li>Give your club a name</li>
         <li>Add your vehicle</li>
         <li>Share a link to your club and invite people to join</li>
@@ -482,7 +482,7 @@ function ArticleContent({ highlightedId }) {
       <p className="mt-7">
         If someone has an accident when they borrow your car, we&rsquo;ll cover:
       </p>
-      <ul className="mt-4 list-disc space-y-2 pl-7">
+      <ul className="mt-4 space-y-2 list-disc pl-7">
         <li>damage to your vehicle</li>
         <li>damage to any other vehicles involved</li>
         <li>personal injury claims</li>
@@ -534,7 +534,7 @@ function ArticleContent({ highlightedId }) {
         pets and smoking in the vehicle too.
       </p>
       <p className="mt-9">A couple of final tips:</p>
-      <ul className="mt-4 list-disc space-y-3 pl-7">
+      <ul className="mt-4 space-y-3 list-disc pl-7">
         <li><strong>Swap phone numbers</strong> so you can stay in touch.</li>
         <li><strong>Take photos of the car</strong> before and after it is borrowed.</li>
       </ul>

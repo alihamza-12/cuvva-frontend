@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle, ChevronRight, Check } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
-import { getPreferredName, getPreviousIncidents } from "../../utils/profileLocalStorage";
+import {
+  getPreferredName,
+  getPreviousIncidents,
+} from "../../utils/profileLocalStorage";
 
 /**
  * frontend/src/components/customer/AccountDetailsPage.jsx
@@ -97,23 +100,23 @@ export default function AccountDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-40">
+    <div className="min-h-screen pb-40 text-white bg-black">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
         <h1 className="text-[16px] font-bold text-white">Account details</h1>
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Help")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <HelpCircle size={18} className="text-white" />
         </button>
@@ -200,7 +203,15 @@ function SectionLabel({ children }) {
   );
 }
 
-function InfoRow({ label, value, verified, onClick, isLast, disabled, danger }) {
+function InfoRow({
+  label,
+  value,
+  verified,
+  onClick,
+  isLast,
+  disabled,
+  danger,
+}) {
   return (
     <button
       type="button"
@@ -210,7 +221,9 @@ function InfoRow({ label, value, verified, onClick, isLast, disabled, danger }) 
         !isLast ? "border-b border-white/5" : ""
       }`}
     >
-      <span className={`text-[15px] text-left ${danger ? "text-[#e05a5a]" : "text-white"}`}>
+      <span
+        className={`text-[15px] text-left ${danger ? "text-[#e05a5a]" : "text-white"}`}
+      >
         {label}
       </span>
       <span className="flex items-center gap-2 shrink-0">

@@ -36,7 +36,7 @@ export default function PolicyWordingPage() {
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a]">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-3 sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b border-black/5">
+      <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b bg-white/95 backdrop-blur-sm border-black/5">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -50,6 +50,7 @@ export default function PolicyWordingPage() {
         </h1>
         <button
           type="button"
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="w-9 h-9 rounded-full bg-[#f2f2f2] flex items-center justify-center"
         >
@@ -58,7 +59,7 @@ export default function PolicyWordingPage() {
       </div>
 
       {/* Full document body */}
-      <div className="px-6 py-6 max-w-2xl mx-auto space-y-10">
+      <div className="max-w-2xl px-6 py-6 mx-auto space-y-10">
         {policyWordingData.sections.map((section, idx) => (
           <section key={idx}>
             <h2 className="text-[17px] font-semibold text-[#8b93a7] mb-3">
@@ -94,7 +95,7 @@ function ContentBlock({ block }) {
 
     case "list":
       return (
-        <ul className="list-disc pl-5 space-y-2">
+        <ul className="pl-5 space-y-2 list-disc">
           {block.items.map((item, i) => (
             <li key={i} className="text-[15px] text-[#1a1a1a] leading-relaxed">
               {item}

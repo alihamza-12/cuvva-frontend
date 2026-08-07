@@ -5,7 +5,10 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react";
-import { useGetMyProfileQuery, useUpdateProfilePhotoMutation } from "../../app/api/profileApi";
+import {
+  useGetMyProfileQuery,
+  useUpdateProfilePhotoMutation,
+} from "../../app/api/profileApi";
 import { useLogoutUserMutation } from "../../app/api/authApi";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../features/authSlice";
@@ -13,7 +16,10 @@ import { useNavigate } from "react-router-dom";
 import referFriendImg from "/referfriendillustration.png";
 import PaymentMethodsSheet from "./PaymentMethodsSheet";
 import RateAppModal from "./RateAppModal";
-import { getPaymentMethod, getPreferredName } from "../../utils/profileLocalStorage";
+import {
+  getPaymentMethod,
+  getPreferredName,
+} from "../../utils/profileLocalStorage";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 /**
@@ -167,7 +173,9 @@ export default function ProfilePage() {
       // Never silently pretend the upload worked — discard the
       // preview and surface a real, honest error message.
       setLocalPreviewUrl(null);
-      setPhotoError(err?.message || "Couldn't update your photo. Please try again.");
+      setPhotoError(
+        err?.message || "Couldn't update your photo. Please try again.",
+      );
     } finally {
       URL.revokeObjectURL(objectUrl);
       setIsUploadingPhoto(false);
@@ -202,7 +210,7 @@ export default function ProfilePage() {
         <h1 className="text-[18px] font-extrabold">Profile</h1>
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Help")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="flex items-center justify-center border rounded-full w-9 h-9 bg-white/5 border-white/10"
         >
@@ -322,15 +330,29 @@ export default function ProfilePage() {
       {/* Support */}
       <SectionLabel>Support</SectionLabel>
       <Card>
-        <Row label="Help centre" onClick={() => handleNotWiredUp("Help centre")} />
-        <Row label="Chat to customer support" onClick={() => handleNotWiredUp("Chat to customer support")} />
-        <Row label="Previous chats" onClick={() => handleNotWiredUp("Previous chats")} isLast />
+        <Row
+          label="Help centre"
+          onClick={() => navigate("/customer/support")}
+        />
+        <Row
+          label="Chat to customer support"
+          onClick={() => navigate("/customer/support")}
+        />
+        <Row
+          label="Previous chats"
+          onClick={() => navigate("/customer/support")}
+          isLast
+        />
       </Card>
 
       {/* Feedback */}
       <SectionLabel>Feedback</SectionLabel>
       <Card>
-        <Row label="Rate the app" onClick={() => setShowRateModal(true)} isLast />
+        <Row
+          label="Rate the app"
+          onClick={() => setShowRateModal(true)}
+          isLast
+        />
       </Card>
 
       {/* About */}
@@ -338,13 +360,21 @@ export default function ProfilePage() {
       <Card>
         <Row label="Blog" href="https://www.cuvva.com/news" />
         <Row label="Careers at Cuvva" href="https://www.cuvva.com/careers" />
-        <Row label="Legal" onClick={() => navigate("/customer/profile/legal")} isLast />
+        <Row
+          label="Legal"
+          onClick={() => navigate("/customer/profile/legal")}
+          isLast
+        />
       </Card>
 
       {/* Settings */}
       <SectionLabel>Settings</SectionLabel>
       <Card>
-        <Row label="Change icon" onClick={() => handleNotWiredUp("Change icon")} isLast />
+        <Row
+          label="Change icon"
+          onClick={() => handleNotWiredUp("Change icon")}
+          isLast
+        />
       </Card>
 
       <Card className="mt-3">

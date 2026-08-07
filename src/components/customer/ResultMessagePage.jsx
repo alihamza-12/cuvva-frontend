@@ -62,6 +62,7 @@ export default function ResultMessagePage() {
       result={result}
       onClose={() => navigate(-1)}
       onOk={handleOk}
+      onHelp={() => navigate("/customer/support")}
     />
   );
 }
@@ -73,7 +74,12 @@ export default function ResultMessagePage() {
  * failure case where you likely want to show this over the camera
  * screen rather than losing that screen's state.
  */
-export function ResultMessageView({ result = DEFAULT_RESULT, onClose, onOk }) {
+export function ResultMessageView({
+  result = DEFAULT_RESULT,
+  onClose,
+  onOk,
+  onHelp,
+}) {
   const Icon = ICONS[result.icon] || ServerErrorIcon;
 
   return (
@@ -117,6 +123,7 @@ export function ResultMessageView({ result = DEFAULT_RESULT, onClose, onOk }) {
         </button>
         <button
           type="button"
+          onClick={onHelp}
           aria-label="Help"
           style={{
             width: 40,

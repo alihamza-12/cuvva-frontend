@@ -47,7 +47,7 @@ export default function InsuranceSummaryPage() {
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a]">
       {/* Header — single sticky header for the whole scrollable page */}
-      <div className="flex items-center justify-between px-3 py-3 sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b border-black/5">
+      <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b bg-white/95 backdrop-blur-sm border-black/5">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -61,6 +61,7 @@ export default function InsuranceSummaryPage() {
         </h1>
         <button
           type="button"
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
           className="w-9 h-9 rounded-full bg-[#f2f2f2] flex items-center justify-center"
         >
@@ -70,7 +71,7 @@ export default function InsuranceSummaryPage() {
 
       {/* 1. Hero card */}
       <div className="bg-[#3d6d8c] text-white px-6 pt-6 pb-8">
-        <div className="h-px bg-white/25 mb-6" />
+        <div className="h-px mb-6 bg-white/25" />
         <h2 className="text-[34px] font-light text-white/60 leading-tight mb-4">
           Motor Insurance
         </h2>
@@ -79,7 +80,7 @@ export default function InsuranceSummaryPage() {
         </p>
 
         <p className="text-[15px] mb-1">
-          <span className="text-white/60 font-semibold">Company </span>
+          <span className="font-semibold text-white/60">Company </span>
           <span className="font-semibold">Wakam</span>
         </p>
         <p className="text-[14px] text-white/90 leading-relaxed mb-4">
@@ -92,7 +93,7 @@ export default function InsuranceSummaryPage() {
         </p>
 
         <p className="text-[15px] mb-1">
-          <span className="text-white/60 font-semibold">Product </span>
+          <span className="font-semibold text-white/60">Product </span>
           <span className="font-semibold">
             Cuvva short-term motor insurance
           </span>
@@ -160,7 +161,7 @@ export default function InsuranceSummaryPage() {
             }
             title="What is Not Insured?"
           />
-          <ul className="space-y-4 mt-4">
+          <ul className="mt-4 space-y-4">
             <CrossItem text="Theft if keys are left in the vehicle" />
             <CrossItem text="Your vehicle damage if you are under the influence of drink/or drugs at the time of an accident" />
             <CrossItem text="Loss or damage due to incorrect fuel being used" />
@@ -188,7 +189,7 @@ export default function InsuranceSummaryPage() {
             }
             title="Are there any restrictions on cover?"
           />
-          <ul className="space-y-4 mt-4">
+          <ul className="mt-4 space-y-4">
             <BangItem text="Third Party Property damage covered up to £2,000,000 including associated costs and expenses" />
             <BangItem text="Accident, theft, attempted theft, or fire is covered if the vehicle is damaged beyond economical repair. We will pay whichever is lower: the vehicle's market value or the amount on your receipt, up to a maximum of £60,000" />
             <BangItem text="A policy excess will apply to each claim. Excess amounts will be stated on the schedule" />
@@ -207,7 +208,7 @@ export default function InsuranceSummaryPage() {
             icon={<GlobeIcon />}
             title="Where am I covered?"
           />
-          <ul className="space-y-3 mt-4">
+          <ul className="mt-4 space-y-3">
             <CheckItem
               dark
               text="Countries within the United Kingdom (UK) on a fully comprehensive basis, and while driving within the European Union (EU), Andorra, Iceland, Liechtenstein, Norway, Serbia and Switzerland for the minimum cover required by law."
@@ -230,7 +231,7 @@ export default function InsuranceSummaryPage() {
             icon={<HandshakeIcon />}
             title="What are my obligations?"
           />
-          <ul className="space-y-3 mt-4 list-disc pl-5">
+          <ul className="pl-5 mt-4 space-y-3 list-disc">
             <li className="text-[15px] text-[#1a1a1a] leading-relaxed">
               To provide information which is correct and complete to the best
               of your knowledge
@@ -308,7 +309,7 @@ function SectionHeader({ iconBg, icon, title }) {
   return (
     <div className="flex items-center gap-3">
       <div
-        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+        className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0"
         style={{ backgroundColor: iconBg }}
       >
         {icon}

@@ -58,26 +58,30 @@ export default function MyIdentityPage() {
     if (!dob) return "Not provided";
     const d = new Date(dob);
     if (Number.isNaN(d.getTime())) return "Not provided";
-    return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+    return d.toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-40">
+    <div className="min-h-screen pb-40 text-white bg-black">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
           onClick={handleBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
         <h1 className="text-[16px] font-bold text-white">My Identity</h1>
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Help")}
+          onClick={() => navigate("/customer/support")}
           aria-label="Help"
-          className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+          className="flex items-center justify-center w-10 h-10 border rounded-full bg-white/5 border-white/10"
         >
           <HelpCircle size={18} className="text-white" />
         </button>
@@ -90,7 +94,9 @@ export default function MyIdentityPage() {
         <p className="text-[18px] font-extrabold text-white mt-3">{fullName}</p>
       </div>
 
-      <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-1">About me</p>
+      <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-1">
+        About me
+      </p>
       <div className="px-4 space-y-px">
         <IdentityRow
           label="Date of birth"
@@ -119,7 +125,7 @@ export default function MyIdentityPage() {
         To update your licence details, you'll need to{" "}
         <button
           type="button"
-          onClick={() => handleNotWiredUp("Chat to us")}
+          onClick={() => navigate("/customer/support")}
           className="font-semibold text-[#7c6bff]"
         >
           chat to us
@@ -130,8 +136,17 @@ export default function MyIdentityPage() {
         Verification photos
       </p>
       <div className="px-4 space-y-px">
-        <IdentityRow label="Driving licence" value="Not taken" onClick={() => handleNotWiredUp("Driving licence photo")} />
-        <IdentityRow label="Selfie" value="Not taken" onClick={() => handleNotWiredUp("Selfie photo")} isLast />
+        <IdentityRow
+          label="Driving licence"
+          value="Not taken"
+          onClick={() => handleNotWiredUp("Driving licence photo")}
+        />
+        <IdentityRow
+          label="Selfie"
+          value="Not taken"
+          onClick={() => handleNotWiredUp("Selfie photo")}
+          isLast
+        />
       </div>
     </div>
   );
