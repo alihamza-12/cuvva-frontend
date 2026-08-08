@@ -162,7 +162,7 @@ export default function AllSubAdminsManagement({ axiosInstance, onRefresh }) {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto animate-fadeIn">
+    <div className="w-full animate-fadeIn">
       {/* Edit Modal */}
       {editOpen && (
         <div

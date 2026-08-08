@@ -16,7 +16,7 @@ export default function VehicleCatalog({
   axiosInstance,
 }) {
   const navigate = useNavigate();
-  
+
   // Lookup States
   const [regInput, setRegInput] = useState("");
   const [lookupResult, setLookupResult] = useState(null);
@@ -35,7 +35,9 @@ export default function VehicleCatalog({
     }
 
     try {
-      const res = await axiosInstance.get(`/api/vehicles/lookup/${cleanedRegParam}`);
+      const res = await axiosInstance.get(
+        `/api/vehicles/lookup/${cleanedRegParam}`,
+      );
       if (res.data?.vehicle) {
         setLookupResult(res.data.vehicle);
       } else {
@@ -47,8 +49,7 @@ export default function VehicleCatalog({
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6 animate-fadeIn">
-      
+    <div className="w-full p-4 space-y-6 animate-fadeIn">
       {/* 1. SYSTEM LOOKUP ENGINE */}
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
         <div className="flex items-center gap-2 mb-4">
@@ -76,30 +77,42 @@ export default function VehicleCatalog({
 
         {/* LOOKUP FEEDBACK */}
         {lookupError && (
-          <div className="mt-4 p-3 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2">
+          <div className="flex items-center gap-2 p-3 mt-4 text-xs text-red-400 border bg-red-500/10 border-red-500/20 rounded-xl">
             <AlertTriangle size={14} /> <span>{lookupError}</span>
           </div>
         )}
 
         {/* CLICKABLE LOOKUP RESULT */}
         {lookupResult && (
-          <div 
-            onClick={() => navigate(`/admin/vehicles/${encodeURIComponent(lookupResult.registration)}`)}
+          <div
+            onClick={() =>
+              navigate(
+                `/admin/vehicles/${encodeURIComponent(lookupResult.registration)}`,
+              )
+            }
             className="mt-4 p-5 bg-[#060814] border border-[#1e2238] rounded-xl space-y-3 animate-slideUp cursor-pointer hover:border-white/20 transition-all group"
           >
             <div className="flex items-center justify-between pb-2 border-b border-white/5">
               <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded tracking-wider text-[11px] uppercase">
                 {lookupResult.registration}
               </span>
-              <span className="text-[10px] text-gray-500 group-hover:text-white transition-colors underline">View Details</span>
+              <span className="text-[10px] text-gray-500 group-hover:text-white transition-colors underline">
+                View Details
+              </span>
             </div>
             <p className="text-sm font-bold text-white">
               {lookupResult.make} {lookupResult.model}
             </p>
-            <div className="flex flex-wrap gap-x-4 text-xs text-gray-400">
-              <span className="flex items-center gap-1.5"><Paintbrush size={12} /> {lookupResult.colour}</span>
-              <span className="flex items-center gap-1.5"><Calendar size={12} /> {lookupResult.year}</span>
-              <span className="flex items-center gap-1.5"><Fuel size={12} /> {lookupResult.fuelType}</span>
+            <div className="flex flex-wrap text-xs text-gray-400 gap-x-4">
+              <span className="flex items-center gap-1.5">
+                <Paintbrush size={12} /> {lookupResult.colour}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Calendar size={12} /> {lookupResult.year}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Fuel size={12} /> {lookupResult.fuelType}
+              </span>
             </div>
           </div>
         )}
@@ -109,7 +122,9 @@ export default function VehicleCatalog({
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
         <div className="mb-6">
           <h3 className="text-lg font-bold text-white">Master Registry</h3>
-          <p className="text-xs text-[#6b7280]">Live asset synchronization viewport.</p>
+          <p className="text-xs text-[#6b7280]">
+            Live asset synchronization viewport.
+          </p>
         </div>
 
         <div className="space-y-3">
@@ -121,11 +136,15 @@ export default function VehicleCatalog({
             vehicles.map((v) => (
               <div
                 key={v._id}
-                onClick={() => navigate(`/admin/vehicles/${encodeURIComponent(v.registration)}`)}
+                onClick={() =>
+                  navigate(
+                    `/admin/vehicles/${encodeURIComponent(v.registration)}`,
+                  )
+                }
                 className="p-4 bg-[#060814]/60 border border-[#1e2238] rounded-xl flex items-center justify-between hover:border-white/10 transition-all cursor-pointer group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white/5 border border-white/5 rounded-xl text-gray-400">
+                  <div className="p-3 text-gray-400 border bg-white/5 border-white/5 rounded-xl">
                     <Car size={20} />
                   </div>
                   <div>
@@ -142,10 +161,14 @@ export default function VehicleCatalog({
                     </div>
                   </div>
                 </div>
-                
-                <div className="text-right hidden sm:block">
-                   <span className="text-[10px] text-gray-500 block uppercase font-bold">Registered By</span>
-                   <span className="text-xs text-white font-medium">{v.createdBy?.fullName || "System"}</span>
+
+                <div className="hidden text-right sm:block">
+                  <span className="text-[10px] text-gray-500 block uppercase font-bold">
+                    Registered By
+                  </span>
+                  <span className="text-xs font-medium text-white">
+                    {v.createdBy?.fullName || "System"}
+                  </span>
                 </div>
               </div>
             ))

@@ -228,8 +228,8 @@ export default function SuperAdminDashboard() {
           </div>
         )}
 
-        {/* RENDER VIEW CONTROLLER MAIN CANVAS */}
-        <main className="flex-1 w-full p-4 mx-auto space-y-8 sm:p-6 lg:p-10 max-w-7xl">
+{/* RENDER VIEW CONTROLLER MAIN CANVAS */}
+        <main className="flex-1 w-full p-4 space-y-8 sm:p-6 lg:p-10">
           {/* TAB FRAME 1: VIEW METRICS AND INSIGHTS DASHBOARD */}
           {activeTab === "overview" && (
             <OverviewGrid

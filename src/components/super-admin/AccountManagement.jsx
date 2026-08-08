@@ -153,7 +153,7 @@ export default function AccountManagement({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto animate-fadeIn">
+    <div className="w-full animate-fadeIn">
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-2xl">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#1e2238] pb-6 mb-6 gap-6">

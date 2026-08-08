@@ -176,7 +176,7 @@ export default function SubAdminDashboard() {
           </div>
         )}
 
-        <main className="flex-1 w-full p-4 mx-auto space-y-8 sm:p-6 lg:p-10 max-w-7xl">
+<main className="flex-1 w-full p-4 space-y-8 sm:p-6 lg:p-10">
           {activeTab === "overview" && (
             <SubAdminOverviewGrid
               counts={counts}

@@ -69,7 +69,7 @@ export function SubAdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 w-full p-10 mx-auto space-y-8 max-w-7xl">
+        <main className="flex-1 w-full p-4 space-y-8 sm:p-6 lg:p-10">
           {activeTab === "create-customer" ? (
             <CreateCustomerPage />
           ) : activeTab === "create-vehicle" ? (
