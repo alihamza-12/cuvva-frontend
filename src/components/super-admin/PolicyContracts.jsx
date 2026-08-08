@@ -19,9 +19,9 @@ export default function PolicyContracts({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 text-xs xl:grid-cols-3 animate-fadeIn">
+    <div className="grid w-full grid-cols-1 gap-8 text-xs animate-fadeIn">
       {/* FEED VISUALIZATION BLOCK */}
-<div className="xl:col-span-2 bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-xl overflow-x-auto">
+      <div className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-xl overflow-x-auto">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-sm font-bold tracking-wide text-white">
@@ -37,7 +37,7 @@ export default function PolicyContracts({
           </span>
         </div>
 
-        <div className="space-y-3 overflow-y-auto max-h-[620px] pr-2 min-w-[320px]">
+        <div className="space-y-3">
           {policies.length === 0 ? (
             <div className="text-center py-16 text-[#6b7280] font-medium tracking-wide">
               No insurance policies match your system visibility parameters.
@@ -145,3 +145,4 @@ export default function PolicyContracts({
     </div>
   );
 }
+

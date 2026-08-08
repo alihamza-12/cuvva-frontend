@@ -7,9 +7,7 @@ import {
   Car,
   ShieldCheck,
 } from "lucide-react";
-import CurrencyInput, {
-  currencyToPence,
-} from "../common/CurrencyInput";
+import CurrencyInput, { currencyToPence } from "../common/CurrencyInput";
 import MaskedDateInput from "../common/MaskedDateInput";
 import MaskedTimeInput from "../common/MaskedTimeInput";
 
@@ -140,7 +138,7 @@ export default function CreatePolicy({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 text-xs xl:grid-cols-3 animate-fadeIn">
+    <div className="grid w-full grid-cols-1 gap-8 text-xs animate-fadeIn">
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 h-fit shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <PlusCircle size={16} className="text-[#644aff]" />
@@ -358,7 +356,7 @@ export default function CreatePolicy({
         </form>
       </div>
 
-      <div className="space-y-6 xl:col-span-2">
+      <div className="w-full space-y-6">
         <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
           <h4 className="text-sm font-bold tracking-wide text-white uppercase">
             Uses backend Policy.js fields

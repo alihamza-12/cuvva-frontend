@@ -64,7 +64,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 text-xs xl:grid-cols-3 animate-fadeIn">
+    <div className="grid w-full grid-cols-1 gap-8 text-xs animate-fadeIn">
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 h-fit shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <UserPlus size={16} className="text-[#644aff]" />
@@ -241,7 +241,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
         </form>
       </div>
 
-      <div className="xl:col-span-2 space-y-6">
+      <div className="w-full space-y-6">
         <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
           <h4 className="text-sm font-bold tracking-wide text-white uppercase">
             What gets saved

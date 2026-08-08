@@ -129,7 +129,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-6 text-xs xl:grid-cols-2 xl:items-start animate-fadeIn w-full">
+    <div className="grid w-full grid-cols-1 gap-6 text-xs animate-fadeIn">
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 h-fit shadow-xl w-full">
         <div className="flex items-center gap-2 mb-4">
           <PlusCircle size={16} className="text-[#644aff]" />
@@ -473,7 +473,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
         </form>
       </div>
 
-      <div className="xl:col-span-2 space-y-6">
+      <div className="w-full space-y-6">
         <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
           <div className="flex items-center gap-2 mb-2">
             <Car size={16} className="text-[#644aff]" />
