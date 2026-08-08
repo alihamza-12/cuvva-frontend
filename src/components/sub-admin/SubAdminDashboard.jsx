@@ -134,8 +134,8 @@ export default function SubAdminDashboard() {
     <div className="min-h-screen bg-[#060814] text-white flex font-sans antialiased selection:bg-[#00f0ff]/30 selection:text-white">
       {/* Sidebar is rendered by SubAdminLayout */}
 
-      <div className="flex flex-col flex-1 max-h-screen overflow-y-auto">
-<header className="h-16 border-b border-[#1e2238] px-4 md:px-8 flex items-center justify-between gap-4 sticky top-0 bg-[#060814]/90 backdrop-blur-md z-40 shrink-0">
+      <div className="flex flex-col flex-1">
+        <header className="h-16 border-b border-[#1e2238] px-4 md:px-8 flex items-center justify-between gap-4 sticky top-0 bg-[#060814]/90 backdrop-blur-md z-40 shrink-0">
           <div className="flex items-center gap-2">
             <h1 className="hidden sm:block text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
               Agent Operations Area
@@ -169,14 +169,14 @@ export default function SubAdminDashboard() {
           </div>
         </header>
 
-{systemAlert && (
+        {systemAlert && (
           <div className="flex items-center gap-2 px-4 py-3 text-xs font-medium border-b md:px-8 bg-amber-500/10 border-amber-500/20 text-amber-400 animate-fadeIn">
             <AlertTriangle size={14} className="shrink-0 animate-pulse" />
             <span>{systemAlert}</span>
           </div>
         )}
 
-<main className="flex-1 w-full p-4 space-y-8 sm:p-6 lg:p-10">
+        <main className="flex-1 w-full p-4 space-y-8 sm:p-6 lg:p-10">
           {activeTab === "overview" && (
             <SubAdminOverviewGrid
               counts={counts}

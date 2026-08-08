@@ -39,8 +39,8 @@ export function SubAdminPolicyContracts({ policies = [], onRefresh }) {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 text-xs xl:grid-cols-3 animate-fadeIn">
-<div className="xl:col-span-2 bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-xl overflow-x-auto">
+    <div className="grid w-full grid-cols-1 gap-8 text-xs animate-fadeIn">
+      <div className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-xl overflow-x-auto">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-sm font-bold tracking-wide text-white">
