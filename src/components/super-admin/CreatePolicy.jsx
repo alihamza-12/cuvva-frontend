@@ -7,6 +7,11 @@ import {
   Car,
   ShieldCheck,
 } from "lucide-react";
+import CurrencyInput, {
+  currencyToPence,
+} from "../common/CurrencyInput";
+import MaskedDateInput from "../common/MaskedDateInput";
+import MaskedTimeInput from "../common/MaskedTimeInput";
 
 export default function CreatePolicy({
   axiosInstance,
@@ -96,7 +101,8 @@ export default function CreatePolicy({
     const payload = {
       customerId: form.customerId,
       vehicleId: form.vehicleId,
-      premiumAmount: parseFloat(form.premiumAmount),
+      // Convert pounds (e.g. "123") to pence (12300) to match backend schema.
+      premiumAmount: currencyToPence(form.premiumAmount),
       startDate: form.startDate,
       endDate: form.endDate,
       startTime: form.startTime,
@@ -222,20 +228,12 @@ export default function CreatePolicy({
 
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-                Premium Amount (£)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                required
+              <CurrencyInput
+                label="Premium Amount (£)"
                 value={form.premiumAmount}
-                onChange={(e) =>
-                  setForm({ ...form, premiumAmount: e.target.value })
-                }
-                placeholder="45.50"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                onChange={(v) => setForm({ ...form, premiumAmount: v })}
+                required
+                accentClass="focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -298,67 +296,37 @@ export default function CreatePolicy({
 
           <div className="p-3 bg-white/[0.02] border border-[#1e2238] rounded-xl space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={form.startDate}
-                  onChange={(e) =>
-                    setForm({ ...form, startDate: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  Start Time (HH:MM)
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="14:30"
-                  value={form.startTime}
-                  onChange={(e) =>
-                    setForm({ ...form, startTime: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
+              <MaskedDateInput
+                label="Start Date"
+                value={form.startDate}
+                onChange={(v) => setForm({ ...form, startDate: v })}
+                required
+                accentClass="focus:border-[#644aff]"
+              />
+              <MaskedTimeInput
+                label="Start Time (HH:MM)"
+                value={form.startTime}
+                onChange={(v) => setForm({ ...form, startTime: v })}
+                required
+                accentClass="focus:border-[#644aff]"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={form.endDate}
-                  onChange={(e) =>
-                    setForm({ ...form, endDate: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
-              <div>
-                <label className="text-[9px] font-bold text-gray-400 uppercase">
-                  End Time (HH:MM)
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="15:30"
-                  value={form.endTime}
-                  onChange={(e) =>
-                    setForm({ ...form, endTime: e.target.value })
-                  }
-                  className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none mt-1"
-                />
-              </div>
+              <MaskedDateInput
+                label="End Date"
+                value={form.endDate}
+                onChange={(v) => setForm({ ...form, endDate: v })}
+                required
+                accentClass="focus:border-[#644aff]"
+              />
+              <MaskedTimeInput
+                label="End Time (HH:MM)"
+                value={form.endTime}
+                onChange={(v) => setForm({ ...form, endTime: v })}
+                required
+                accentClass="focus:border-[#644aff]"
+              />
             </div>
           </div>
 
@@ -390,7 +358,7 @@ export default function CreatePolicy({
         </form>
       </div>
 
-      <div className="xl:col-span-2 space-y-6">
+      <div className="space-y-6 xl:col-span-2">
         <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
           <h4 className="text-sm font-bold tracking-wide text-white uppercase">
             Uses backend Policy.js fields

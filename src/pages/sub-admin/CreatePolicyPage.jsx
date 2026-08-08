@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { httpClient } from "../../app/api/httpClient";
+import CurrencyInput, {
+  currencyToPence,
+} from "../../components/common/CurrencyInput";
+import MaskedDateInput from "../../components/common/MaskedDateInput";
+import MaskedTimeInput from "../../components/common/MaskedTimeInput";
 
 function Field({ label, children }) {
   return (
@@ -116,7 +121,7 @@ export default function CreatePolicyPage() {
       const payload = {
         customerId: form.customerId,
         vehicleId: form.vehicleId,
-        premiumAmount: parseFloat(form.premiumAmount),
+        premiumAmount: currencyToPence(form.premiumAmount),
         startDate: form.startDate,
         endDate: form.endDate,
         startTime: form.startTime,
@@ -229,14 +234,13 @@ export default function CreatePolicyPage() {
             </Field>
 
             <Field label="Premium Amount (£) (required)">
-              <input
+              <CurrencyInput
                 value={form.premiumAmount}
-                onChange={handleChange("premiumAmount")}
-                type="number"
-                step="0.01"
-                min="0"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
-                placeholder="e.g. 45.50"
+                onChange={(v) =>
+                  setForm((prev) => ({ ...prev, premiumAmount: v }))
+                }
+                required
+                accentClass="focus:border-[#00f0ff]"
               />
             </Field>
 
@@ -281,40 +285,38 @@ export default function CreatePolicyPage() {
             </Field>
 
             <Field label="Start Date (required)">
-              <input
+              <MaskedDateInput
                 value={form.startDate}
-                onChange={handleChange("startDate")}
-                type="date"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                onChange={(v) => setForm((prev) => ({ ...prev, startDate: v }))}
+                required
+                accentClass="focus:border-[#00f0ff]"
               />
             </Field>
 
             <Field label="End Date (required)">
-              <input
+              <MaskedDateInput
                 value={form.endDate}
-                onChange={handleChange("endDate")}
-                type="date"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                onChange={(v) => setForm((prev) => ({ ...prev, endDate: v }))}
+                required
+                accentClass="focus:border-[#00f0ff]"
               />
             </Field>
 
             <Field label="Start Time (required)">
-              <input
+              <MaskedTimeInput
                 value={form.startTime}
-                onChange={handleChange("startTime")}
-                type="text"
-                placeholder="14:30"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                onChange={(v) => setForm((prev) => ({ ...prev, startTime: v }))}
+                required
+                accentClass="focus:border-[#00f0ff]"
               />
             </Field>
 
             <Field label="End Time (required)">
-              <input
+              <MaskedTimeInput
                 value={form.endTime}
-                onChange={handleChange("endTime")}
-                type="text"
-                placeholder="15:30"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                onChange={(v) => setForm((prev) => ({ ...prev, endTime: v }))}
+                required
+                accentClass="focus:border-[#00f0ff]"
               />
             </Field>
           </div>

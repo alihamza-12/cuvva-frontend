@@ -186,11 +186,14 @@ export default function SuperAdminDashboard() {
 
       {/* MASTER APPLICATION CONTENT BLOCK */}
       <div className="flex flex-col flex-1 max-h-screen overflow-y-auto">
-        {/* HEADER BAR PROVISIONS */}
-        <header className="h-16 border-b border-[#1e2238] px-10 flex items-center justify-between sticky top-0 bg-[#060814]/90 backdrop-blur-md z-40 shrink-0">
+{/* HEADER BAR PROVISIONS */}
+        <header className="h-16 border-b border-[#1e2238] px-4 md:px-8 flex items-center justify-between gap-4 sticky top-0 bg-[#060814]/90 backdrop-blur-md z-40 shrink-0">
           <div className="flex items-center gap-3">
-            <h1 className="text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
+            <h1 className="hidden sm:block text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
               System Operations Area
+            </h1>
+            <h1 className="sm:hidden text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
+              Ops
             </h1>
             {isSyncing && (
               <RefreshCw size={12} className="animate-spin text-[#644aff]" />
@@ -217,16 +220,16 @@ export default function SuperAdminDashboard() {
           </div>
         </header>
 
-        {/* SYSTEM STATUS BANNER NOTIFICATION CONSOLE */}
+{/* SYSTEM STATUS BANNER NOTIFICATION CONSOLE */}
         {systemAlert && (
-          <div className="flex items-center gap-2 px-10 py-3 text-xs font-medium border-b bg-amber-500/10 border-amber-500/20 text-amber-400 animate-fadeIn">
+          <div className="flex items-center gap-2 px-4 py-3 text-xs font-medium border-b md:px-8 bg-amber-500/10 border-amber-500/20 text-amber-400 animate-fadeIn">
             <AlertTriangle size={14} className="shrink-0 animate-pulse" />
             <span>{systemAlert}</span>
           </div>
         )}
 
         {/* RENDER VIEW CONTROLLER MAIN CANVAS */}
-        <main className="flex-1 w-full p-10 mx-auto space-y-8 max-w-7xl">
+        <main className="flex-1 w-full p-4 mx-auto space-y-8 sm:p-6 lg:p-10 max-w-7xl">
           {/* TAB FRAME 1: VIEW METRICS AND INSIGHTS DASHBOARD */}
           {activeTab === "overview" && (
             <OverviewGrid

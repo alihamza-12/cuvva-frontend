@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { MoreHorizontal, ChevronRight, Timer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,24 +6,57 @@ import { getMyPolicies } from "../../app/api/policyApi";
 import policyImg from "/policyimg.png";
 
 /**
- * frontend/src/pages/customer/PoliciesPage.jsx
+ * frontend/src/components/customer/PoliciesPage.jsx
  *
  * Customer -> Policies tab
  * - Click from CustomerBottomNav => this page renders.
  * - Calls GET /api/policies/my (via getMyPolicies) — SAME working API
  *   call as before, untouched.
- * - UI redesigned to match the reference screenshot:
- *     1. Hero card ("Let's hit the road" / "Get insured in minutes" /
- *        "Get a quote" button + car illustration).
- *     2. "Past" section listing past/expired policies as cards showing
- *        registration, "1 hour · 5 Jun" style duration+date summary,
- *        and a chevron to view more (destination TBD — see note below).
- *
- * "Get a quote" navigates to the Get Insured search screen
- * (/customer, the home tab with PlateSearchBar) so the customer can
- * search a new plate immediately — no new route needed since that
- * search UI already exists on CustomerHome.jsx.
+ * - Renders ALL policies (Upcoming / Active / Expired / Cancelled) in a
+ *   single flat list, each card showing a dynamic status badge derived
+ *   from startDate/endDate (combined with startTime/endTime).
  */
+
+// Combines a date-only field (e.g. "2026-06-17T00:00:00.000Z") with a
+// separate "HH:MM" time-of-day field (e.g. "01:59") into one real
+// Date/time. The backend stores date and time-of-day separately.
+const combineDateAndTime = (dateValue, timeValue) => {
+  if (!dateValue) return null;
+  const datePart = new Date(dateValue);
+  if (Number.isNaN(datePart.getTime())) return null;
+
+  const combined = new Date(datePart);
+  if (timeValue && /^\d{1,2}:\d{2}$/.test(timeValue)) {
+    const [hours, minutes] = timeValue.split(":").map(Number);
+    combined.setUTCHours(hours, minutes, 0, 0);
+  }
+  return combined;
+};
+
+// Dynamic status derived purely from dates, independent of the stored
+// `status` field so the UI always reflects the real timeline even if the
+// cron hasn't run yet.
+const getDynamicStatus = (policy) => {
+  const start = combineDateAndTime(policy?.startDate, policy?.startTime);
+  const end = combineDateAndTime(policy?.endDate, policy?.endTime);
+  const now = new Date();
+
+  if (!start || !end) {
+    // Fall back to the stored status if we can't compute dates.
+    return policy?.status || "Upcoming";
+  }
+  if (end <= now) return "Expired";
+  if (start > now) return "Upcoming";
+  return "Active";
+};
+
+const STATUS_STYLES = {
+  Upcoming: "bg-purple-500/10 text-purple-300 border-purple-500/30",
+  Active: "bg-green-500/10 text-green-400 border-green-500/30",
+  Expired: "bg-red-500/10 text-red-400 border-red-500/30",
+  Cancelled: "bg-gray-500/10 text-gray-400 border-gray-500/30",
+};
+
 export default function PoliciesPage() {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -63,13 +96,10 @@ export default function PoliciesPage() {
     };
   }, []);
 
-  // "Past" = anything not currently Active/Upcoming — i.e. Expired or
-  // Cancelled policies, matching the reference screenshot's single
-  // "Past" section (no separate Active/Upcoming groups shown there).
-  const pastPolicies = useMemo(() => {
-    return policies
-      .filter((p) => p?.status === "Expired" || p?.status === "Cancelled")
-      .sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
+  const sortedPolicies = useMemo(() => {
+    return [...policies].sort(
+      (a, b) => new Date(b.endDate) - new Date(a.endDate),
+    );
   }, [policies]);
 
   const handleGetQuote = () => {
@@ -80,30 +110,8 @@ export default function PoliciesPage() {
   const handleOpenPolicy = (policy) => {
     // Full policy object is already in memory (fetched above via
     // getMyPolicies), so it's passed directly via router state — no
-    // second network call needed. PolicyDetailPage.jsx renders the
-    // full "Start/End · Policy summary · Start location · Payment
-    // information · Get help · Buy again" screen from this.
+    // second network call needed.
     navigate("/customer/policies/detail", { state: { policy } });
-  };
-
-  // Combines a date-only field (e.g. "2026-06-17T00:00:00.000Z") with a
-  // separate "HH:MM" time-of-day field (e.g. "01:59") into one real
-  // Date/time. Your backend stores date and time-of-day separately
-  // (startDate/endDate are date-only, startTime/endTime carry the
-  // actual clock time), so they must be combined before diffing —
-  // comparing startDate/endDate alone always produces 0, since both
-  // are midnight on the same calendar date.
-  const combineDateAndTime = (dateValue, timeValue) => {
-    if (!dateValue) return null;
-    const datePart = new Date(dateValue);
-    if (Number.isNaN(datePart.getTime())) return null;
-
-    const combined = new Date(datePart);
-    if (timeValue && /^\d{1,2}:\d{2}$/.test(timeValue)) {
-      const [hours, minutes] = timeValue.split(":").map(Number);
-      combined.setUTCHours(hours, minutes, 0, 0);
-    }
-    return combined;
   };
 
   const formatDurationAndDate = (policy) => {
@@ -113,10 +121,8 @@ export default function PoliciesPage() {
     let durationLabel = "";
     if (start && end) {
       // Guard against an end time that's technically "earlier" than the
-      // start time on the same date (e.g. a policy running past
-      // midnight where endDate wasn't bumped to the next day) — treat
-      // that as spanning into the next day instead of a negative/zero
-      // duration.
+      // start time on the same date — treat that as spanning into the
+      // next day instead of a negative/zero duration.
       if (end <= start) {
         end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
       }
@@ -207,7 +213,7 @@ export default function PoliciesPage() {
             </button>
           </div>
 
-          {/* Car illustration (real PNG asset, background removed), absolutely positioned to the right */}
+          {/* Car illustration, absolutely positioned to the right */}
           <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 w-[46%]">
             <img
               src={policyImg}
@@ -219,7 +225,7 @@ export default function PoliciesPage() {
         </div>
       </div>
 
-      {/* Past */}
+      {/* Policies list */}
       <div className="px-4 pt-6">
         {loading ? (
           <div className="space-y-3">
@@ -230,21 +236,24 @@ export default function PoliciesPage() {
           <p className="text-[14px] text-[#9497a1]">
             We couldn't load your policies.
           </p>
-        ) : pastPolicies.length === 0 ? (
+        ) : sortedPolicies.length === 0 ? (
           <p className="text-[14px] text-[#9497a1]">
-            You don't have any past policies yet.
+            You don't have any policies yet.
           </p>
         ) : (
           <section>
-            <h2 className="text-[15px] font-bold text-[#9497a1] mb-3">Past</h2>
+            <h2 className="text-[15px] font-bold text-[#9497a1] mb-3">
+              Your policies
+            </h2>
             <div className="space-y-3">
-              {pastPolicies.map((policy) => {
+              {sortedPolicies.map((policy) => {
                 const vehicle = policy?.vehicleId;
                 const registration = vehicle?.registration;
                 const ownerLabel =
                   vehicle?.make && vehicle?.model
                     ? `${vehicle.make} ${vehicle.model}`
                     : registration || "Vehicle";
+                const status = getDynamicStatus(policy);
 
                 return (
                   <button
@@ -269,10 +278,17 @@ export default function PoliciesPage() {
                         </div>
                       </div>
 
-                      <ChevronRight
-                        size={18}
-                        className="text-[#5c5e68] shrink-0"
-                      />
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${STATUS_STYLES[status] || STATUS_STYLES.Upcoming}`}
+                        >
+                          {status}
+                        </span>
+                        <ChevronRight
+                          size={18}
+                          className="text-[#5c5e68] shrink-0"
+                        />
+                      </div>
                     </div>
                   </button>
                 );

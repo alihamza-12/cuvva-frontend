@@ -125,6 +125,23 @@ export default function PolicyDetailPage() {
     return `${hours}h`;
   })();
 
+  const dynamicStatus = (() => {
+    const start = combineDateAndTime(policy?.startDate, policy?.startTime);
+    const end = combineDateAndTime(policy?.endDate, policy?.endTime);
+    const now = new Date();
+    if (!start || !end) return policy?.status || "Upcoming";
+    if (end <= now) return "Expired";
+    if (start > now) return "Upcoming";
+    return "Active";
+  })();
+
+  const statusStyles = {
+    Upcoming: "bg-purple-500/10 text-purple-300 border-purple-500/30",
+    Active: "bg-green-500/10 text-green-400 border-green-500/30",
+    Expired: "bg-red-500/10 text-red-400 border-red-500/30",
+    Cancelled: "bg-gray-500/10 text-gray-400 border-gray-500/30",
+  };
+
   const coverLabel =
     policy?.coverageType === "Comprehensive"
       ? "Fully comprehensive"
@@ -189,13 +206,20 @@ export default function PolicyDetailPage() {
           below never overlaps the last card, regardless of how short
           or tall the content is. */}
       <div className="pb-28">
-        <div className="px-4 -mt-2 text-center">
+        <div className="flex flex-col items-center px-4 -mt-2">
           <h1 className="text-[22px] font-extrabold text-[#c8c9d1]">
             {ownerLabel}
           </h1>
-          <p className="text-[14px] text-[#9497a1] mt-1 tracking-wide">
-            {registration}
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-[14px] text-[#9497a1] tracking-wide">
+              {registration}
+            </p>
+            <span
+              className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${statusStyles[dynamicStatus] || statusStyles.Upcoming}`}
+            >
+              {dynamicStatus}
+            </span>
+          </div>
         </div>
 
         {/* Quick actions */}

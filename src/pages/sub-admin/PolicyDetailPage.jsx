@@ -3,6 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Car, FileText, User, ShieldAlert } from "lucide-react";
 
 import { httpClient } from "../../app/api/httpClient";
+import CurrencyInput, {
+  currencyToPence,
+  penceToCurrency,
+} from "../../components/common/CurrencyInput";
+import MaskedDateInput from "../../components/common/MaskedDateInput";
+import MaskedTimeInput from "../../components/common/MaskedTimeInput";
 
 export default function PolicyDetailPage() {
   const { id } = useParams();
@@ -78,7 +84,7 @@ export default function PolicyDetailPage() {
     if (!policy) return;
 
     setEditForm({
-      premiumAmount: policy.premiumAmount ?? "",
+      premiumAmount: penceToCurrency(policy.premiumAmount),
       startDate: policy.startDate
         ? new Date(policy.startDate).toISOString().split("T")[0]
         : "",
@@ -131,7 +137,7 @@ export default function PolicyDetailPage() {
 
     try {
       const payload = {
-        premiumAmount: parseFloat(editForm.premiumAmount),
+        premiumAmount: currencyToPence(editForm.premiumAmount),
         startDate: editForm.startDate,
         endDate: editForm.endDate,
         startTime: editForm.startTime,
@@ -338,22 +344,14 @@ export default function PolicyDetailPage() {
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                          Premium Amount
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0"
+                        <CurrencyInput
+                          label="Premium Amount (£)"
                           value={editForm.premiumAmount}
-                          required
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              premiumAmount: e.target.value,
-                            })
+                          onChange={(v) =>
+                            setEditForm({ ...editForm, premiumAmount: v })
                           }
-                          className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
+                          required
+                          accentClass="focus:border-[#00f0ff]"
                         />
                       </div>
 
@@ -375,77 +373,47 @@ export default function PolicyDetailPage() {
                         </select>
                       </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                          Start Date
-                        </label>
-                        <input
-                          type="date"
+<MaskedDateInput
+                          label="Start Date"
                           value={editForm.startDate}
-                          required
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              startDate: e.target.value,
-                            })
+                          onChange={(v) =>
+                            setEditForm({ ...editForm, startDate: v })
                           }
-                          className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                          required
+                          accentClass="focus:border-[#00f0ff]"
                         />
-                      </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                          Start Time
-                        </label>
-                        <input
-                          type="text"
+                        <MaskedTimeInput
+                          label="Start Time (HH:MM)"
                           value={editForm.startTime}
-                          required
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              startTime: e.target.value,
-                            })
+                          onChange={(v) =>
+                            setEditForm({ ...editForm, startTime: v })
                           }
-                          placeholder="08:00"
-                          className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                          required
+                          accentClass="focus:border-[#00f0ff]"
                         />
                       </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                          End Date
-                        </label>
-                        <input
-                          type="date"
+                      <MaskedDateInput
+                          label="End Date"
                           value={editForm.endDate}
-                          required
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              endDate: e.target.value,
-                            })
+                          onChange={(v) =>
+                            setEditForm({ ...editForm, endDate: v })
                           }
-                          className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                          required
+                          accentClass="focus:border-[#00f0ff]"
                         />
-                      </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-                          End Time
-                        </label>
-                        <input
-                          type="text"
+                        <MaskedTimeInput
+                          label="End Time (HH:MM)"
                           value={editForm.endTime}
-                          required
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              endTime: e.target.value,
-                            })
+                          onChange={(v) =>
+                            setEditForm({ ...editForm, endTime: v })
                           }
-                          placeholder="18:00"
-                          className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none"
+                          required
+                          accentClass="focus:border-[#00f0ff]"
                         />
                       </div>
 
