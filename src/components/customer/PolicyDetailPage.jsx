@@ -125,15 +125,13 @@ export default function PolicyDetailPage() {
     return `${hours}h`;
   })();
 
-  const dynamicStatus = (() => {
-    const start = combineDateAndTime(policy?.startDate, policy?.startTime);
-    const end = combineDateAndTime(policy?.endDate, policy?.endTime);
-    const now = new Date();
-    if (!start || !end) return policy?.status || "Upcoming";
-    if (end <= now) return "Expired";
-    if (start > now) return "Upcoming";
-    return "Active";
-  })();
+  // Use the API's stored status field directly so the badge reflects
+  // exactly what the backend reports.
+  const dynamicStatus = policy?.status || "Upcoming";
+  // Only show a badge for Active/Upcoming policies. Any other status
+  // (Expired, Cancelled, etc.) keeps the detail visible but shows NO
+  // badge at all.
+  const showBadge = dynamicStatus === "Active" || dynamicStatus === "Upcoming";
 
   const statusStyles = {
     Upcoming: "bg-purple-500/10 text-purple-300 border-purple-500/30",
@@ -214,11 +212,16 @@ export default function PolicyDetailPage() {
             <p className="text-[14px] text-[#9497a1] tracking-wide">
               {registration}
             </p>
-            <span
-              className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${statusStyles[dynamicStatus] || statusStyles.Upcoming}`}
-            >
-              {dynamicStatus}
-            </span>
+            {/* Badge only shows for Active/Upcoming. Expired or any
+                other status keeps the detail visible but with NO
+                badge at all. */}
+            {showBadge && (
+              <span
+                className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${statusStyles[dynamicStatus] || statusStyles.Upcoming}`}
+              >
+                {dynamicStatus}
+              </span>
+            )}
           </div>
         </div>
 

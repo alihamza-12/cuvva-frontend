@@ -33,23 +33,6 @@ const combineDateAndTime = (dateValue, timeValue) => {
   return combined;
 };
 
-// Dynamic status derived purely from dates, independent of the stored
-// `status` field so the UI always reflects the real timeline even if the
-// cron hasn't run yet.
-const getDynamicStatus = (policy) => {
-  const start = combineDateAndTime(policy?.startDate, policy?.startTime);
-  const end = combineDateAndTime(policy?.endDate, policy?.endTime);
-  const now = new Date();
-
-  if (!start || !end) {
-    // Fall back to the stored status if we can't compute dates.
-    return policy?.status || "Upcoming";
-  }
-  if (end <= now) return "Expired";
-  if (start > now) return "Upcoming";
-  return "Active";
-};
-
 const STATUS_STYLES = {
   Upcoming: "bg-purple-500/10 text-purple-300 border-purple-500/30",
   Active: "bg-green-500/10 text-green-400 border-green-500/30",
@@ -97,6 +80,9 @@ export default function PoliciesPage() {
   }, []);
 
   const sortedPolicies = useMemo(() => {
+    // Show ALL policies (Active, Upcoming, Expired, Cancelled). The
+    // expired status badge is simply hidden on each card (see render),
+    // but the policy itself remains visible.
     return [...policies].sort(
       (a, b) => new Date(b.endDate) - new Date(a.endDate),
     );
@@ -238,7 +224,7 @@ export default function PoliciesPage() {
           </p>
         ) : sortedPolicies.length === 0 ? (
           <p className="text-[14px] text-[#9497a1]">
-            You don't have any policies yet.
+            You don't have any active or upcoming policies right now.
           </p>
         ) : (
           <section>
@@ -253,7 +239,13 @@ export default function PoliciesPage() {
                   vehicle?.make && vehicle?.model
                     ? `${vehicle.make} ${vehicle.model}`
                     : registration || "Vehicle";
-                const status = getDynamicStatus(policy);
+                // Use the API's stored status field directly so the badge reflects
+                // exactly what the backend reports.
+                const status = policy?.status || "Upcoming";
+                // Only show a badge for Active/Upcoming policies. Any other
+                // status (Expired, Cancelled, etc.) keeps the card visible
+                // but shows NO badge at all.
+                const showBadge = status === "Active" || status === "Upcoming";
 
                 return (
                   <button
@@ -279,11 +271,16 @@ export default function PoliciesPage() {
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span
-                          className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${STATUS_STYLES[status] || STATUS_STYLES.Upcoming}`}
-                        >
-                          {status}
-                        </span>
+                        {/* Badge only shows for Active/Upcoming. Expired or
+                            any other status keeps the card visible but with
+                            NO badge at all. */}
+                        {showBadge && (
+                          <span
+                            className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${STATUS_STYLES[status] || STATUS_STYLES.Upcoming}`}
+                          >
+                            {status}
+                          </span>
+                        )}
                         <ChevronRight
                           size={18}
                           className="text-[#5c5e68] shrink-0"
