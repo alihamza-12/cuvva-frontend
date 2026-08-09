@@ -1,22 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, ChevronsUpDown } from "lucide-react";
 
-/**
- * frontend/src/components/customer/InlineDateField.jsx
- *
- * "Date" field for AddIncidentPage.jsx — matches the reference
- * screenshot exactly: a pill row showing the selected date, which
- * expands inline (not a bottom sheet) into a full month calendar grid
- * with a blue-circle highlight on the selected day and </> month
- * navigation arrows in both the field header row and the calendar
- * header row.
- *
- * Props:
- *  - value: Date
- *  - onChange: (date: Date) => void
- *  - open: boolean
- *  - onToggle: () => void
- */
 const WEEKDAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
 function formatFieldLabel(date) {
@@ -29,7 +13,7 @@ function formatFieldLabel(date) {
 
 function buildMonthGrid(year, month) {
   const firstOfMonth = new Date(year, month, 1);
-  const startWeekday = firstOfMonth.getDay(); // 0 = Sun
+  const startWeekday = firstOfMonth.getDay(); 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const cells = [];
@@ -68,8 +52,7 @@ export default function InlineDateField({ value, onChange, open, onToggle }) {
   const handlePickDay = (day) => {
     if (!day) return;
     const picked = new Date(viewYear, viewMonth, day);
-    // Incidents must be dated today or in the past (can't declare a
-    // future incident) — clamp to today if somehow exceeded.
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     onChange(picked > today ? today : picked);

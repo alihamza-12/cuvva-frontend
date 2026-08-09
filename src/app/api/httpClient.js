@@ -12,13 +12,12 @@ function clearAuthAndRedirectToLogin() {
   try {
     localStorage.removeItem("cuvva_user");
   } catch (_) {
-    // ignore
+
   }
 
   window.location.assign("/login");
 }
 
-// Token refresh / retry on 401
 httpClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -28,14 +27,13 @@ httpClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Prevent infinite retry loops
     if (config && config.__isRetryRequest) {
       clearAuthAndRedirectToLogin();
       return Promise.reject(error);
     }
 
     try {
-      // Attempt refresh using httpOnly refreshToken cookie
+
       const refreshResponse = await httpClient.post(
         "/api/auth/refresh-token",
         {},
@@ -47,7 +45,6 @@ httpClient.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      // Retry original request once
       if (config) {
         config.__isRetryRequest = true;
         return httpClient(config);

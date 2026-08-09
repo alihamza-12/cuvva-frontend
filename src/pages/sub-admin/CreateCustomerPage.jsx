@@ -25,14 +25,14 @@ export default function CreateCustomerPage() {
     dateOfBirth: "",
     gender: "",
     drivingLicenceNumber: "",
-    // address (flat)
+
     line1: "",
     line2: "",
     city: "",
     county: "",
     postcode: "",
     country: "UK",
-    // expiry options
+
     useDurationDays: true,
     durationDays: "365",
     expiresAt: "",
@@ -84,14 +84,14 @@ export default function CreateCustomerPage() {
         dateOfBirth: form.dateOfBirth,
         gender: form.gender,
         drivingLicenceNumber: form.drivingLicenceNumber.trim(),
-        // backend accepts either durationDays or expiresAt
+
         durationDays: form.useDurationDays
           ? Number(form.durationDays)
           : undefined,
         expiresAt: form.useDurationDays
           ? undefined
           : new Date(form.expiresAt).toISOString(),
-        // address fields match User schema structure
+
         line1: form.line1?.trim() || undefined,
         line2: form.line2?.trim() || undefined,
         city: form.city?.trim() || undefined,
@@ -100,11 +100,6 @@ export default function CreateCustomerPage() {
         country: form.country || "UK",
       };
 
-      // IMPORTANT: Backend User model expects nested `address` object.
-      // But auth/register route reads flat `fullName, email, password, role, expiresAt/durationDays` only.
-      // So we must send address in the correct flat keys OR backend should be updated.
-      // To stay compatible with current backend, we send address fields only under the expected `address` key.
-      // If backend already ignores unknown fields, this is still safe.
       payload.address = {
         line1: payload.line1,
         line2: payload.line2,
@@ -119,7 +114,6 @@ export default function CreateCustomerPage() {
       delete payload.county;
       delete payload.postcode;
 
-      // Clean address
       payload.address = Object.fromEntries(
         Object.entries(payload.address).filter(
           ([, v]) => v !== undefined && v !== "",

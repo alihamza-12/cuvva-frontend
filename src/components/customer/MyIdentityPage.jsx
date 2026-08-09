@@ -2,43 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle, User } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
 
-/**
- * frontend/src/components/customer/MyIdentityPage.jsx
- *
- * "My Identity" — opened from AccountDetailsPage.jsx's "My identity"
- * row. Matches reference: header, avatar circle + full name, "About
- * me" card (Date of birth / Name / Gender / Driving licence, each
- * with a small green dot), "chat to us" link for licence updates,
- * "Verification photos" card (Driving licence / Selfie, each showing
- * "Taken"). UI is unchanged — same rows, same layout, same
- * "Not provided"/"Not taken" fallback pattern as before.
- *
- * REAL DATA (from GET /customers/me):
- *   - "Name" -> customer.fullName.
- *   - "Date of birth" -> customer.dateOfBirth, formatted via
- *     formatDob(). Falls back to "Not provided" if null/missing on a
- *     given customer's record.
- *   - "Gender" -> customer.gender. Falls back to "Not provided" if
- *     null/missing.
- *   - "Driving licence" -> customer.drivingLicenceNumber. Falls back
- *     to "Not provided" if null/missing.
- *
- * UPDATE: all 4 fields above are now REAL backend data — the
- * create-customer flow (Super Admin's CreateUser.jsx and Sub Admin's
- * CreateCustomerPage.jsx) now collects and requires
- * dateOfBirth/gender/drivingLicenceNumber when a customer is created,
- * User.js's schema has gender/drivingLicenceNumber added, and
- * GET /customers/me's `.select(...)` list includes both. So any
- * customer created going forward will have real values for all 4
- * fields; any "Not provided" shown here for an OLDER customer account
- * (created before these fields existed) is accurate — that record
- * genuinely has no value stored for it, not a frontend gap.
- *
- * "Verification photos" (Driving licence / Selfie "Taken" status) —
- * no such concept exists anywhere in the schema (no file-upload/
- * verification-status collection) — left as static "Not taken"
- * placeholders, NOT real data.
- */
 export default function MyIdentityPage() {
   const navigate = useNavigate();
   const { data } = useGetMyProfileQuery();

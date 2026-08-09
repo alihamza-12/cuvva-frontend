@@ -22,13 +22,10 @@ export default function SubAdminDashboard() {
 
   const [activeTab, setActiveTab] = useState("overview");
 
-  // RTK Query will be wired in later.
-  // For now we keep the same UX patterns as SuperAdminDashboard.
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [systemAlert, setSystemAlert] = useState(null);
 
-  // Data states
   const [policies, setPolicies] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [myVehiclesError, setMyVehiclesError] = useState("");
@@ -98,7 +95,7 @@ export default function SubAdminDashboard() {
     try {
       await httpClient.post("/api/auth/logout");
     } catch (_) {
-      // ignore
+
     } finally {
       try {
         localStorage.clear();
@@ -132,7 +129,6 @@ export default function SubAdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#060814] text-white flex font-sans antialiased selection:bg-[#00f0ff]/30 selection:text-white">
-      {/* Sidebar is rendered by SubAdminLayout */}
 
       <div className="flex flex-col flex-1">
         <header className="h-16 border-b border-[#1e2238] px-4 md:px-8 flex items-center justify-between gap-4 sticky top-0 bg-[#060814]/90 backdrop-blur-md z-40 shrink-0">
@@ -212,7 +208,6 @@ export default function SubAdminDashboard() {
             />
           )}
 
-          {/* Session revoke button is in Sidebar */}
         </main>
       </div>
     </div>

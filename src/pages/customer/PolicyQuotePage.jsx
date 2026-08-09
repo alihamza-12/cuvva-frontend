@@ -20,35 +20,6 @@ import {
   calculateExtensionCost,
 } from "../../utils/calculatePremium";
 
-/**
- * frontend/src/pages/customer/PolicyQuotePage.jsx
- *
- * SINGLE combined screen — this replaces the earlier two-route split
- * (PolicySetupPage.jsx + QuoteReviewPage.jsx). Both screenshots you sent
- * are actually one continuously scrollable page:
- *
- *   [header] -> [vehicle icon/name] -> [Start/Duration rows]
- *   -> [breakdown cover note] -> [benefit checklist]
- *   -> [policy documents] -> [extend-cover upsell]
- *   -> [sticky price + Continue footer]
- *
- * The Duration row still opens DurationPickerSheet.jsx as a bottom-sheet
- * overlay on TOP of this page (not a page navigation) — exactly like
- * your third screenshot showed the sheet appearing over the dimmed page.
- *
- * Route: /customer/policies/new?vehicleId=...
- *
- * IMPORTANT DATA NOTE: your backend (vehicles.js) only exposes vehicle
- * lookup by REGISTRATION (`GET /api/vehicles/lookup/:registration`),
- * there is no `GET /api/vehicles/:id` route. So this page relies on the
- * vehicle object being passed via `navigate(..., { state: { prefillVehicle } })`
- * from PlateSearchBar.jsx / RecentlyViewedSection.jsx / BuyAgainSection.jsx.
- * If someone opens this URL directly (e.g. a refresh or shared link) and
- * `location.state` is empty, there's currently no way to re-fetch the
- * vehicle by the `vehicleId` query param alone — flag this to me if you
- * want a workaround (e.g. also storing the last-looked-up vehicle in
- * localStorage keyed by id, purely client-side, no backend change).
- */
 export default function PolicyQuotePage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,12 +41,10 @@ export default function PolicyQuotePage() {
   const [isDurationSheetOpen, setDurationSheetOpen] = useState(false);
   const coverageType = "Comprehensive";
 
-  // --- Start time state ---
-  const [startMode, setStartMode] = useState("immediate"); // "immediate" | "scheduled"
+  const [startMode, setStartMode] = useState("immediate"); 
   const [scheduledStartDate, setScheduledStartDate] = useState(null);
   const [isStartSheetOpen, setStartSheetOpen] = useState(false);
 
-  // --- Statements confirmation modal (shown on "Continue") ---
   const [isStatementsModalOpen, setStatementsModalOpen] = useState(false);
 
   const quote = useMemo(
@@ -99,8 +68,6 @@ export default function PolicyQuotePage() {
   const durationLabel =
     durationHours === 1 ? "1 hour" : `${durationHours} hours`;
 
-  // "Get X hours instead for an extra £Y" upsell — steps to the next
-  // duration tier up from whatever is currently selected.
   const DURATION_TIERS = [1, 2, 3, 6, 24];
   const nextTier = DURATION_TIERS.find((h) => h > durationHours);
   const extensionCost = nextTier
@@ -144,25 +111,19 @@ export default function PolicyQuotePage() {
         ? `Starts at ${scheduledStartDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`
         : "";
 
-  // "Continue" now opens the statements confirmation modal instead of
-  // navigating straight to checkout. What happens on Yes/No is wired
-  // up separately below (currently: Yes proceeds to checkout, No just
-  // closes the modal) — update these once you decide the exact behavior.
   const handleContinue = () => {
     setStatementsModalOpen(true);
   };
 
   const handleStatementsConfirm = () => {
     setStatementsModalOpen(false);
-    // "Yes" now leads into the vehicle condition photo capture flow
-    // (front/back/left/right) before checkout, instead of skipping
-    // straight to checkout.
+
     navigate("/customer/policies/photos/front", {
       state: {
         vehicle,
         durationHours,
         coverageType,
-        premiumAmount: quote.premiumGBP, // direct decimal pounds, matches Policy.premiumAmount
+        premiumAmount: quote.premiumGBP, 
         excess: quote.excess,
       },
     });
@@ -174,7 +135,7 @@ export default function PolicyQuotePage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-black/95 backdrop-blur-sm">
         <button
           type="button"
@@ -231,9 +192,8 @@ export default function PolicyQuotePage() {
         </div>
       </div>
 
-      {/* Scrollable content */}
       <div className="flex-1 px-4 pb-4 space-y-3 overflow-y-auto">
-        {/* Vehicle identity block */}
+        
         <div className="flex flex-col items-center pt-1 pb-2">
           <CarBrandIcon make={vehicle.make} size={56} />
           <div className="mt-3 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#17181c] border border-white/5">
@@ -244,7 +204,6 @@ export default function PolicyQuotePage() {
           </div>
         </div>
 
-        {/* Start / Duration rows */}
         <div className="rounded-2xl bg-[#17181c] overflow-hidden">
           <button
             type="button"
@@ -281,7 +240,6 @@ export default function PolicyQuotePage() {
           </button>
         </div>
 
-        {/* Breakdown cover note */}
         <div className="bg-[#17181c] rounded-2xl p-4">
           <p className="text-[13px] text-[#b5b6bd] leading-relaxed">
             Get 24/7 roadside assistance and local recovery from Call Assist.
@@ -295,7 +253,6 @@ export default function PolicyQuotePage() {
           </button>
         </div>
 
-        {/* Benefit checklist */}
         <div className="bg-[#17181c] rounded-2xl p-4 space-y-5">
           <BenefitRow
             title={`Your excess is £${quote.excess}`}
@@ -315,7 +272,6 @@ export default function PolicyQuotePage() {
           />
         </div>
 
-        {/* Policy documents */}
         <button
           type="button"
           onClick={() =>
@@ -332,7 +288,6 @@ export default function PolicyQuotePage() {
           <ChevronRight size={18} className="text-[#5c5e68]" />
         </button>
 
-        {/* Extend-cover upsell */}
         {nextTier && extensionCost != null && (
           <button
             type="button"
@@ -352,7 +307,6 @@ export default function PolicyQuotePage() {
         )}
       </div>
 
-      {/* Sticky footer: price + continue */}
       <div className="sticky bottom-0 flex items-center justify-between px-4 py-4 bg-black border-t border-white/5">
         <div>
           <div className="text-[22px] font-extrabold text-white">

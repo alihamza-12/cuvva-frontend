@@ -1,33 +1,7 @@
-/**
- * frontend/src/utils/calculatePremium.js
- *
- * Deterministic quote calculator for short-term vehicle insurance,
- * modeled on how real temp-cover insurers (Cuvva, Veygo, Tempcover)
- * actually price policies: a FLAT BASE FEE to open a policy (covers
- * admin/risk underwriting cost) + a small MARGINAL rate per extra hour,
- * then loaded up/down by risk factors (vehicle, driver age, cover type).
- *
- * This is NOT a simple "hours x hourly rate" formula — real short-term
- * cover is front-loaded (e.g. Cuvva-style: 1hr ~£15-20, but going from
- * 1hr to 3hr only adds a few pounds), which is why this uses a base fee
- * + marginal-hour model instead.
- *
- * All the knobs are constants at the top — tune them as you get real
- * underwriting guidance, without touching the calculation logic itself.
- *
- * IMPORTANT: This is a placeholder rating engine for an MVP/demo. Real
- * insurance pricing requires an actual underwriter/actuarial model —
- * do not use these numbers for a live regulated insurance product
- * without review from whoever underwrites your policies (per your
- * Policy schema: Wakam / ERS Syndicate / Crawford).
- */
 
-// ---------------------------------------------------------------------------
-// Tunable constants — change these numbers, not the logic below.
-// ---------------------------------------------------------------------------
 
-const BASE_FEE_GBP = 17.5; // flat cost to open any policy (covers the first hour)
-const MARGINAL_RATE_PER_EXTRA_HOUR_GBP = 2.25; // cost per hour beyond the first
+const BASE_FEE_GBP = 17.5; 
+const MARGINAL_RATE_PER_EXTRA_HOUR_GBP = 2.25; 
 
 const COVERAGE_MULTIPLIER = {
   Comprehensive: 1.0,
@@ -39,7 +13,6 @@ const EXCESS_BY_COVERAGE = {
   "Third Party Only": 750,
 };
 
-// Vehicle risk loadings (stack additively, e.g. big engine + old car both apply)
 const ENGINE_CC_LOADING = [
   { max: 1200, loading: 0 },
   { max: 2000, loading: 0.1 },
@@ -59,8 +32,6 @@ const VEHICLE_AGE_LOADING = [
   { maxYears: Infinity, loading: 0.2 },
 ];
 
-// Driver age loading — young/inexperienced and elderly drivers cost more
-// to insure short-term. Requires the customer's dateOfBirth.
 const DRIVER_AGE_LOADING = [
   { maxAge: 21, loading: 0.7 },
   { maxAge: 24, loading: 0.35 },
@@ -68,11 +39,7 @@ const DRIVER_AGE_LOADING = [
   { maxAge: Infinity, loading: 0.25 },
 ];
 
-const MINIMUM_PREMIUM_GBP = 8.0; // never quote below this, regardless of duration
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+const MINIMUM_PREMIUM_GBP = 8.0; 
 
 const findLoading = (bands, value, key) => {
   const band = bands.find((b) => value <= (b[key] ?? Infinity));
@@ -87,20 +54,6 @@ const getAgeInYears = (dateOfBirth) => {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.25));
 };
 
-/**
- * @param {Object} params
- * @param {number} params.durationHours - length of cover, e.g. 1, 3, 24
- * @param {Object} params.vehicle - { year, engineCapacityCC, powerBHP }
- * @param {string} params.coverageType - "Comprehensive" | "Third Party Only"
- * @param {string} [params.driverDateOfBirth] - customer's dateOfBirth (ISO string)
- *
- * @returns {{
- *   premiumGBP: number,       // e.g. 18.59
- *   premiumPence: number,     // e.g. 1859 — store this in Policy.premiumAmount
- *   excess: number,           // e.g. 500
- *   breakdown: Array<{ label: string, amount: number }>
- * }}
- */
 export function calculatePremium({
   durationHours,
   vehicle = {},
@@ -154,10 +107,6 @@ export function calculatePremium({
   };
 }
 
-/**
- * Quick helper to price the "extend cover" upsell shown on the quote
- * screen (e.g. "Get 3 hours instead for an extra £4.78").
- */
 export function calculateExtensionCost(baseParams, extraHours) {
   const current = calculatePremium(baseParams);
   const extended = calculatePremium({

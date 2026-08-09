@@ -3,25 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { getResidentialAddress, saveResidentialAddress } from "../../utils/profileLocalStorage";
 
-/**
- * frontend/src/components/customer/ResidentialAddressPage.jsx
- *
- * "Residential address" — opened from AccountDetailsPage.jsx's
- * "Residential address" row. Matches reference: header (back only,
- * no help icon in this screenshot), title, 4 stacked pill inputs
- * (Address line 1, Address line 2 optional, City/town, Postcode),
- * sticky "Done" button.
- *
- * BACKEND GAP — User.js DOES have a real `address` object field
- * ({ line1, line2, city, county, postcode, country }), but there is
- * NO route exposing or editing it for a Customer: customers.js's only
- * PATCH route (`PATCH /:id`) is Super-Admin/Sub-Admin-only and only
- * accepts fullName/email/expiresAt/password — address isn't in that
- * accepted-fields list at all, and a Customer can't call that route
- * anyway (authorizeRoles excludes "Customer"). Saved 100% client-side
- * via localStorage (profileLocalStorage.js) until a real
- * PATCH /customers/me route supporting address is added.
- */
 export default function ResidentialAddressPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -46,18 +27,13 @@ export default function ResidentialAddressPage() {
   };
 
   const handleDone = () => {
-    // localStorage only — no backend route exposes address editing to
-    // a Customer yet.
+
     saveResidentialAddress(form);
     handleBack();
   };
 
   return (
-    // The "Done" button is placed inline, right after the last input
-    // (normal document flow, not `fixed`/`mt-auto`) — this guarantees
-    // it always renders directly below the fields with a fixed gap,
-    // never on top of them, and pb-40 on the outer wrapper keeps it
-    // clear of the bottom nav.
+
     <div className="min-h-screen bg-black text-white pb-40">
       <div className="flex items-center px-4 pt-4">
         <button
@@ -112,11 +88,6 @@ export default function ResidentialAddressPage() {
   );
 }
 
-/**
- * Pill input with a small floating label above the value, matching
- * the reference's "Address line 1" (small grey label) + "293
- * Salisbury Avenue" (larger white value) stacked look.
- */
 function FloatingPillInput({ label, value, onChange }) {
   return (
     <div className="w-full px-5 py-3 rounded-2xl bg-[#242429]">

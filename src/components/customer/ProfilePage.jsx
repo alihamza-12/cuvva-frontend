@@ -22,19 +22,6 @@ import {
 } from "../../utils/profileLocalStorage";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
-/**
- * frontend/src/components/customer/ProfilePage.jsx
- *
- * Customer tab: Profile. See original file header for full docs.
- *
- * FIX (this pass): the "Payment methods" row's Apple Pay badge had the
- * "Apple Pay" text sitting INSIDE the white icon chip (because the
- * white `bg-white` span wrapped both the Apple-logo+"Pay" SVG AND a
- * separate "Apple Pay" text span). The Apple logo + "Pay" wordmark
- * already IS the Apple Pay mark, so the extra text was redundant and
- * visually wrong. Removed the inner "Apple Pay" text span so the
- * white chip now shows ONLY the Apple Pay mark (Apple logo + "Pay").
- */
 export default function ProfilePage() {
   const { data, isLoading, error, refetch } = useGetMyProfileQuery();
   const dispatch = useDispatch();
@@ -45,7 +32,6 @@ export default function ProfilePage() {
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [showRateModal, setShowRateModal] = useState(false);
 
-  // Profile photo upload state
   const fileInputRef = useRef(null);
   const [localPreviewUrl, setLocalPreviewUrl] = useState(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -53,10 +39,6 @@ export default function ProfilePage() {
 
   const customer = data?.customer;
 
-  // Header name: prefer the saved preferred name (server value first,
-  // then the localStorage fallback saved by PreferredNamePage.jsx),
-  // falling back to the real fullName, then a generic placeholder.
-  // Only replaces the FIRST word of fullName with the preferred name.
   const name = useMemo(() => {
     const fullName = customer?.fullName;
     if (!fullName) return "Your account";
@@ -81,13 +63,10 @@ export default function ProfilePage() {
     return method === "apple-pay" ? "Apple Pay" : null;
   }, [showPaymentSheet]);
 
-  // Avatar image priority: a fresh local preview (mid-upload) > the
-  // real saved photo from the server > nothing (falls back to the
-  // placeholder Camera icon below).
   const avatarSrc = localPreviewUrl || customer?.profilePhotoUrl || null;
 
   const handleNotWiredUp = (label) => {
-    // Placeholder — explicitly deferred, no destination page yet.
+
     console.log(`${label} tapped — not wired up yet.`);
   };
 
@@ -97,14 +76,12 @@ export default function ProfilePage() {
 
   const handleFileSelected = async (event) => {
     const file = event.target.files?.[0];
-    // Always reset the input's value, even on failure, so selecting
-    // the SAME file again later still fires this onChange handler.
+
     event.target.value = "";
     if (!file) return;
 
     setPhotoError(null);
 
-    // Instant local preview so the UI feels responsive immediately.
     const objectUrl = URL.createObjectURL(file);
     setLocalPreviewUrl(objectUrl);
     setIsUploadingPhoto(true);
@@ -131,7 +108,7 @@ export default function ProfilePage() {
       dispatch(logOut());
       navigate("/login", { replace: true });
     } catch {
-      // Even if the API fails, clear local auth state to avoid being stuck.
+
       dispatch(logOut());
       navigate("/login", { replace: true });
     }
@@ -147,7 +124,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <div className="w-9 h-9" />
         <h1 className="text-[18px] font-extrabold">Profile</h1>
@@ -161,7 +138,6 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      {/* Avatar / name / member since */}
       <div className="flex flex-col items-center pt-4 pb-2">
         <input
           ref={fileInputRef}

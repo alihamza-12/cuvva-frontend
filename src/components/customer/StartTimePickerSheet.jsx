@@ -1,29 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-/**
- * frontend/src/components/customer/StartTimePickerSheet.jsx
- *
- * Bottom-sheet "Start" picker — mirrors DurationPickerSheet.jsx's pattern
- * (backdrop + slide-up sheet + scroll-snap wheels), but offers two modes:
- *
- *   1. "Immediately" — radio option, starts at time of payment (default).
- *   2. "Choose time"  — radio option, reveals a 3-column scroll-snap wheel
- *      (Date / Hour / Minute) letting the customer schedule a future
- *      start within the next 4 weeks, exactly like the reference screenshot.
- *
- * Props:
- *  - open: boolean
- *  - initialMode: "immediate" | "scheduled"
- *  - initialDate: Date | null   (only relevant when mode === "scheduled")
- *  - onClose: () => void
- *  - onConfirm: (result: { mode: "immediate" } | { mode: "scheduled", date: Date }) => void
- */
-
 const ITEM_HEIGHT = 44;
-const MINUTE_STEP = 15; // matches screenshot: :00, :15, :30, :45
+const MINUTE_STEP = 15; 
 const WEEKS_AHEAD = 4;
 
-// Builds the scrollable date list: Today + next (WEEKS_AHEAD * 7) days.
 function buildDateOptions() {
   const days = [];
   const today = new Date();
@@ -61,8 +41,7 @@ function WheelColumn({ options, renderLabel, selectedIndex, onSettle, width }) {
         scrollRef.current.scrollTop = selectedIndex * ITEM_HEIGHT;
       }
     });
-    // Only run when selectedIndex changes externally (e.g. sheet open) —
-    // internal scroll-driven updates shouldn't re-trigger this jump.
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -121,7 +100,7 @@ export default function StartTimePickerSheet({
 
   const dateOptions = useMemo(() => buildDateOptions(), [open]);
 
-  const defaultDateIndex = 0; // "Today"
+  const defaultDateIndex = 0; 
   const defaultHourIndex = new Date().getHours();
   const defaultMinuteIndex = 0;
 
@@ -180,7 +159,6 @@ export default function StartTimePickerSheet({
           <h2 className="text-[20px] font-extrabold text-white">Start</h2>
         </div>
 
-        {/* Immediately option */}
         <button
           type="button"
           onClick={() => setMode("immediate")}
@@ -200,7 +178,6 @@ export default function StartTimePickerSheet({
 
         <div className="h-px mx-5 bg-white/5" />
 
-        {/* Choose time option */}
         <button
           type="button"
           onClick={() => setMode("scheduled")}
@@ -218,7 +195,6 @@ export default function StartTimePickerSheet({
           <RadioDot active={mode === "scheduled"} />
         </button>
 
-        {/* Triple wheel: Date / Hour / Minute — only shown in scheduled mode */}
         {mode === "scheduled" && (
           <div className="relative px-5 mt-2">
             <div

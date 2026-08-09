@@ -3,25 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import CarBrandIcon from "./CarBrandIcon";
 
-/**
- * frontend/src/components/customer/RecentlyViewedSection.jsx
- *
- * Horizontal-scroll row of vehicles the customer recently looked up via
- * the number-plate search (DVLA lookup), NOT necessarily insured yet.
- * Each card is dismissible via the "x" button.
- *
- * This is distinct from "Buy again": Recently Viewed = plates searched
- * (may have never bought a policy). Buy Again = vehicles with an expired
- * policy record.
- *
- * Suggested local persistence: store recently-viewed vehicles in
- * localStorage (or a lightweight `GET/DELETE /api/customers/me/recent-views`
- * endpoint if you want it synced across devices).
- *
- * Props:
- *  - vehicles: [{ _id, registration, make, model }]
- *  - onDismiss: (vehicleId) => void
- */
 export default function RecentlyViewedSection({ vehicles = [], onDismiss }) {
   const navigate = useNavigate();
 

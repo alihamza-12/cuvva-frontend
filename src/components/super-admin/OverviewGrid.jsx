@@ -2,20 +2,20 @@ import React from "react";
 import { ShieldCheck, Users, Car, FileText } from "lucide-react";
 
 export default function OverviewGrid({ counts = {} }) {
-  // Normalized configuration matrix supporting the full 4-tier telemetry profile
+
   const metrics = [
     {
       title: "Sub-Admin Accounts",
-      // Safe fallback pattern handles asynchronous rendering delays cleanly
+
       value: counts?.subAdmins ?? 0,
       label: "Active administrative nodes",
-      icon: ShieldCheck, // Upgraded to distinguish admin nodes from user profiles
+      icon: ShieldCheck, 
       color: "text-purple-400",
       bgLight: "bg-purple-500/5",
       borderLight: "border-purple-500/10",
     },
     {
-      title: "Customer Accounts", // Resolved Omission Bug: Integrated into layout dashboard
+      title: "Customer Accounts", 
       value: counts?.customers ?? 0,
       label: "Global registered client base",
       icon: Users,
@@ -36,7 +36,7 @@ export default function OverviewGrid({ counts = {} }) {
       title: "Active Insurance Policies",
       value: counts?.policies ?? 0,
       label: "Short-term coverage contracts",
-      icon: FileText, // Corrected semantic theme representation
+      icon: FileText, 
       color: "text-green-400",
       bgLight: "bg-green-500/5",
       borderLight: "border-green-500/10",
@@ -44,9 +44,7 @@ export default function OverviewGrid({ counts = {} }) {
   ];
 
   return (
-    /* Layout Structural Correction:
-      Transitions cleanly from 1 to 2, and then 4 balanced columns across viewport boundaries.
-    */
+
     <div className="grid grid-cols-1 gap-5 select-none sm:grid-cols-2 lg:grid-cols-4 animate-fadeIn">
       {metrics.map((card, idx) => {
         const Icon = card.icon;
@@ -55,7 +53,7 @@ export default function OverviewGrid({ counts = {} }) {
             key={idx}
             className={`bg-[#0d0f1d] border border-[#1e2238] p-5 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:border-white/10 group`}
           >
-            {/* CARD TITLE & GLYPH LAYERS */}
+
             <div className="flex items-start justify-between gap-4">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#8a8fbc]">
                 {card.title}
@@ -67,7 +65,6 @@ export default function OverviewGrid({ counts = {} }) {
               </div>
             </div>
 
-            {/* NUMERICAL DATA METRIC SHELF */}
             <div className="mt-5">
               <h2 className="font-mono text-2xl font-black tracking-tight text-white transition-colors group-hover:text-purple-100">
                 {card.value.toLocaleString()}
@@ -77,7 +74,6 @@ export default function OverviewGrid({ counts = {} }) {
               </p>
             </div>
 
-            {/* SUBTLE CARD FOCUS ACCENT FOOTER BAR */}
             <div
               className={`h-[2px] w-0 group-hover:w-full transition-all duration-300 mt-4 rounded-full ${card.color.replace("text-", "bg-")}/40`}
             />

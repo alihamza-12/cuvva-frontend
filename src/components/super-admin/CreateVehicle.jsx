@@ -5,14 +5,13 @@ const FUEL_TYPES = ["PETROL", "DIESEL", "ELECTRIC", "HYBRID"];
 
 export default function CreateVehicle({ axiosInstance, onCreated }) {
   const [form, setForm] = useState({
-    // --- Core Identity ---
+
     registration: "",
     make: "",
     model: "",
     colour: "",
     year: "",
 
-    // --- Technical Specifications ---
     fuelType: "PETROL",
     engineCapacityCC: "",
     powerBHP: "",
@@ -20,7 +19,6 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
     cylinders: "",
     fuelConsumptionMPG: "",
 
-    // --- DVLA Compliance Status (Manually Managed) ---
     motStatus: "Valid",
     motExpiryDate: "",
     taxStatus: "Paid",
@@ -77,7 +75,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
 
       const toDateOrUndefined = (v) => {
         if (!v) return undefined;
-        // Expect YYYY-MM-DD from <input type="date" />
+
         const d = new Date(v);
         return Number.isNaN(d.getTime()) ? undefined : d;
       };
@@ -248,7 +246,6 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
             </select>
           </div>
 
-          {/* Technical specs */}
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
@@ -327,7 +324,6 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
             />
           </div>
 
-          {/* MOT / Tax + Compliance fields */}
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">

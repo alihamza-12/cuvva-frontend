@@ -9,23 +9,7 @@ import {
   getPreferredName,
   savePreferredName,
 } from "../../utils/profileLocalStorage";
-/**
- * frontend/src/components/customer/PreferredNamePage.jsx
- *
- * "Edit preferred name" — opened from AccountDetailsPage.jsx's
- * "Preferred first name" row. Matches reference: header, title,
- * subtitle copy, single pill input pre-filled with the current
- * preferred name, sticky "Save" button.
- *
- * Persists the preferredName to the backend via
- * PATCH /api/customers/me (see customers.js) AND caches locally
- * in localStorage as a fallback/offline override. Invalidates the
- * Profile RTK cache on success so AccountDetailsPage and ProfilePage
- * show the updated name immediately without a manual refresh.
- *
- * Defaults to the server-preferredName if available, otherwise the
- * real fullName's first word (from GET /customers/me).
- */
+
 export default function PreferredNamePage() {
   const navigate = useNavigate();
   const { data, refetch } = useGetMyProfileQuery();
@@ -41,7 +25,7 @@ export default function PreferredNamePage() {
   const [saveFailed, setSaveFailed] = useState(false);
 
   useEffect(() => {
-    // Priority: server preferredName > localStorage > realFirstName
+
     const stored = getPreferredName();
     setName(serverPreferredName || stored || realFirstName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,24 +41,11 @@ export default function PreferredNamePage() {
     setSaved(false);
     setSaveFailed(false);
 
-    // Cache locally regardless of what the backend does — this is
-    // what makes AccountDetailsPage.jsx / ProfilePage.jsx pick up the
-    // new name even if the network call below fails, since both read
-    // getPreferredName() as a fallback.
     savePreferredName(trimmed);
 
-    // Persist to backend. Previously this error was silently
-    // swallowed and `setSaved(true)` ran unconditionally afterwards —
-    // so the UI showed "Saved." even when the PATCH request actually
-    // failed (wrong endpoint, network error, validation error, etc).
-    // Now the success/failure message reflects what really happened.
     try {
       await updatePreferredName(trimmed).unwrap();
-      // Force a refetch here rather than relying only on RTK Query
-      // tag-invalidation being configured correctly on the mutation —
-      // this guarantees `data.customer.preferredName` is fresh, which
-      // is what ProfilePage.jsx/AccountDetailsPage.jsx read FIRST
-      // (before falling back to localStorage).
+
       await refetch();
       setSaved(true);
     } catch (err) {
@@ -85,12 +56,7 @@ export default function PreferredNamePage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Header — back button on the left. Previously this button had
-          BOTH aria-label="Back" and aria-label="Help" on the same
-          element and only rendered the HelpCircle icon (no
-          ChevronLeft anywhere in the file), so the real back button
-          never appeared — fixed by giving it its own single label and
-          the correct ChevronLeft icon. */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"

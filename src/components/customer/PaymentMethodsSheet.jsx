@@ -3,37 +3,6 @@ import { createPortal } from "react-dom";
 import { X, Check, Plus } from "lucide-react";
 import { getPaymentMethod, savePaymentMethod } from "../../utils/profileLocalStorage";
 
-/**
- * frontend/src/components/customer/PaymentMethodsSheet.jsx
- *
- * "Manage your payment methods" bottom sheet — opened by tapping the
- * "Payment methods" row on ProfilePage.jsx. Rebuilt to match the
- * reference screenshot's exact tile shape: wide credit-card-style
- * rounded rectangles (not small squares) — a dashed-border "+ Add"
- * tile with a solid grey circle+plus centered, and a solid
- * purple-bordered "Apple Pay" tile containing a white card-style
- * badge (Apple glyph + "Pay" wordmark) with a purple checkmark circle
- * overlapping its bottom-right corner.
- *
- * STACKING FIX: rendered via a React portal straight into
- * document.body (instead of inline inside ProfilePage's tree), with a
- * z-index (z-[100]) higher than CustomerBottomNav's z-50. Without
- * this, the sheet — despite being `position: fixed` — could end up
- * stacking BELOW the bottom nav bar (same z-index, different
- * stacking context via CustomerLayout's tree), causing the nav to
- * visibly cut across the sheet's bottom edge instead of the sheet
- * covering the full screen. The portal guarantees this sheet always
- * renders on top and reaches true screen edges, everywhere it's used.
- *
- * NO BACKEND ENDPOINT/SCHEMA for payment methods exists on User.js —
- * there's no real Apple Pay/Stripe/card integration wired up.
- * Selection is persisted 100% client-side via localStorage
- * (profileLocalStorage.js), purely so the UI remembers your choice
- * between visits — it does NOT charge or store any real payment
- * credentials. The Apple glyph below is drawn as a plain inline SVG
- * shape (not Apple's actual trademarked logo asset), just enough to
- * visually read as the familiar "apple" silhouette next to "Pay".
- */
 export default function PaymentMethodsSheet({ onClose }) {
   const [selected, setSelected] = useState("apple-pay");
 
@@ -41,8 +10,6 @@ export default function PaymentMethodsSheet({ onClose }) {
     setSelected(getPaymentMethod());
   }, []);
 
-  // Lock background scroll while the sheet is open, same as a native
-  // bottom sheet would.
   useEffect(() => {
     const original = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -57,13 +24,13 @@ export default function PaymentMethodsSheet({ onClose }) {
   };
 
   const handleAddMethod = () => {
-    // Placeholder — no real card/payment-provider integration exists.
+
     console.log("Add payment method tapped — not wired up yet.");
   };
 
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-end">
-      {/* Backdrop */}
+
       <button
         type="button"
         aria-label="Close"
@@ -71,7 +38,6 @@ export default function PaymentMethodsSheet({ onClose }) {
         className="absolute inset-0 bg-black/60"
       />
 
-      {/* Sheet */}
       <div className="relative w-full bg-[#1c1d22] rounded-t-3xl px-4 pt-4 pb-8 z-10">
         <div className="flex items-center justify-between">
           <div className="w-9 h-9" />
@@ -90,8 +56,7 @@ export default function PaymentMethodsSheet({ onClose }) {
         </h2>
 
         <div className="flex items-start gap-4 mt-6">
-          {/* + Add tile — wide dashed-border card with a centered
-              solid circle+plus icon */}
+          
           <button
             type="button"
             onClick={handleAddMethod}
@@ -105,9 +70,6 @@ export default function PaymentMethodsSheet({ onClose }) {
             <span className="text-[14px] font-semibold text-white">+ Add</span>
           </button>
 
-          {/* Apple Pay tile — wide card, purple border when selected,
-              white Apple Pay badge centered, purple checkmark overlapping
-              the bottom-right corner. */}
           <button
             type="button"
             onClick={() => handleSelect("apple-pay")}
@@ -134,14 +96,6 @@ export default function PaymentMethodsSheet({ onClose }) {
   );
 }
 
-
-/**
- * Small white rounded-rect card badge with an Apple glyph + "Pay"
- * wordmark, matching the reference's tile artwork. The apple shape is
- * a plain inline SVG silhouette (not Apple's real trademarked logo
- * file) — close enough visually to read correctly at this size
- * without using any protected brand asset.
- */
 function ApplePayBadge() {
   return (
     <div className="w-[72px] h-[38px] rounded-lg bg-white flex items-center justify-center gap-1">

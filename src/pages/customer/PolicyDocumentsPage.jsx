@@ -2,22 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { X, HelpCircle, FileText, ChevronRight } from "lucide-react";
 
-/**
- * frontend/src/pages/customer/PolicyDocumentsPage.jsx
- *
- * Full page (not a bottom sheet) shown when the customer taps the
- * "Policy documents" row on PolicyQuotePage.jsx.
- *
- * - "Insurance summary (IPID)" -> navigates to an IN-APP content page
- *   (InsuranceSummaryPage.jsx) rendering the FAQ-style summary shown in
- *   the reference screenshots (light theme, icon + Q&A cards).
- * - "Policy wording (full terms)" -> still opens the static PDF, since
- *   no in-app design was provided for that document yet. Place the file at:
- *     frontend/public/docs/policy-wording-full-terms.pdf
- *   If you'd rather this ALSO be an in-app page like the IPID one, send
- *   over the screenshots for it and I'll build it the same way.
- */
-
 const DOCUMENTS = [
   {
     id: "ipid",
@@ -46,7 +30,7 @@ export default function PolicyDocumentsPage() {
 
   return (
     <div className="min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <button
           type="button"
@@ -69,7 +53,6 @@ export default function PolicyDocumentsPage() {
         </button>
       </div>
 
-      {/* Document list card */}
       <div className="mx-4 mt-4 rounded-2xl bg-[#17181c] overflow-hidden">
         {DOCUMENTS.map((doc, idx) => (
           <React.Fragment key={doc.id}>

@@ -13,41 +13,6 @@ import {
   MapPin,
 } from "lucide-react";
 
-/**
- * frontend/src/pages/customer/PolicyDetailPage.jsx
- *
- * Full policy detail screen — opened by tapping a "Past" policy card on
- * PoliciesPage.jsx. Matches the reference screenshots exactly: header
- * (X / vehicle name / plate), 3 quick-action icons (Policy docs /
- * Receipt / Make a claim), Start-End time card with duration, Policy
- * summary card, Start location card, Payment information card, Get
- * help card, and a sticky "Buy again" button.
- *
- * DATA SOURCE: the full policy object is passed via router state from
- * PoliciesPage.jsx (it's already fetched there via GET /api/policies/my
- * — no new network call needed). If this page is opened directly
- * without that state (e.g. a hard refresh), it shows a graceful
- * "not found" fallback rather than crashing, since your backend's
- * single-policy lookup (GET /api/policies/:id) is Super-Admin-only per
- * policies.js and can't be called by a Customer directly. If you want
- * this page to survive a refresh, a new customer-scoped endpoint like
- * GET /api/policies/my/:id would need to be added — flag it if you
- * want that built.
- *
- * FIELDS NOT IN YOUR CURRENT SCHEMA (rendered as clearly-labeled
- * placeholders, NOT fabricated real data):
- *   - "Breakdown cover" — no such field on Policy.js; hardcoded "No".
- *   - "Start location" / address / map — no location/geo field exists
- *     anywhere in Policy, Vehicle, or User schemas. The map is a
- *     static illustrative placeholder, not a real maps integration.
- *   - Receipt and Make a claim navigate to their real pages.
- *     Book a mechanic navigates to BookMechanicPage.jsx (a static
- *     Cuvva -> ClickMechanic hand-off screen — no real backend
- *     endpoint or partner integration exists yet).
- *   - Chat to us, Visit the help centre — no backend endpoints exist
- *     for these yet; buttons are inert placeholders (logged to
- *     console) until you build them out.
- */
 export default function PolicyDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -125,12 +90,8 @@ export default function PolicyDetailPage() {
     return `${hours}h`;
   })();
 
-  // Use the API's stored status field directly so the badge reflects
-  // exactly what the backend reports.
   const dynamicStatus = policy?.status || "Upcoming";
-  // Only show a badge for Active/Upcoming policies. Any other status
-  // (Expired, Cancelled, etc.) keeps the detail visible but shows NO
-  // badge at all.
+
   const showBadge = dynamicStatus === "Active" || dynamicStatus === "Upcoming";
 
   const statusStyles = {
@@ -170,7 +131,7 @@ export default function PolicyDetailPage() {
   };
 
   const handleNotWiredUp = (label) => {
-    // Placeholder — no backend endpoint exists yet for this action.
+
     console.log(`${label} tapped — not wired up yet.`);
   };
 
@@ -188,7 +149,7 @@ export default function PolicyDetailPage() {
 
   return (
     <div className="min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="sticky top-0 z-10 px-4 pt-4 pb-2 bg-black/95 backdrop-blur-sm">
         <button
           type="button"
@@ -200,9 +161,6 @@ export default function PolicyDetailPage() {
         </button>
       </div>
 
-      {/* Scrollable content — pb-28 reserves space so the fixed footer
-          below never overlaps the last card, regardless of how short
-          or tall the content is. */}
       <div className="pb-28">
         <div className="flex flex-col items-center px-4 -mt-2">
           <h1 className="text-[22px] font-extrabold text-[#c8c9d1]">
@@ -212,9 +170,7 @@ export default function PolicyDetailPage() {
             <p className="text-[14px] text-[#9497a1] tracking-wide">
               {registration}
             </p>
-            {/* Badge only shows for Active/Upcoming. Expired or any
-                other status keeps the detail visible but with NO
-                badge at all. */}
+          
             {showBadge && (
               <span
                 className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${statusStyles[dynamicStatus] || statusStyles.Upcoming}`}
@@ -225,7 +181,6 @@ export default function PolicyDetailPage() {
           </div>
         </div>
 
-        {/* Quick actions */}
         <div className="flex items-start justify-center gap-10 px-4 mt-6">
           <QuickAction
             icon={FileText}
@@ -240,7 +195,6 @@ export default function PolicyDetailPage() {
           />
         </div>
 
-        {/* Start / End card */}
         <div className="mx-4 mt-6 rounded-2xl bg-[#17181c] px-4 py-4 flex items-center justify-between">
           <div>
             <p className="text-[12px] text-[#9497a1]">Start</p>
@@ -272,7 +226,6 @@ export default function PolicyDetailPage() {
           </div>
         </div>
 
-        {/* Policy summary */}
         <div className="mx-4 mt-4 rounded-2xl bg-[#17181c] overflow-hidden">
           <div className="px-4 pt-4 pb-2">
             <h2 className="text-[16px] font-bold text-white">Policy summary</h2>
@@ -310,15 +263,11 @@ export default function PolicyDetailPage() {
           </button>
         </div>
 
-        {/* Start location */}
         <div className="mx-4 mt-4 rounded-2xl bg-[#17181c] overflow-hidden">
           <div className="px-4 pt-4 pb-3">
             <h2 className="text-[16px] font-bold text-white">Start location</h2>
           </div>
 
-          {/* Static illustrative map placeholder — NOT a real maps
-              integration, since no location/geo data exists on the
-              Policy/Vehicle/User schemas yet. */}
           <div className="mx-4 rounded-xl overflow-hidden relative h-[130px] bg-[#20342b]">
             <div
               className="absolute inset-0 opacity-60"
@@ -346,7 +295,6 @@ export default function PolicyDetailPage() {
           </div>
         </div>
 
-        {/* Payment information */}
         <div className="mx-4 mt-4 rounded-2xl bg-[#17181c] overflow-hidden">
           <div className="px-4 pt-4 pb-2">
             <h2 className="text-[16px] font-bold text-white">
@@ -369,7 +317,6 @@ export default function PolicyDetailPage() {
           </button>
         </div>
 
-        {/* Get help */}
         <div className="mx-4 mt-4 rounded-2xl bg-[#17181c] overflow-hidden">
           <div className="px-4 pt-4 pb-2">
             <h2 className="text-[16px] font-bold text-white">Get help</h2>
@@ -399,13 +346,6 @@ export default function PolicyDetailPage() {
         </div>
       </div>
 
-      {/* Fixed footer — position: fixed (not part of the flex/flow
-          layout), so it always pins to the bottom of the viewport
-          regardless of how much content is above it. This is what
-          fixes the large empty gap: previously this footer was inside
-          a `flex-1` scroll container, which stretched to fill the
-          screen on short content and pushed the footer down with a
-          big gap before it. */}
       <div className="fixed bottom-0 left-0 right-0 z-20 px-4 py-4 bg-black border-t border-white/5">
         <button
           type="button"

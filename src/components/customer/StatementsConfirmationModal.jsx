@@ -1,31 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Check, Info, ChevronDown } from "lucide-react";
 
-/**
- * frontend/src/components/customer/StatementsConfirmationModal.jsx
- *
- * Full-screen confirmation modal shown when the customer taps
- * "Continue" on PolicyQuotePage.jsx. Presents a scrollable checklist of
- * true/false declaration statements the customer must confirm before
- * the policy can be created, ending in a disclaimer and No/Yes buttons.
- *
- * Content order reconstructed from two overlapping scroll-capture
- * screenshots (both share 4 identical statements at the seam, confirming
- * they're one continuous list): "1 modal.jpeg" content comes first,
- * flowing into "2modal.jpeg" content, ending with the disclaimer +
- * No/Yes buttons.
- *
- * This component ONLY renders the UI/scroll behavior — what happens on
- * "Yes" vs "No" is intentionally left as a callback prop for you to
- * wire up next (e.g. Yes -> proceed to checkout/payment, No -> close
- * modal or navigate back).
- *
- * Props:
- *  - open: boolean
- *  - onClose: () => void        // e.g. tapping backdrop, or "No"
- *  - onConfirm: () => void      // "Yes" button
- */
-
 const STATEMENTS = [
   {
     text: "I am not currently banned from driving, nor have I received a driving ban outside of the UK during the last 5 years",
@@ -104,15 +79,11 @@ export default function StatementsConfirmationModal({
 
   return (
     <div className="fixed inset-0 z-[60] bg-[#0b0b0e] flex flex-col">
-      {/* Pinned heading — sits OUTSIDE the scrollable area so it never
-          moves/scrolls away, regardless of how far the checklist below
-          it is scrolled. No top gap: content starts right near the top
-          of the screen with normal safe-area padding only. */}
+
       <h1 className="shrink-0 text-[26px] font-extrabold text-white leading-tight px-6 pt-4 pb-4">
         Are all of these statements true and correct?
       </h1>
 
-      {/* Scrollable content (checklist + disclaimer only) */}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -146,11 +117,9 @@ export default function StatementsConfirmationModal({
           cancelled and claims could be rejected or not paid in full.
         </p>
 
-        {/* Spacer so the last statement isn't flush against the footer */}
         <div className="h-2" />
       </div>
 
-      {/* Footer: either a "scroll for more" prompt, or the final No/Yes buttons */}
       <div className="px-6 pb-8 pt-3 bg-[#0b0b0e] shrink-0">
         {!atBottom ? (
           <button

@@ -31,22 +31,18 @@ import VehicleCameraCapturePage from "../components/customer/VehicleCameraCaptur
 import CarClubsPage from "../components/customer/CarClubsPage";
 import PoliciesPage from "../components/customer/PoliciesPage";
 import ProfilePage from "../components/customer/ProfilePage";
-// NOTE: aliased to avoid clashing with the Super Admin's PolicyDetailPage
-// imported above — these are two DIFFERENT components.
+
 import CustomerPolicyDetailPage from "../components/customer/PolicyDetailPage";
 import MakeAClaimPage from "../components/customer/MakeAClaimPage";
 import PolicyReceiptPage from "../components/customer/PolicyReceiptPage";
 import BookMechanicPage from "../components/customer/BookMechanicPage";
-// Profile sub-pages (Account details, Bank details, Discount code,
-// Your discounts, Refer a friend) — added for the Profile rebuild.
+
 import AccountDetailsPage from "../components/customer/AccountDetailsPage";
 import BankAccountDetailsPage from "../components/customer/BankAccountDetailsPage";
 import DiscountCodePage from "../components/customer/DiscountCodePage";
 import YourDiscountsPage from "../components/customer/YourDiscountsPage";
 import ReferFriendPage from "../components/customer/ReferFriendPage";
-// Account details sub-pages (Preferred name, Email, Mobile, Connected
-// accounts, My identity, Residential address, Marketing preferences,
-// Delete account info screen).
+
 import PreferredNamePage from "../components/customer/PreferredNamePage";
 import EmailAddressPage from "../components/customer/EmailAddressPage";
 import AddEmailPage from "../components/customer/AddEmailPage";
@@ -67,7 +63,7 @@ import CarClubDetailPage from "../components/customer/CarClubDetailPage";
 import CreateCarClubPage from "../components/customer/CreateCarClubPage";
 import CarClubResourcePage from "../components/customer/CarClubResourcePage";
 import ChatSupportPage from "../components/customer/ChatSupportWidget";
-// --- HOOKED UP SUB-ADMIN INTERFACE PLACEHOLDERS ---
+
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">
     <div className="p-6 bg-[#0d0f1d] border border-[#1e2238] rounded-2xl">
@@ -102,7 +98,7 @@ const TempSubDash = () => (
     </p>
   </div>
 );
-// --- HANDLES AUTOMATIC TRAFFIC REDIRECTION BASED ON ROLE ACCOUNTS ---
+
 const RoleRedirect = () => {
   const user = useSelector(selectCurrentUser);
   if (!user) return <Navigate to="/login" replace />;
@@ -121,12 +117,12 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ================= OPEN PUBLIC ACCESS CHANNELS ================= */}
+
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<TempForgot />} />
-        {/* Dynamic Entry Connection Point */}
+        
         <Route path="/" element={<RoleRedirect />} />
-        {/* ================= SECURE SUPER ADMIN WORKSPACE ================= */}
+        
         <Route
           path="/admin"
           element={
@@ -145,24 +141,7 @@ export default function AppRouter() {
           <Route path="sub-admins/:id" element={<SubAdminDetailPage />} />
           <Route path="policies/:id" element={<PolicyDetailPage />} />
         </Route>
-        {/* ================= SECURE CUSTOMER WORKSPACE ================= */}
-        {/*
-          car-clubs / policies / profile live INSIDE this block as
-          children (relative paths), alongside `index`. This makes
-          them:
-            1. Actually reachable at /customer/car-clubs, /customer/policies,
-               /customer/profile.
-            2. Rendered inside CustomerLayout's <Outlet/>, so
-               CustomerBottomNav shows on them.
-            3. Protected by the same role check as the rest of /customer.
-          Profile sub-pages (Account details + all its child screens,
-          Bank details, Discount code, Your discounts, Refer a friend)
-          are ALSO nested here now (relative paths), so the bottom nav
-          stays visible on them too — they were previously declared as
-          standalone absolute routes outside CustomerLayout (grouped
-          with the full-screen purchase flow), which hid the bottom
-          nav on every one of them.
-        */}
+
         <Route
           path="/customer"
           element={
@@ -185,7 +164,7 @@ export default function AppRouter() {
           <Route path="profile/discount-code" element={<DiscountCodePage />} />
           <Route path="profile/discounts" element={<YourDiscountsPage />} />
           <Route path="profile/refer" element={<ReferFriendPage />} />
-          {/* Account details sub-pages */}
+          
           <Route
             path="profile/account/preferred-name"
             element={<PreferredNamePage />}
@@ -223,12 +202,7 @@ export default function AppRouter() {
           <Route path="profile/legal/terms" element={<TermsPage />} />
           <Route path="profile/legal/fon" element={<FonPage />} />
         </Route>
-        {/*
-          Full-screen purchase flow — deliberately OUTSIDE CustomerLayout
-          so the bottom nav stays hidden on these (X-to-close pattern).
-          Still protected individually if you want that; wrap each in
-          <ProtectedRoute allowedRoles={["Customer"]}> if needed.
-        */}
+        
         <Route path="/customer/policies/new" element={<PolicyQuotePage />} />
         <Route
           path="/customer/policies/documents"
@@ -250,25 +224,12 @@ export default function AppRouter() {
           path="/customer/policies/photos/:step/camera"
           element={<VehicleCameraCapturePage />}
         />
-        {/* Car club help article — full-screen X-to-close page, same
-            category as the purchase flow above, so it MUST stay
-            outside CustomerLayout too or CustomerBottomNav renders
-            underneath it (this was the actual cause of the nav bar
-            incorrectly showing on this page). */}
+        
         <Route
           path="/customer/car-clubs/resources/:resourceId"
           element={<CarClubResourcePage />}
         />
-        {/* Chat Support — reachable from ANY page/icon in the app via
-            navigate("/customer/support"), per instruction ("register
-            the chat support in the app router file with the url so
-            when i need that chat support in any url then i call that
-            url"). Full-screen X-to-close overlay (hub / messages /
-            conversation / help articles / terms all live inside
-            ChatSupportWidget.jsx, switched via internal state, not
-            sub-routes) — stays OUTSIDE CustomerLayout, same as
-            CarClubResourcePage.jsx above, so the bottom nav doesn't
-            show underneath it. */}
+        
         <Route path="/customer/support" element={<ChatSupportPage />} />
         <Route
           path="/customer/policies/detail"
@@ -283,17 +244,12 @@ export default function AppRouter() {
           path="/customer/policies/mechanic"
           element={<BookMechanicPage />}
         />
-        {/*
-          Add incident — also OUTSIDE CustomerLayout so the bottom nav
-          is hidden on this screen and everything reachable from it
-          (calendar/wheel steps, confirmation sheet). Only the incidents
-          LIST page (profile/account/incidents) keeps the nav.
-        */}
+        
         <Route
           path="/customer/profile/account/incidents/add"
           element={<AddIncidentPage />}
         />
-        {/* ================= SECURE SUB ADMIN AGENT WORKSPACE ================= */}
+        
         <Route
           path="/dashboard"
           element={
@@ -303,9 +259,9 @@ export default function AppRouter() {
           }
         >
           <Route index element={<SubAdminHome />} />
-          {/* Feeds already use /dashboard/policies/:id */}
+          
           <Route path="policies/:id" element={<PolicyDetailPageSubAdmin />} />
-          {/* Dedicated Sub Admin detail pages for vehicle + customer */}
+          
           <Route
             path="vehicles/:registration"
             element={<VehicleDetailPageSubAdmin />}
@@ -315,12 +271,7 @@ export default function AppRouter() {
             element={<CustomerDetailPageSubAdmin />}
           />
         </Route>
-        {/*
-          Catch-All Fallback stays at the VERY END. React Router matches
-          sibling routes in declaration order — having `*` earlier would
-          swallow EVERY navigation (including bottom nav clicks) before
-          any later route could ever match.
-        */}
+        
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

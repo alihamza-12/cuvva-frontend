@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-/**
- * frontend/src/components/common/MaskedTimeInput.jsx
- *
- * Reusable masked time input in HH:MM format.
- *
- * - Users can click/tab into any position and type over individual
- *   digits without clearing the whole field.
- * - Value contract: `value` is the "HH:MM" string (or ""). The display
- *   matches this format directly.
- */
 export const maskTime = (raw) => {
   const digits = String(raw || "")
     .replace(/\D/g, "")

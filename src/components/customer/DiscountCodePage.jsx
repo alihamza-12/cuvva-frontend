@@ -7,56 +7,10 @@ import {
 } from "../../utils/profileLocalStorage";
 import notFoundIcon from "/details-not-found-icon.png";
 
-/**
- * frontend/src/components/customer/DiscountCodePage.jsx
- *
- * "Apply discount code" — opened from Profile > Apply discount code.
- * Base screen (before Redeem is tapped) matches the reference EXACTLY
- * as originally built: centered header title, help icon, instructional
- * copy, single pill input, "Redeem" button, NOTHING else — no visible
- * "Chat to our team" text on this base screen at all. That only shows
- * up once "Details not found" appears (see below).
- *
- * NO BACKEND ENDPOINT EXISTS for discount codes anywhere in
- * policies.js/customers.js — there's no discount/voucher schema at
- * all. Per instruction, this works entirely through localStorage:
- * "redeeming" a code just appends it to a locally-stored list
- * (profileLocalStorage.js), with no real validation, discount
- * calculation, or server-side effect. Flagged clearly so it's never
- * mistaken for a real working discount system.
- *
- * "Details not found" state (matches 20p exactly): typing ANY code
- * and tapping "Redeem" triggers this — there's no real backend to
- * validate the code against, so every code gets the same result.
- * Three things all appear together the instant this is triggered:
- *   1. A dim/transparent-ish backdrop (rgba(0,0,0,0.65)) over the
- *      header/subtitle/input/Redeem area — you can still see that
- *      content faintly through it, matching the reference.
- *   2. The "Details not found" card, positioned right under the
- *      Redeem button (not centered on the whole screen).
- *   3. CustomerBottomNav is REPLACED — not just covered/hidden, its
- *      exact screen position (fixed, bottom, full-width, same height
- *      band) now shows a "Chat to our team" bar INSTEAD of the nav
- *      pill, exactly matching 20p where the 4-tab nav is completely
- *      gone and a single centered "Chat to our team" link sits where
- *      the nav used to be. This is done from THIS page only (a
- *      same-fixed-position, higher-z-index, opaque black bar) — no
- *      edit to CustomerBottomNav.jsx/CustomerLayout.jsx, since the
- *      standing rule is not to touch that file; it's still mounted
- *      and running behind this bar, just fully visually replaced by
- *      it while "Details not found" is showing. Tapping ANY blank
- *      area of the dimmed backdrop instantly returns to the plain
- *      base screen (dim gone, card gone, real bottom nav visible
- *      again) — nothing navigates away from this page.
- *
- * Icon: real image import (`details-not-found-icon.png`, placed in
- * `frontend/public/`) rather than a hand-drawn SVG — swap that file
- * for whatever icon you want; no code changes needed here for that.
- */
 export default function DiscountCodePage() {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
-  const [status, setStatus] = useState(null); // null | "empty"
+  const [status, setStatus] = useState(null); 
   const [showNotFound, setShowNotFound] = useState(false);
 
   const handleBack = () => {
@@ -70,10 +24,7 @@ export default function DiscountCodePage() {
       setStatus("empty");
       return;
     }
-    // localStorage only — no real discount/voucher backend exists, so
-    // every code (right or wrong) is saved locally for record-keeping,
-    // but the UI always shows "Details not found" per instruction,
-    // since there's nothing real to validate the code against.
+
     const existing = getAppliedDiscounts();
     saveAppliedDiscounts([
       ...existing,
@@ -85,7 +36,7 @@ export default function DiscountCodePage() {
 
   return (
     <div className="relative flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="relative z-10 flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -108,8 +59,6 @@ export default function DiscountCodePage() {
         </button>
       </div>
 
-      {/* Content — this is the base screen, matches your original
-          code exactly (no "Chat to our team" here at all). */}
       <div className="relative z-10 px-4 pt-6">
         <p className="text-[15px] text-[#9497a1] leading-relaxed text-center">
           Enter a discount code if you have been referred by a friend or have a
@@ -144,13 +93,9 @@ export default function DiscountCodePage() {
         )}
       </div>
 
-      {/* Everything below only exists once "Details not found" is
-          triggered — none of it is present on the base screen. */}
       {showNotFound && (
         <>
-          {/* Dim backdrop over the header/input/Redeem area. Tapping
-              anywhere on it closes everything and returns to the
-              plain base screen (real bottom nav reappears). */}
+          
           <button
             type="button"
             aria-label="Close"
@@ -159,8 +104,6 @@ export default function DiscountCodePage() {
             style={{ height: "38%", background: "rgba(0,0,0,0.65)" }}
           />
 
-          {/* "Details not found" card — sits just under the Redeem
-              button, not centered on the whole screen. */}
           <div className="absolute z-40 left-4 right-4" style={{ top: "34%" }}>
             <div className="bg-[#1b1c21] rounded-3xl px-6 pt-8 pb-8 text-center shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
               <div className="flex justify-center">

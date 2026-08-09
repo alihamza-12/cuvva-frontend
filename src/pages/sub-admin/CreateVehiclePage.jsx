@@ -25,14 +25,12 @@ export default function CreateVehiclePage() {
     year: "2024",
     fuelType: "PETROL",
 
-    // optional specs
     engineCapacityCC: "",
     powerBHP: "",
     topSpeed: "",
     cylinders: "",
     fuelConsumptionMPG: "",
 
-    // optional MOT/Tax fields
     motStatus: "Valid",
     motExpiryDate: "",
     taxStatus: "Paid",
@@ -43,7 +41,6 @@ export default function CreateVehiclePage() {
     euroStatus: "",
     wheelplan: "",
 
-    // UX
     submitting: false,
   });
 
@@ -79,7 +76,7 @@ export default function CreateVehiclePage() {
   const toDateOrUndef = (v) => {
     const s = String(v ?? "").trim();
     if (!s) return undefined;
-    // Accept datetime-local or date string
+
     const d = new Date(s);
     if (Number.isNaN(d.getTime())) return undefined;
     return d;
@@ -123,7 +120,6 @@ export default function CreateVehiclePage() {
         wheelplan: form.wheelplan?.trim() || undefined,
       };
 
-      // Clean undefined keys
       const cleanedPayload = Object.fromEntries(
         Object.entries(payload).filter(([, v]) => v !== undefined),
       );

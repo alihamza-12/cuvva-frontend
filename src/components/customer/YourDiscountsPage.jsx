@@ -4,19 +4,6 @@ import { ChevronLeft, HelpCircle } from "lucide-react";
 import { getAppliedDiscounts } from "../../utils/profileLocalStorage";
 import referFriendImg from "/referillustration.png";
 
-/**
- * frontend/src/components/customer/YourDiscountsPage.jsx
- *
- * "Your discounts" — opened from Profile > Your discounts. Matches
- * reference: header, title, 2 lines of copy, "No active discounts"
- * label (or a list if any codes were redeemed locally), then the
- * "Refer a friend" promo card.
- *
- * NO BACKEND ENDPOINT/SCHEMA for discounts exists — reads whatever
- * was "redeemed" via DiscountCodePage.jsx's localStorage list
- * (profileLocalStorage.js). This is a device-local read, not a real
- * account balance; flagged clearly.
- */
 export default function YourDiscountsPage() {
   const navigate = useNavigate();
   const [discounts, setDiscounts] = useState([]);
@@ -36,7 +23,7 @@ export default function YourDiscountsPage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -56,7 +43,6 @@ onClick={() => navigate("/customer/support")}
         </button>
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-4 pt-4 pb-10">
         <h1 className="text-[24px] font-extrabold text-white leading-tight">
           Your discounts
@@ -87,7 +73,6 @@ onClick={() => navigate("/customer/support")}
           </div>
         )}
 
-        {/* Refer a friend promo card */}
         <div className="mt-6 rounded-2xl bg-[#17181c] border border-white/5 p-4 relative overflow-hidden">
           <div className="max-w-[55%]">
             <p className="text-[16px] font-extrabold text-white leading-snug">

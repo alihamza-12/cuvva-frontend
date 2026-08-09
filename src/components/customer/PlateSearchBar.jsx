@@ -6,27 +6,6 @@ import { getVehicleByRegistration } from "../../app/api/vehicleApi";
 const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
 const MAX_RECENT = 10;
 
-/**
- * frontend/src/components/customer/PlateSearchBar.jsx
- *
- * "ENTER NUMBER PLATE" search on the Get Insured landing page.
- * No backend changes required — reuses the existing
- * GET /api/vehicles/lookup/:registration route (via vehicleApi.js) that
- * already powers VehicleDetailPage.jsx, and persists the search result
- * entirely client-side in localStorage.
- *
- * On submit:
- *   1. Calls getVehicleByRegistration(plate) — existing route, no changes.
- *   2. On success, saves the vehicle into localStorage (de-duped, most
- *      recent first, capped at 10) so it survives refreshes/relaunches
- *      on this device.
- *   3. Notifies the parent (CustomerHome) so Recently Viewed updates
- *      immediately without re-reading localStorage.
- *   4. Navigates into the policy purchase flow, pre-filled with the vehicle.
- *
- * Props:
- *  - onVehicleFound: (vehicle) => void
- */
 export default function PlateSearchBar({ onVehicleFound }) {
   const [plate, setPlate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,7 +21,7 @@ export default function PlateSearchBar({ onVehicleFound }) {
       const next = [vehicle, ...deduped].slice(0, MAX_RECENT);
       localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
     } catch {
-      // localStorage unavailable/full — fail silently, search still works.
+
     }
   };
 

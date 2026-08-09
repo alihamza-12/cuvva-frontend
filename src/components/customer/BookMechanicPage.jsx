@@ -3,43 +3,6 @@ import { ChevronLeft, Check, ExternalLink } from "lucide-react";
 import mechanic from "/mechanic.png";
 import mechanicicon from "/mechanicicon.png";
 
-/**
- * frontend/src/components/customer/BookMechanicPage.jsx
- *
- * "Book a mechanic" hand-off screen — opened from the Get help row's
- * "Book a mechanic" action on PolicyDetailPage.jsx. Matches the
- * reference screenshot exactly: a gradient hero image (mechanic photo
- * + MOT / Repairs / Servicing floating badges, connected by dotted
- * lines) that curves into a black content section below, listing the
- * ClickMechanic value props, a "Provided by ClickMechanic" credit, and
- * a sticky "Continue to ClickMechanic" button.
- *
- * IMPORTANT — the curved bottom edge is NOT baked into mechanic.png
- * (confirmed by inspecting the raw file: its bottom edge is still flat
- * gradient colour, not black). The wavy cut is created here in CSS via
- * an elliptical `border-radius` on the wrapping div (bigger radius on
- * the corners than the center dip), which is the same technique the
- * reference screenshot's curve was pixel-traced from. This scales
- * correctly at any screen width, unlike a hand-drawn SVG mask sized to
- * one fixed viewport.
- *
- * This is purely a static informational/hand-off screen — Cuvva
- * doesn't run its own mechanic booking flow, it hands off to a real
- * third-party partner (ClickMechanic). "Continue to ClickMechanic"
- * opens ClickMechanic's real public site (https://www.clickmechanic.com/)
- * in a new browser tab — there's no backend endpoint in
- * policies.js/vehicles.js for this, so it's a plain outbound link, not
- * a real partner referral/API integration (no tracking params, no
- * pre-filled vehicle/policy data passed across). Flagging clearly so
- * it's not mistaken for a deeper integration than it is.
- *
- * Implemented as a real <a target="_blank" rel="noopener noreferrer">
- * rather than a window.open() call in a JS handler — anchor-tag
- * navigation is treated as a normal user-initiated link by mobile
- * browsers (iOS Safari in particular), so it reliably opens a new tab
- * both on desktop and on phone; script-triggered window.open() can get
- * silently blocked as a popup on some mobile browsers/webviews.
- */
 export default function BookMechanicPage() {
   const navigate = useNavigate();
 
@@ -53,9 +16,7 @@ export default function BookMechanicPage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Hero — pre-composed gradient image asset, clipped into the
-          reference's wavy bottom edge via border-radius (see comment
-          above), back button overlaid on top. */}
+
       <div
         className="relative overflow-hidden"
         style={{ borderRadius: "0 0 50% 50% / 0 0 12% 12%" }}
@@ -76,7 +37,6 @@ export default function BookMechanicPage() {
         </button>
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-6 pt-6 pb-32">
         <h1 className="text-[24px] font-extrabold text-white leading-tight">
           Car repair and servicing made easy

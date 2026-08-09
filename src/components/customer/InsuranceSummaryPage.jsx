@@ -8,45 +8,12 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-/**
- * frontend/src/pages/customer/InsuranceSummaryPage.jsx
- *
- * "Insurance summary (IPID)" — full real text/JSX content page, built
- * from the exact wording across your 7 reference screenshots (in the
- * order: 1 -> 7). This is ONE continuous scrollable page with ONE
- * sticky header (not repeated per screenshot), matching how the real
- * app renders it.
- *
- * Sections in order:
- *   1. Motor Insurance hero card (Wakam underwriter info)
- *   2. What is this type of Insurance?
- *   3. What is Insured?        (green, checkmarks)
- *   4. What is Not Insured?    (red, X marks)
- *   5. Are there any restrictions on cover?  (orange, ! marks)
- *   6. Where am I covered?     (purple globe)
- *   7. What are my obligations? (green handshake, bullets)
- *   8. When and how do I pay?  (yellow)
- *   9. When does the cover start and end? (purple hourglass)
- *   10. How do I cancel the contract? (black shield)
- *
- * Route suggestion: /customer/policies/documents/ipid
- *
- * NOTE: this content references a specific underwriter (Wakam) and
- * specific cover limits (£2,000,000 / £60,000 / £500 / £100 / £150 /
- * £5,000 / £2,500). Your Policy schema supports THREE underwriters
- * (Wakam, ERS Syndicate, Crawford) — if a policy is underwritten by
- * ERS Syndicate or Crawford instead of Wakam, this static copy would be
- * factually wrong for that policy. Flagging this so you can decide
- * whether to make the underwriter name/limits dynamic based on
- * policy.underwriter, or whether this IPID template is Wakam-only by
- * design (e.g. because you currently only issue Wakam policies).
- */
 export default function InsuranceSummaryPage() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a]">
-      {/* Header — single sticky header for the whole scrollable page */}
+
       <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b bg-white/95 backdrop-blur-sm border-black/5">
         <button
           type="button"
@@ -69,7 +36,6 @@ export default function InsuranceSummaryPage() {
         </button>
       </div>
 
-      {/* 1. Hero card */}
       <div className="bg-[#3d6d8c] text-white px-6 pt-6 pb-8">
         <div className="h-px mb-6 bg-white/25" />
         <h2 className="text-[34px] font-light text-white/60 leading-tight mb-4">
@@ -108,7 +74,7 @@ export default function InsuranceSummaryPage() {
       </div>
 
       <div className="px-6 py-6 space-y-8">
-        {/* 2. What is this type of Insurance? */}
+        
         <section>
           <h3 className="text-[17px] font-semibold text-[#1a1a1a] mb-2">
             What is this type of Insurance?
@@ -120,7 +86,6 @@ export default function InsuranceSummaryPage() {
           </p>
         </section>
 
-        {/* 3. What is Insured? */}
         <section className="bg-[#eeeeef] rounded-2xl p-5">
           <SectionHeader
             iconBg="#1fae6e"
@@ -147,7 +112,6 @@ export default function InsuranceSummaryPage() {
           </ul>
         </section>
 
-        {/* 4. What is Not Insured? */}
         <section className="bg-[#eeeeef] rounded-2xl p-5">
           <SectionHeader
             iconBg="#e0384c"
@@ -175,7 +139,6 @@ export default function InsuranceSummaryPage() {
           </ul>
         </section>
 
-        {/* 5. Are there any restrictions on cover? */}
         <section className="bg-[#eeeeef] rounded-2xl p-5">
           <SectionHeader
             iconBg="#f2994a"
@@ -201,7 +164,6 @@ export default function InsuranceSummaryPage() {
           </ul>
         </section>
 
-        {/* 6. Where am I covered? */}
         <section>
           <SectionHeader
             iconBg="#5b52f0"
@@ -224,7 +186,6 @@ export default function InsuranceSummaryPage() {
           </p>
         </section>
 
-        {/* 7. What are my obligations? */}
         <section>
           <SectionHeader
             iconBg="#1fae6e"
@@ -254,7 +215,6 @@ export default function InsuranceSummaryPage() {
           </p>
         </section>
 
-        {/* 8. When and how do I pay? */}
         <section>
           <SectionHeader
             iconBg="#f5b400"
@@ -268,7 +228,6 @@ export default function InsuranceSummaryPage() {
           </p>
         </section>
 
-        {/* 9. When does the cover start and end? */}
         <section>
           <SectionHeader
             iconBg="#5b52f0"
@@ -281,7 +240,6 @@ export default function InsuranceSummaryPage() {
           </p>
         </section>
 
-        {/* 10. How do I cancel the contract? */}
         <section>
           <SectionHeader
             iconBg="#111111"
@@ -300,10 +258,6 @@ export default function InsuranceSummaryPage() {
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Small building blocks
-// ---------------------------------------------------------------------------
 
 function SectionHeader({ iconBg, icon, title }) {
   return (

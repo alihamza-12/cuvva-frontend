@@ -68,10 +68,6 @@ export default function SubAdminSidebar({
     },
   ];
 
-  // Group by *purpose* rather than array position, so reordering menuItems
-  // above never silently breaks the sections again. Each section lists the
-  // ids it owns; anything not claimed falls into a fallback "Other" bucket
-  // automatically (belt-and-braces against future additions being missed).
   const SECTION_DEFS = [
     { title: "Overview", ids: ["overview"] },
     {
@@ -114,18 +110,16 @@ export default function SubAdminSidebar({
     navigate(item.href, { replace: true });
   };
 
-  // "Create New" items get a distinct accent (amber) so they read visually
-  // as actions rather than views, even though they share the same button shape.
   const isCreateItem = (id) => id.startsWith("create-");
 
   return (
     <>
-      {/* Desktop Sidebar */}
+
       <aside className="hidden lg:flex w-72 bg-[#0d0f1d] border-r border-[#1e2238] flex-col h-screen sticky top-0 shrink-0 select-none z-50 relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_circle_at_20%_0%,rgba(100,74,255,0.22),transparent_55%),radial-gradient(700px_circle_at_70%_30%,rgba(0,240,255,0.14),transparent_45%)]" />
 
         <div className="relative flex-1 min-h-0 overflow-y-auto px-6 pt-6 pb-4 space-y-8 scrollbar-thin scrollbar-thumb-[#2a2f4a]/60 scrollbar-track-transparent">
-          {/* Brand */}
+        
           <div className="flex items-center gap-2.5 px-2">
             <div className="w-7 h-7 rounded-2xl bg-[#00f0ff]/15 border border-[#00f0ff]/40 flex items-center justify-center font-black text-[11px] text-[#00f0ff] shadow-[0_0_0_1px_rgba(0,240,255,0.35),0_10px_30px_rgba(0,240,255,0.18)]">
               A
@@ -138,7 +132,6 @@ export default function SubAdminSidebar({
             </span>
           </div>
 
-          {/* User card */}
           <div className="p-4 bg-[#13172d]/55 border border-[#1e2238] rounded-2xl flex items-center gap-3 transition-all duration-300 hover:border-white/15 hover:bg-[#13172d]/65">
             <div className="w-10 h-10 bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#9ff7ff] rounded-2xl flex items-center justify-center font-extrabold text-xs shrink-0 tracking-wider">
               {computeUserInitials(user?.fullName)}
@@ -153,7 +146,6 @@ export default function SubAdminSidebar({
             </div>
           </div>
 
-          {/* Nav sections, grouped by purpose */}
           {sections.map((section, sIdx) => (
             <div key={section.title} className={sIdx === 0 ? "" : "pt-4"}>
               <div className="flex items-center gap-2 px-2 mb-2">
@@ -231,7 +223,6 @@ export default function SubAdminSidebar({
           ))}
         </div>
 
-        {/* Logout */}
         <div className="relative shrink-0 border-t border-[#1e2238] bg-[#0d0f1d]/80 backdrop-blur-sm px-6 py-5">
           <button
             onClick={onLogout}
@@ -255,7 +246,6 @@ export default function SubAdminSidebar({
         </div>
       </aside>
 
-      {/* Mobile Bottom Nav */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 shadow-2xl bg-[#0d0f1d] border-t border-[#1e2238]">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(800px_circle_at_50%_0%,rgba(0,240,255,0.16),transparent_55%)]" />
 

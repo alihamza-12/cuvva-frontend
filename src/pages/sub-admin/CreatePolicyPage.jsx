@@ -49,7 +49,7 @@ export default function CreatePolicyPage() {
       setLoading(true);
       setLoadError("");
       try {
-        // For Sub Admin: list customers in their scope (backend restricts via ownership)
+
         const custRes = await httpClient.get("/api/customers");
         const custList = custRes?.data?.customers || [];
         const vehRes = await httpClient.get("/api/vehicles/all");

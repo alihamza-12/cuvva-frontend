@@ -2,9 +2,6 @@ import React from "react";
 import { ChevronRight, CheckCircle2 } from "lucide-react";
 import CarBrandIcon from "./CarBrandIcon";
 
-/**
- * frontend/src/components/customer/BuyAgainCard.jsx
- */
 export default function BuyAgainCard({ vehicle, onSelect }) {
   const { registration, ownerLabel, relationship = "Owner", make } = vehicle;
 

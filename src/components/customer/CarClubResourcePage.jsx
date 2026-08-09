@@ -4,45 +4,6 @@ import { ChevronDown, ChevronRight, HelpCircle, MessageCircle, X, Menu, Search }
 import cuvvaLogoWhite from "/cuvva-logo-white.png";
 import cuvvaLogoGrey from "/cuvva-logo-grey.png";
 
-/**
- * frontend/src/components/customer/CarClubResourcePage.jsx
- *
- * "Cuvva car clubs explained" help article — reached from
- * CarClubsPage.jsx's "Tips and resources" > "Tips for sharing your
- * car" row. Matches pict1.jpeg through pict9.jpeg (one continuous
- * scrollable page; pict2.jpeg is the hamburger-menu dropdown opening
- * on TOP of the navy header, not a separate scroll position).
- *
- * FIXES THIS PASS (all 5 issues you reported):
- *   1. Real Cuvva logo — swapped the hand-drawn SVG approximation for
- *      your actual logo image (image.png), background-removed via a
- *      colour-distance alpha mask (navy bg -> transparent) and saved
- *      as two recoloured PNGs: white (for the navy header) and grey
- *      (for the light footer) — /public/cuvva-logo-white.png and
- *      /public/cuvva-logo-grey.png, imported via the project's usual
- *      absolute `/filename.png` convention.
- *   2. Search bar is now a REAL controlled <input>. Typing shows a
- *      live dropdown of matching sections (by heading text); tapping
- *      a result — or pressing Enter to jump to the first match —
- *      smooth-scrolls to that heading and briefly highlights it.
- *   3. "Table of contents" pill is now a real toggle: tapping it
- *      opens a list of every article heading; tapping any heading
- *      scrolls to it (same smooth-scroll + highlight as search) and
- *      closes the list.
- *   4. Both chat-support icons (top-right circular help button AND
- *      the floating bottom-right bubble) are now clickable — they
- *      open a small "Chat support" info modal, matching the same
- *      honest-placeholder modal pattern used elsewhere in this app
- *      (e.g. CreateCarClubPage's "can't create yet" modal) since
- *      there's no real live-chat backend to connect to.
- *   5. Bottom tab nav no longer shows on this page — this is a
- *      full-screen help article (X-to-close pattern), same category
- *      as the policy purchase flow pages, so in AppRouter.jsx this
- *      route must be declared OUTSIDE CustomerLayout, not nested
- *      inside it (nesting inside CustomerLayout is what was causing
- *      CustomerBottomNav to render underneath it).
- */
-
 const resourceContent = {
   "tips-sharing": {
     title: "Tips for sharing your car",
@@ -58,10 +19,6 @@ const resourceContent = {
   },
 };
 
-// Every heading in the article body, in order — powers BOTH the
-// search dropdown and the "Table of contents" list, so they always
-// stay in sync with the real content (one source of truth, not two
-// hand-maintained lists that could drift apart).
 const SECTIONS = [
   { id: "whats-a-car-club", label: "What's a Cuvva car club?" },
   { id: "who-can-set-up", label: "Can anyone set up a car club on Cuvva?" },
@@ -88,10 +45,6 @@ export default function CarClubResourcePage() {
     return SECTIONS.filter((s) => s.label.toLowerCase().includes(q));
   }, [searchQuery]);
 
-  // Shared by both search results and the table-of-contents list:
-  // scrolls the matching heading into view and briefly flashes a
-  // highlight background so it's obvious something actually happened
-  // (a smooth-scroll alone can be easy to miss on a long page).
   const jumpToSection = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -108,9 +61,7 @@ export default function CarClubResourcePage() {
 
   return (
     <div className="min-h-screen bg-white text-[#202124]">
-      {/* Close/help buttons float ABOVE the navy header, matching
-          pict1.jpeg exactly (white circular buttons with shadow,
-          sitting on top of the dark navy block underneath them). */}
+
       <div className="sticky top-0 z-[60] flex items-center justify-between px-5 pb-4 pt-5">
         <button
           type="button"
@@ -130,7 +81,6 @@ export default function CarClubResourcePage() {
         </button>
       </div>
 
-      {/* Navy header block — Cuvva logo, hamburger menu, search bar. */}
       <div className="-mt-[68px] rounded-t-[28px] bg-[#06021f] px-5 pb-7 pt-[84px]">
         <div className="flex items-center justify-between">
           <img src={cuvvaLogoWhite} alt="Cuvva" className="w-auto h-5 select-none" draggable={false} />
@@ -144,7 +94,6 @@ export default function CarClubResourcePage() {
           </button>
         </div>
 
-        {/* Real search input + live results dropdown. */}
         <form onSubmit={handleSearchSubmit} className="relative mt-6">
           <div className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3.5">
             <Search size={18} className="shrink-0 text-white/70" />
@@ -191,7 +140,6 @@ export default function CarClubResourcePage() {
         </p>
         <p className="mt-6 text-[15px] text-[#777b82]">Updated this week</p>
 
-        {/* Real toggle now — tapping opens the section list below it. */}
         <div className="relative mt-8">
           <button
             type="button"
@@ -259,9 +207,6 @@ export default function CarClubResourcePage() {
           </div>
         </section>
 
-        {/* Cuvva footer block — matches pict9.jpeg. All product links
-            and social icons are inert placeholders (real cuvva.com
-            marketing content, not part of this app's own routes). */}
         <footer className="text-center mt-14">
           <img src={cuvvaLogoGrey} alt="Cuvva" className="w-auto h-6 mx-auto select-none" draggable={false} />
           <p className="mx-auto mt-6 max-w-[320px] text-[15px] leading-relaxed text-[#8b8f96]">
@@ -292,7 +237,6 @@ export default function CarClubResourcePage() {
         </footer>
       </main>
 
-      {/* Hamburger menu dropdown — matches pict2.jpeg. */}
       {showMenu && (
         <div className="fixed inset-0 z-[80] flex items-start justify-end px-5 pt-[86px]">
           <button
@@ -319,11 +263,6 @@ export default function CarClubResourcePage() {
         </div>
       )}
 
-      {/* "Chat support" placeholder modal — opened by EITHER the
-          top-right help icon or the floating bottom-right bubble.
-          Honest placeholder (no real live-chat backend exists),
-          matching the app's established "not built yet" modal
-          pattern instead of silently doing nothing when tapped. */}
       {showChatModal && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center px-6">
           <button
@@ -375,8 +314,6 @@ export default function CarClubResourcePage() {
   );
 }
 
-/** Wraps a heading with its section id + an optional highlight flash
-    (used by both search results and the table-of-contents jump). */
 function Heading({ id, level: Level, className, highlightedId, children }) {
   const isHighlighted = highlightedId === id;
   return (

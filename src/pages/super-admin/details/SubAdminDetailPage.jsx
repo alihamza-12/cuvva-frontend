@@ -56,8 +56,7 @@ export default function SubAdminDetailPage() {
       <Sidebar
         activeTab={"accounts"}
         setActiveTab={(tabId) => {
-          // Keep SPA navigation (no full reload)
-          // Detail pages only need a safe fallback: go back to super-admin dashboard.
+
           if (tabId) navigate("/admin/dashboard");
         }}
         user={{
@@ -94,7 +93,7 @@ export default function SubAdminDetailPage() {
 
         {!loading && !error && subAdmin && (
           <div className="space-y-4">
-            {/* Summary */}
+
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
               <h3 className="mb-3 text-xs font-bold tracking-wider text-white uppercase">
                 Sub-Admin Detail Fields

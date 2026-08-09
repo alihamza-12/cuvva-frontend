@@ -2,39 +2,7 @@ import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, HelpCircle, X, Check } from "lucide-react";
 
-// Both cards use the SAME source image — only the surrounding border/
-// background/badge styling differs between the "bad" and "good"
-// examples (confirmed against the reference screenshot: it's one photo
-// shown twice with different framing treatments, not two different
-// photos). Rename/replace this single file with your own.
 import exampleCarImage from "/car.jpeg";
-
-/**
- * frontend/src/pages/customer/VehiclePhotoCapturePage.jsx
- *
- * Vehicle condition photo capture step — shown after the customer taps
- * "Yes" on StatementsConfirmationModal.jsx.
- *
- * IMAGES: only ONE example image is needed — both the "bad" and "good"
- * cards show the SAME photo, just wrapped in different border/badge
- * treatments (red continuous border vs. green corner brackets). Place
- * your file at:
- *   frontend/public/car.jpeg
- * (or update the import path above to match your actual filename).
- *
- * NOTE ON STYLING: colors/borders below use INLINE STYLES rather than
- * Tailwind arbitrary-value classes (e.g. text-[#9497a1]). This is a
- * deliberate fix — arbitrary bracket classes only work if this file's
- * path is covered by tailwind.config.js's `content` glob; if it isn't,
- * Tailwind silently drops those classes at build time and the browser
- * falls back to inherited/default colors (which is very likely why the
- * subtitle rendered blue instead of grey in your screenshot). Inline
- * styles always render correctly regardless of Tailwind's build
- * config, so this component no longer depends on that being right.
- *
- * On "Open camera", this currently just logs a placeholder — wiring up
- * an actual camera/file input and upload endpoint is a decision for you.
- */
 
 const STEP_CONFIG = {
   front: {
@@ -86,7 +54,7 @@ export default function VehiclePhotoCapturePage() {
         flexDirection: "column",
       }}
     >
-      {/* Header */}
+
       <div
         style={{
           display: "flex",
@@ -133,7 +101,6 @@ export default function VehiclePhotoCapturePage() {
         </button>
       </div>
 
-      {/* Example cards */}
       <div
         style={{
           flex: 1,
@@ -184,7 +151,6 @@ export default function VehiclePhotoCapturePage() {
         </p>
       </div>
 
-      {/* Footer: Open camera — text only, no icon */}
       <div style={{ padding: "0 24px 40px 24px" }}>
         <button
           type="button"
@@ -207,15 +173,6 @@ export default function VehiclePhotoCapturePage() {
   );
 }
 
-/**
- * Card wrapping the supplied image with the correct border/badge
- * treatment:
- *   bad:  continuous solid red rounded border, red X badge, image inset
- *         with a small margin (so the dark card background is visible
- *         around it, not edge-to-edge).
- *   good: 4 separate green corner brackets (no full border), green
- *         check badge, image inset the same way.
- */
 function ExampleCard({ variant, imageSrc }) {
   const isGood = variant === "good";
   const badgeColor = isGood ? "#2aa264" : "#e0304a";
@@ -236,7 +193,7 @@ function ExampleCard({ variant, imageSrc }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: 10, // inset so the image doesn't bleed edge-to-edge
+          padding: 10, 
         }}
       >
         <img

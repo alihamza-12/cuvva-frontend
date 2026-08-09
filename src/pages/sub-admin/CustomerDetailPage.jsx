@@ -5,10 +5,6 @@ import { ArrowLeft, User, ShieldAlert, Mail } from "lucide-react";
 import { getCustomerById } from "../../app/api/customerApi";
 import { updateCustomer } from "../../app/api/customerUpdateApi";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 const ROLES = ["Super Admin", "Sub Admin", "Customer"];
 const STATUSES = ["Active", "Suspended"];
 
@@ -19,9 +15,6 @@ const toDateInputValue = (value) => {
   return d.toISOString().slice(0, 10);
 };
 
-// Builds the full edit-form state from a fetched customer record.
-// Deliberately EXCLUDES: password, refreshTokens, resetToken, resetExpires,
-// _id, createdBy, createdAt/updatedAt, firstName/lastName (auto-derived).
 const buildFormFromCustomer = (customer) => ({
   fullName: customer?.fullName || "",
   email: customer?.email || "",
@@ -64,14 +57,10 @@ const buildPayloadFromForm = (form) => {
     lastFourDigits: strOrUndef(form.lastFourDigits),
     role: strOrUndef(form.role),
     status: strOrUndef(form.status),
-    // expiresAt intentionally allows explicit null (means "no expiry"/infinite)
+
     expiresAt: form.expiresAt ? dateOrNull(form.expiresAt) : null,
   };
 };
-
-// ---------------------------------------------------------------------------
-// Small presentational helpers
-// ---------------------------------------------------------------------------
 
 const FieldLabel = ({ children }) => (
   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
@@ -137,10 +126,6 @@ const statusPill = (status) => {
     </span>
   );
 };
-
-// ---------------------------------------------------------------------------
-// Main component
-// ---------------------------------------------------------------------------
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
@@ -253,7 +238,7 @@ export default function CustomerDetailPage() {
 
         {!loading && !error && customer && (
           <div className="space-y-5">
-            {/* --- Edit controls pinned at the top, same pattern as Vehicle page --- */}
+
             <div className="flex items-center justify-end gap-2">
               {!isEditMode ? (
                 <button
@@ -295,7 +280,6 @@ export default function CustomerDetailPage() {
               </div>
             )}
 
-            {/* Header / profile card */}
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-2">
@@ -319,7 +303,7 @@ export default function CustomerDetailPage() {
                   onSubmit={(e) => e.preventDefault()}
                   className="mt-4 space-y-6"
                 >
-                  {/* --- Account Basics --- */}
+                
                   <div>
                     <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#644aff] uppercase">
                       Account Basics
@@ -352,7 +336,6 @@ export default function CustomerDetailPage() {
                     </div>
                   </div>
 
-                  {/* --- Address --- */}
                   <div>
                     <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#644aff] uppercase">
                       Address
@@ -393,7 +376,6 @@ export default function CustomerDetailPage() {
                     </div>
                   </div>
 
-                  {/* --- Account Control --- */}
                   <div>
                     <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#644aff] uppercase">
                       Account Control
@@ -480,7 +462,6 @@ export default function CustomerDetailPage() {
               )}
             </div>
 
-            {/* Read-only system metadata card (never editable) */}
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
               <h3 className="mb-3 text-xs font-bold tracking-wider text-white uppercase">
                 System Metadata

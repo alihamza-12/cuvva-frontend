@@ -2,35 +2,6 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { X, HelpCircle } from "lucide-react";
 
-/**
- * frontend/src/pages/customer/ResultMessagePage.jsx
- *
- * Generic full-screen "we can't do X right now" result page — matches
- * the reference screenshot's template exactly (X close, help icon,
- * illustration, bold heading, stacked paragraphs, single OK button).
- *
- * This is intentionally GENERIC/reusable, not hardcoded to one message,
- * since the same visual pattern applies to many different failure
- * states in an insurance app (can't insure you, can't process photo,
- * server error, session expired, etc.) — only the icon/heading/body
- * text and the OK button's destination change per use case.
- *
- * Usage: navigate here with router state describing the specific error:
- *   navigate("/customer/result", {
- *     state: {
- *       icon: "barrier" | "server-error" | "warning",
- *       heading: "Sorry, we can't insure you",
- *       paragraphs: ["...", "..."],
- *       okLabel: "OK",
- *       okTo: "/customer",        // where OK navigates
- *     },
- *   });
- *
- * If no state is provided, falls back to a generic server-error message
- * (useful for wiring this up quickly before every call site passes
- * custom copy).
- */
-
 const ICONS = {
   barrier: BarrierIcon,
   "server-error": ServerErrorIcon,
@@ -67,13 +38,6 @@ export default function ResultMessagePage() {
   );
 }
 
-/**
- * Exported separately so other pages (e.g. VehicleCameraCapturePage.jsx)
- * can render this INLINE as an overlay after a failed action, instead of
- * always doing a full route navigation — useful for the "Take photo"
- * failure case where you likely want to show this over the camera
- * screen rather than losing that screen's state.
- */
 export function ResultMessageView({
   result = DEFAULT_RESULT,
   onClose,
@@ -94,7 +58,7 @@ export function ResultMessageView({
         flexDirection: "column",
       }}
     >
-      {/* Header */}
+
       <div
         style={{
           display: "flex",
@@ -141,7 +105,6 @@ export function ResultMessageView({
         </button>
       </div>
 
-      {/* Content */}
       <div
         style={{
           flex: 1,
@@ -194,7 +157,6 @@ export function ResultMessageView({
         </div>
       </div>
 
-      {/* Footer */}
       <div style={{ padding: "0 24px 40px 24px" }}>
         <button
           type="button"
@@ -217,20 +179,16 @@ export function ResultMessageView({
   );
 }
 
-/* --- Illustrations --- */
-
 function BarrierIcon() {
   return (
     <svg width="130" height="115" viewBox="0 0 200 170" fill="none">
-      {/* Post base (flared foot) */}
+      
       <path d="M 110 152 L 110 162 L 150 162 L 150 152 Z" fill="#c9cbe0" />
       <path d="M 134 152 L 134 162 L 150 162 L 150 152 Z" fill="#9ea1c4" />
 
-      {/* Post shaft */}
       <rect x="114" y="55" width="36" height="97" fill="#dfe1f0" />
       <rect x="134" y="55" width="16" height="97" fill="#a7aad0" />
 
-      {/* Barrier arm, angled, crossing at neck level */}
       <g transform="rotate(-9 132 68)">
         <rect x="10" y="58" width="132" height="22" rx="11" fill="#f2994a" />
         <clipPath id="barrierArmClip">
@@ -270,15 +228,13 @@ function BarrierIcon() {
             fill="#ffcc33"
           />
         </g>
-        {/* Rounded white tip near the post */}
+        
         <rect x="120" y="58" width="26" height="22" rx="11" fill="#f4f5fa" />
       </g>
 
-      {/* Post head box with face, drawn after the arm so it sits on top */}
       <rect x="104" y="14" width="56" height="44" rx="10" fill="#e6e8f5" />
       <rect x="134" y="14" width="26" height="44" rx="10" fill="#b3b6d9" />
 
-      {/* Sleepy/happy eyes */}
       <path
         d="M 118 32 q6 -8 12 0"
         stroke="#15151a"

@@ -6,20 +6,6 @@ import {
   saveMarketingPreferences,
 } from "../../utils/profileLocalStorage";
 
-/**
- * frontend/src/components/customer/MarketingPreferencesPage.jsx
- *
- * "Marketing preferences" — opened from AccountDetailsPage.jsx's
- * "Marketing preferences" row. Matches reference: header, "Cuvva"
- * section with 3 radio-style options (All the good stuff / Stay in
- * the loop / Opt out), "Toyota" section with a single toggle switch
- * ("Send me offers").
- *
- * NO BACKEND FIELD for marketing preferences exists anywhere on
- * User.js. Saved 100% client-side via localStorage
- * (profileLocalStorage.js) — flagged clearly, not a real
- * consent-management/CRM integration.
- */
 export default function MarketingPreferencesPage() {
   const navigate = useNavigate();
   const [prefs, setPrefs] = useState({

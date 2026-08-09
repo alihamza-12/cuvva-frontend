@@ -2,44 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, MessageCircleQuestion } from "lucide-react";
 import fonData from "../../data/fonData.json";
 
-/**
- * frontend/src/components/customer/FonPage.jsx
- *
- * "FON" (Fair Obtaining Notice) — opened from LegalPage.jsx's "FON"
- * row. Full real text content (the FON copy you pasted, ~320 words),
- * parsed into frontend/src/data/fonData.json (an array of sections ->
- * content blocks) rather than hand-typed here — same convention as
- * PrivacyPolicyPage.jsx / privacyPolicyData.json and TermsPage.jsx /
- * termsData.json. This file is just the renderer, and is
- * visually/structurally IDENTICAL to those two pages (same white
- * background, same sticky fading header, same two-heading-weight
- * system, same muted grey-blue inline email-link styling), matching
- * your 3 reference screenshots which show FON using the exact same
- * layout.
- *
- * Heading weights, confirmed against your screenshots:
- *   - "Fair obtaining notice" (the page's intro title, right under
- *     the sticky header) is the smaller dark/bold "sublabel" style —
- *     matches Terms' "Why you should read these" treatment.
- *   - "How we'll use your data" and "How your data will be processed"
- *     are the lighter-grey "major" headings with a horizontal divider
- *     above them (confirmed by pixel-sampling "How your data will be
- *     processed" at ~136 brightness, matching Privacy/Terms' major
- *     heading grey) — a NEW content-block type ("divider") was added
- *     just for FON's major headings, since neither Privacy nor Terms
- *     had a rule line above their major headings, but every FON major
- *     heading in your screenshots does.
- *   - "Insurance underwriting & anti-fraud purposes" is a plain bold
- *     sub-label sitting directly among the body paragraphs under "How
- *     we'll use your data" (new "sublabel" content-block type, same
- *     concept as PolicyWordingPage.jsx's existing "sublabel" block
- *     type, just not used yet by Privacy/Terms since neither of them
- *     needed a third heading level).
- *   - The "Give your driving licence number...", "Carrying out
- *     searches...", "Searches may be carried out..." items render as
- *     PLAIN PARAGRAPHS in your screenshots, not bullet points — kept
- *     as "p" blocks rather than a "list" block to match exactly.
- */
 export default function FonPage() {
   const navigate = useNavigate();
 
@@ -50,8 +12,7 @@ export default function FonPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] pb-32">
-      {/* Header — sticky + translucent, same fade-through-scroll
-          effect as PrivacyPolicyPage.jsx / TermsPage.jsx. */}
+
       <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b bg-white/95 backdrop-blur-sm border-black/5">
         <button
           type="button"
@@ -74,7 +35,6 @@ export default function FonPage() {
         </button>
       </div>
 
-      {/* Full document body */}
       <div className="max-w-2xl px-6 py-6 mx-auto space-y-6">
         {fonData.sections.map((section, idx) => (
           <section key={idx}>
@@ -142,13 +102,6 @@ function ContentBlock({ block }) {
   }
 }
 
-/**
- * Same inline email-link styling as TermsPage.jsx — splits text on
- * email addresses and renders them in the muted grey-blue link color
- * confirmed by pixel-sampling the reference screenshots (e.g.
- * "privacy@cuvva.com", "dpo@aphaia.co.uk"), leaving surrounding text
- * as normal black body copy.
- */
 const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
 
 function renderWithEmailLinks(text) {

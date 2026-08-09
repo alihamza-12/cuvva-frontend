@@ -33,8 +33,6 @@ export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
   const filteredVehicles = useMemo(() => {
     const q = query.trim().toLowerCase();
 
-    // Backend already applies role-based visibility.
-    // Some payloads may omit `createdBy` for Sub Admins, so don't hard-filter by it.
     let list = Array.isArray(vehicles) ? vehicles : [];
 
     if (!q) return list;

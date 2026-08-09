@@ -17,7 +17,6 @@ export default function VehicleCatalog({
 }) {
   const navigate = useNavigate();
 
-  // Lookup States
   const [regInput, setRegInput] = useState("");
   const [lookupResult, setLookupResult] = useState(null);
   const [lookupError, setLookupError] = useState("");
@@ -50,7 +49,7 @@ export default function VehicleCatalog({
 
   return (
     <div className="w-full p-4 space-y-6 animate-fadeIn">
-      {/* 1. SYSTEM LOOKUP ENGINE */}
+
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <Search size={18} className="text-[#644aff]" />
@@ -75,14 +74,12 @@ export default function VehicleCatalog({
           </button>
         </form>
 
-        {/* LOOKUP FEEDBACK */}
         {lookupError && (
           <div className="flex items-center gap-2 p-3 mt-4 text-xs text-red-400 border bg-red-500/10 border-red-500/20 rounded-xl">
             <AlertTriangle size={14} /> <span>{lookupError}</span>
           </div>
         )}
 
-        {/* CLICKABLE LOOKUP RESULT */}
         {lookupResult && (
           <div
             onClick={() =>
@@ -118,7 +115,6 @@ export default function VehicleCatalog({
         )}
       </div>
 
-      {/* 2. MASTER VEHICLE REGISTRY CATALOG */}
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-xl">
         <div className="mb-6">
           <h3 className="text-lg font-bold text-white">Master Registry</h3>

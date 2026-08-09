@@ -28,12 +28,6 @@ export default function CarClubDetailPage() {
   const myName = profileData?.customer?.fullName || "You";
   const myPhoto = profileData?.customer?.profilePhotoUrl || null;
 
-  /*
-   * Important:
-   * Read localStorage synchronously before the first render.
-   * Do not initialise this as false and update it inside useEffect,
-   * otherwise an already-joined club briefly shows the Join sheet.
-   */
   const initialJoined = club ? isCarClubJoined(club.id) : false;
 
   const [alreadyJoined, setAlreadyJoined] = useState(
@@ -74,20 +68,12 @@ export default function CarClubDetailPage() {
     setSheetStage("closed");
   };
 
-  /*
-   * Macks Car Club is currently the locally-created/demo club.
-   * Real club creation is not connected to a backend schema yet.
-   */
   const isOwnClub = club.id === "macks-car-club";
 
   const memberCount = alreadyJoined
     ? club.baseMemberCount + 1
     : club.baseMemberCount;
 
-  /*
-   * Generate the same complete deterministic member list each time.
-   * One generated member slot is reserved for the admin.
-   */
   const generatedMembers = useMemo(
     () =>
       generateClubMembers(
@@ -99,7 +85,7 @@ export default function CarClubDetailPage() {
 
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -123,7 +109,6 @@ export default function CarClubDetailPage() {
         </button>
       </div>
 
-      {/* Member count */}
       <div className="flex items-center gap-2 px-4 pt-4">
         <span className="w-6 h-6 rounded-full bg-[#3a3b40] flex items-center justify-center">
           <User size={14} className="text-[#9497a1]" />
@@ -134,7 +119,6 @@ export default function CarClubDetailPage() {
         </span>
       </div>
 
-      {/* Cars */}
       <p className="text-[13px] text-[#9497a1] px-4 pt-6 pb-2">
         Cars
       </p>
@@ -171,7 +155,6 @@ export default function CarClubDetailPage() {
         </button>
       </div>
 
-      {/* Members or Chat */}
       {alreadyJoined && (
         <>
           <p className="text-[13px] text-[#9497a1] px-4 pt-6 pb-2">
@@ -196,7 +179,7 @@ export default function CarClubDetailPage() {
               </>
             ) : (
               <>
-                {/* Logged-in user appears first without chat action */}
+              
                 <MemberRow
                   name={myName}
                   avatar={myPhoto}
@@ -204,7 +187,6 @@ export default function CarClubDetailPage() {
                   isLast={false}
                 />
 
-                {/* Club admin */}
                 <MemberRow
                   name={`${club.adminName} (Admin)`}
                   avatar={club.adminAvatar}
@@ -216,7 +198,6 @@ export default function CarClubDetailPage() {
                   isLast={generatedMembers.length === 0}
                 />
 
-                {/* Full deterministic member list */}
                 {generatedMembers.map((member, index) => (
                   <MemberRow
                     key={`${club.id}-${member.name}-${index}`}
@@ -238,7 +219,6 @@ export default function CarClubDetailPage() {
         </>
       )}
 
-      {/* Join sheet */}
       {sheetStage === "join" && (
         <div className="fixed inset-0 z-[60] flex items-end">
           <button
@@ -288,7 +268,6 @@ export default function CarClubDetailPage() {
         </div>
       )}
 
-      {/* Welcome sheet */}
       {sheetStage === "welcome" && (
         <div className="fixed inset-0 z-[60] flex items-end">
           <button
@@ -341,7 +320,6 @@ export default function CarClubDetailPage() {
         </div>
       )}
 
-      {/* Chat restriction modal */}
       {showChatBlockedModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-6">
           <button

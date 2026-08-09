@@ -3,27 +3,6 @@ import { ChevronLeft, HelpCircle } from "lucide-react";
 import { useDeleteMyAccountMutation } from "../../app/api/profileApi";
 import deleteAccountIllustration from "/deleteaccountillustration.png";
 
-/**
- * frontend/src/components/customer/DeleteAccountInfoPage.jsx
- *
- * "Delete your account" info screen — opened from
- * AccountDetailsPage.jsx's "Delete your account" row (replacing the
- * previous plain window.confirm() flow). Matches reference: header,
- * illustration, title, informational copy with a "privacy notice"
- * link, sticky "Delete account" button.
- *
- * Tapping "Delete account" makes a REAL network call to
- * DELETE /customers/me via useDeleteMyAccountMutation (already added
- * to profileApi.js) — per instruction, even though that backend route
- * does not exist yet in customers.js (you said you'll add it later).
- * Until it exists, this will fail with a 404, which is surfaced to
- * the user rather than silently ignored or faked as a success.
- *
- * deleteaccountillustration.png: AI-generated illustration matching
- * the reference screenshot (hand holding a phone showing a "GB PLATE"
- * badge + slider, on a pink-to-purple gradient circle), placed in
- * frontend/public/ per the project's image-import convention.
- */
 export default function DeleteAccountInfoPage() {
   const navigate = useNavigate();
   const [deleteAccount, { isLoading: isDeleting, error: deleteError }] =
@@ -45,10 +24,7 @@ export default function DeleteAccountInfoPage() {
     if (!confirmed) return;
 
     try {
-      // Real network call — backend route (DELETE /customers/me) is
-      // not implemented yet on the server per your note ("I will
-      // implement that api later"), so this is expected to fail with
-      // a 404 until that route exists. The call is real, not faked.
+
       await deleteAccount().unwrap();
       navigate("/login", { replace: true });
     } catch (err) {

@@ -6,21 +6,6 @@ import {
   saveBankDetails,
 } from "../../utils/profileLocalStorage";
 
-/**
- * frontend/src/components/customer/BankAccountDetailsPage.jsx
- *
- * "Bank account details" — opened from Profile > Bank details.
- * Matches reference screenshot exactly: header, title + subtitle,
- * 4 stacked pill inputs, "How payouts work" link, sticky "Save
- * details" button.
- *
- * NO BACKEND ENDPOINT EXISTS for this (per instruction) — this is
- * Cuvva's car-SHARING host payout feature, unrelated to insurance
- * policies, and there's nothing in customers.js/User.js for bank
- * details. Persisted 100% client-side via localStorage
- * (profileLocalStorage.js) — device-local only, not synced to any
- * server. Flagged clearly, not silently faked as a real save.
- */
 export default function BankAccountDetailsPage() {
   const navigate = useNavigate();
 
@@ -55,14 +40,14 @@ export default function BankAccountDetailsPage() {
 
   const handleSave = () => {
     if (!canSave) return;
-    // localStorage only — no backend endpoint exists for bank details.
+
     saveBankDetails(form);
     setSaved(true);
   };
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -82,7 +67,6 @@ export default function BankAccountDetailsPage() {
         </button>
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-4 pt-4 pb-32">
         <h1 className="text-[24px] font-extrabold text-white leading-tight">
           Bank account details
@@ -136,9 +120,6 @@ export default function BankAccountDetailsPage() {
         )}
       </div>
 
-      {/* Sticky footer — offset above CustomerBottomNav (bottom-24)
-          rather than bottom-0, since this page now renders inside
-          CustomerLayout (bottom nav visible) instead of full-screen. */}
       <div className="fixed z-40 bottom-24 left-4 right-4">
         <button
           type="button"

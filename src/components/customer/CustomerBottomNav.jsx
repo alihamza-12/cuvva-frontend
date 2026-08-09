@@ -2,18 +2,6 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, Users, Shield, Zap, CircleUser } from "lucide-react";
 
-/**
- * frontend/src/components/customer/CustomerBottomNav.jsx
- *
- * Pixel-matched to the reference screenshot:
- * - Floating dark pill bottom nav
- * - ICON ON TOP, LABEL UNDERNEATH (flex-col)
- * - 4 tabs exactly: Get insured / Car clubs / Policies / Profile
- * - Active tab: light pill bg #2a2a31 + purple #7c5bff icon & text
- * - Inactive: muted icon #9a9aa3, white label
- */
-
-// Custom Policies icon to match the screenshot: shield with lightning bolt
 const PoliciesIcon = ({ size = 22, active = false, className = "" }) => (
   <div
     className={`relative flex items-center justify-center ${className}`}
@@ -40,7 +28,7 @@ const TABS = [
     id: "get-insured",
     label: "Get insured",
     path: "/customer",
-    // lucide Search matches the screenshot magnifying glass
+
     Icon: Search,
   },
   {
@@ -53,7 +41,7 @@ const TABS = [
     id: "policies",
     label: "Policies",
     path: "/customer/policies",
-    // Use custom composite to get shield + lightning, exactly like screenshot
+
     Icon: PoliciesIcon,
     isCustom: true,
   },
@@ -61,7 +49,7 @@ const TABS = [
     id: "profile",
     label: "Profile",
     path: "/customer/profile",
-    // CircleUser gives you the user-in-circle from the screenshot
+
     Icon: CircleUser,
   },
 ];
@@ -123,7 +111,7 @@ export default function CustomerBottomNav() {
                 }
               `}
             >
-              {/* ICON ON TOP */}
+
               <div className="flex items-center justify-center h-[22px]">
                 {tab.isCustom ? (
                   <IconComp size={22} active={active} />
@@ -132,7 +120,7 @@ export default function CustomerBottomNav() {
                     size={20}
                     strokeWidth={2.2}
                     className={active ? "text-[#7c5bff]" : "text-[#9a9aa3]"}
-                    // fill the profile circle subtly when active, matches screenshot
+
                     fill={
                       active && tab.id === "profile"
                         ? "rgba(124,91,255,0.12)"
@@ -142,7 +130,6 @@ export default function CustomerBottomNav() {
                 )}
               </div>
 
-              {/* LABEL UNDER ICON - SMALL LIKE SCREENSHOT */}
               <span
                 className={`
                   text-[11px] leading-none tracking-normal whitespace-nowrap
@@ -161,7 +148,6 @@ export default function CustomerBottomNav() {
         })}
       </nav>
 
-      {/* Safe area / hide scrollbar helper */}
       <style>{`
         .safe-bottom {
           padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
@@ -181,19 +167,3 @@ export default function CustomerBottomNav() {
   );
 }
 
-/*
-  // --- ALTERNATIVE ICON SWAPS if you want 100% lucide defaults ---
-  // Policies: replace PoliciesIcon with:
-  //   import { ShieldCheck } from "lucide-react"
-  //   Icon: ShieldCheck
-  //
-  // Profile: for a plain user outline (no circle):
-  //   import { User } from "lucide-react"
-  //   Icon: User
-  //
-  // All labels stay exactly:
-  //   "Get insured"
-  //   "Car clubs"
-  //   "Policies"
-  //   "Profile"
-*/

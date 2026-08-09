@@ -3,34 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle } from "lucide-react";
 import referIllustration from "/referillustration.png";
 
-/**
- * frontend/src/components/customer/ReferFriendPage.jsx
- *
- * "Invite your friends to Cuvva" — opened from Profile > Refer a
- * friend, or from the "Invite friends" buttons on the Profile page /
- * Your discounts page. Matches reference: header, title + copy with
- * inline "How referrals work" link, illustration (hand with phone +
- * two friend avatars connected by dashed arrows), numbered 1-2-3
- * steps, sticky "Share a referral link" button.
- *
- * NO BACKEND ENDPOINT/SCHEMA for referrals exists anywhere in
- * customers.js/User.js/policies.js — there's no referral code field,
- * no referral tracking. "Share a referral link" uses the browser's
- * native Web Share API when available (a real, working share sheet),
- * falling back to copying a placeholder link to the clipboard when
- * Web Share isn't supported — but the link itself is a static
- * placeholder (not a real unique per-user referral code, since no
- * backend generates one). Flagged clearly, not faked as a real
- * referral system.
- *
- * referillustration.png: AI-generated illustration matching the
- * reference screenshot's style (hand holding phone with paper-plane
- * icon, dashed arrows to two friend avatar circles), placed in
- * frontend/public/ per the project's image-import convention.
- */
 export default function ReferFriendPage() {
   const navigate = useNavigate();
-  const [shareStatus, setShareStatus] = useState(null); // null | "shared" | "copied" | "failed"
+  const [shareStatus, setShareStatus] = useState(null); 
 
   const handleBack = () => {
     if (window.history.length > 1) navigate(-1);
@@ -42,8 +17,7 @@ export default function ReferFriendPage() {
   };
 
   const handleShareReferralLink = async () => {
-    // Placeholder link — no backend generates a real unique referral
-    // code for the signed-in customer yet.
+
     const referralUrl = "https://cuvva.example.com/refer/placeholder-code";
 
     if (navigator.share) {
@@ -55,7 +29,7 @@ export default function ReferFriendPage() {
         });
         setShareStatus("shared");
       } catch {
-        // User cancelled the native share sheet — not an error.
+
       }
       return;
     }
@@ -70,7 +44,7 @@ export default function ReferFriendPage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -90,7 +64,6 @@ export default function ReferFriendPage() {
         </button>
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-6 pt-4 pb-32 text-center">
         <h1 className="text-[22px] font-extrabold text-white leading-tight">
           Invite your friends to Cuvva

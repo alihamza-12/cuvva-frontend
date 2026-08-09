@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, FileText } from "lucide-react";
 
 export default function PolicyContracts({
-  policies = [], // Defensive assignment: Prevents array map runtime breaks if undefined
+  policies = [], 
 }) {
   const navigate = useNavigate();
-
-  // Helper utility format to make database UTC date arrays cleaner for presentation
 
   const formatDateString = (rawDate) => {
     if (!rawDate) return "N/A";
@@ -20,7 +18,7 @@ export default function PolicyContracts({
 
   return (
     <div className="grid w-full grid-cols-1 gap-8 text-xs animate-fadeIn">
-      {/* FEED VISUALIZATION BLOCK */}
+
       <div className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-xl overflow-x-auto">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -56,7 +54,7 @@ export default function PolicyContracts({
                   }
                 }}
               >
-                {/* ID Token, Scope Tags & Cost Ledger Row */}
+        
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <FileText size={14} className="text-[#644aff]" />
@@ -77,7 +75,6 @@ export default function PolicyContracts({
                   </div>
                 </div>
 
-                {/* Entity Relations Grid Block */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-white/[0.01] border border-white/5 rounded-xl text-[#8a8fbc] text-[11px]">
                   <div className="space-y-0.5">
                     <span className="text-[9px] uppercase font-bold text-[#6b7280] block tracking-wide">
@@ -111,7 +108,6 @@ export default function PolicyContracts({
                   </div>
                 </div>
 
-                {/* Expanded Time Horizon Scale Display */}
                 <div className="flex flex-wrap items-center justify-between text-[11px] text-[#6b7280] pt-1.5 border-t border-white/5 gap-3">
                   <div className="flex items-center gap-1 font-medium text-gray-300">
                     <Calendar size={13} className="text-[#644aff]" />
@@ -124,7 +120,6 @@ export default function PolicyContracts({
                     </span>
                   </div>
 
-                  {/* Operational Security Audit Signature */}
                   {p.createdBy && (
                     <div className="text-[10px] text-right bg-white/5 px-2 py-0.5 rounded border border-white/5">
                       <span className="text-gray-500">Issued By: </span>

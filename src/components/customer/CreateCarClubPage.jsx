@@ -4,24 +4,6 @@ import { ChevronLeft, MessageCircleQuestion, ChevronRight, X, Construction } fro
 import publicIcon from "/car-club-public-icon.png";
 import privateIcon from "/car-club-private-icon.png";
 
-/**
- * frontend/src/components/customer/CreateCarClubPage.jsx
- *
- * "What type of car club would you like to create?" — opened from
- * CarClubsPage.jsx's "Create your Cuvva car club" button (empty
- * state) or "+ Create car club" row (already-joined state). Matches
- * createcarclub1.jpeg exactly: back + help header, title + subtitle,
- * two option cards (Public — with a "Great for making money" pill
- * badge, and Private).
- *
- * Per instruction, the REAL club-creation flow isn't built yet —
- * tapping either "Public" or "Private" shows a "You can't create a
- * car club yet" info modal instead of proceeding, with a close
- * button. This keeps the screen visually complete and navigable
- * (matches the reference exactly) while being explicit that the
- * actual multi-step creation flow is a future pass, not silently
- * broken or faked.
- */
 export default function CreateCarClubPage() {
   const navigate = useNavigate();
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
@@ -41,7 +23,7 @@ export default function CreateCarClubPage() {
 
   return (
     <div className="min-h-screen bg-black text-white pb-32">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -61,7 +43,6 @@ export default function CreateCarClubPage() {
         </button>
       </div>
 
-      {/* Title */}
       <div className="px-4 pt-4">
         <h1 className="text-[22px] font-extrabold text-white leading-tight">
           What type of car club would you like to create?
@@ -69,7 +50,6 @@ export default function CreateCarClubPage() {
         <p className="text-[14px] text-[#9497a1] mt-2">You can always change this later on.</p>
       </div>
 
-      {/* Options */}
       <div className="px-4 pt-5 space-y-3">
         <button
           type="button"
@@ -115,7 +95,6 @@ export default function CreateCarClubPage() {
         </button>
       </div>
 
-      {/* "You can't create a car club yet" modal */}
       {showComingSoonModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-6">
           <button

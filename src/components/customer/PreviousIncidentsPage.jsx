@@ -19,30 +19,6 @@ import {
   saveIncidentsDeclarationDone,
 } from "../../utils/profileLocalStorage";
 
-/**
- * frontend/src/components/customer/PreviousIncidentsPage.jsx
- *
- * "Add any incidents you've been involved in over the last 3 years" —
- * opened from AccountDetailsPage.jsx's "Previous incidents" row.
- * Matches all your reference screenshots for this screen's states:
- *
- *   - Empty state (no incidents yet, declaration not yet confirmed):
- *     "Add an incident" row only, sticky button says "No incidents to
- *     declare" — tapping it opens the "Confirm you've declared:"
- *     sheet with "I've declared all incidents" (-> navigates back to
- *     Account details) and "Add an incident" (-> opens
- *     AddIncidentPage.jsx) buttons.
- *   - With 1+ incidents already added: each is listed below "Add an
- *     incident" as a locked (padlock icon), permanent row showing its
- *     type icon, type name, date, and (for Accident) fault-status +
- *     injuries summary — plus "To edit your existing incident
- *     details, contact us." Sticky button becomes "Done" (-> navigates
- *     back to Account details).
- *
- * ALL LOCAL STORAGE — see profileLocalStorage.js's incidents section
- * for why (no incidents/claims schema exists on the backend at all).
- */
-
 const TYPE_ICON = {
   Accident: CarFront,
   Theft: ShieldAlert,
@@ -103,13 +79,12 @@ export default function PreviousIncidentsPage() {
 
   const handleMainButtonTap = () => {
     if (incidents.length > 0) {
-      // "Done" — already have incidents, just confirm and leave.
+
       saveIncidentsDeclarationDone(true);
       navigate("/customer/profile/account", { replace: true });
       return;
     }
-    // No incidents yet — open the declaration confirmation sheet
-    // ("No incidents to declare" tap target).
+
     setShowDeclareSheet(true);
   };
 
@@ -121,7 +96,7 @@ export default function PreviousIncidentsPage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center px-4 pt-4">
         <button
           type="button"
@@ -133,9 +108,6 @@ export default function PreviousIncidentsPage() {
         </button>
       </div>
 
-      {/* Content — scrolls normally. pb-40 reserves clearance at the
-          bottom so the last row/text is never hidden behind the fixed
-          "Done" button below. */}
       <div className="flex-1 px-4 pt-4 pb-40">
         <h1 className="text-[22px] font-extrabold text-white leading-tight">
           Add any incidents you've been involved in over the last 3 years
@@ -208,9 +180,6 @@ export default function PreviousIncidentsPage() {
         )}
       </div>
 
-      {/* "Done" / "No incidents to declare" — fixed, always sitting
-          right above CustomerBottomNav, exactly like every other
-          Account-details page's sticky action button. */}
       <div className="fixed z-40 bottom-24 left-4 right-4">
         <button
           type="button"
@@ -221,8 +190,6 @@ export default function PreviousIncidentsPage() {
         </button>
       </div>
 
-      {/* "Confirm you've declared:" sheet — only reachable when there
-          are zero incidents added yet, matching the reference. */}
       {showDeclareSheet && (
         <div className="fixed inset-0 z-50 flex items-end">
           <button

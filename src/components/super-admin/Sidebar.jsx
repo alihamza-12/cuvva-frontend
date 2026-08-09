@@ -97,20 +97,13 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Desktop Sidebar */}
+
       <aside className="hidden lg:flex w-72 bg-[#0d0f1d] border-r border-[#1e2238] flex-col h-screen sticky top-0 shrink-0 select-none z-50 relative overflow-hidden">
-        {/* Ambient glow */}
+        
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_circle_at_20%_0%,rgba(100,74,255,0.22),transparent_55%),radial-gradient(700px_circle_at_70%_30%,rgba(255,59,87,0.14),transparent_45%)]" />
 
-        {/*
-          FIX 1: The scrollable nav area and the logout button are now two
-          explicit flex children of a column flex container, each with their
-          own padding, instead of one giant block with mt-auto trying to fight
-          for space. This guarantees they never visually touch/overlap
-          regardless of how many menu items are added.
-        */}
         <div className="relative flex-1 min-h-0 overflow-y-auto px-6 pt-6 pb-4 space-y-8 scrollbar-thin scrollbar-thumb-[#2a2f4a]/60 scrollbar-track-transparent">
-          {/* Brand */}
+          
           <div className="flex items-center gap-2.5 px-2">
             <div className="w-7 h-7 rounded-2xl bg-[#644aff] flex items-center justify-center font-black text-[11px] text-white shadow-[0_0_0_1px_rgba(100,74,255,0.35),0_10px_30px_rgba(100,74,255,0.18)]">
               C
@@ -123,7 +116,6 @@ export default function Sidebar({
             </span>
           </div>
 
-          {/* User card */}
           <div className="p-4 bg-[#13172d]/55 border border-[#1e2238] rounded-2xl flex items-center gap-3 transition-all duration-300 hover:border-white/15 hover:bg-[#13172d]/65">
             <div className="w-10 h-10 bg-[#644aff]/10 border border-[#644aff]/30 text-[#b7a6ff] rounded-2xl flex items-center justify-center font-extrabold text-xs shrink-0 tracking-wider">
               {computeUserInitials(user?.fullName)}
@@ -138,7 +130,6 @@ export default function Sidebar({
             </div>
           </div>
 
-          {/* Nav */}
           {(() => {
             const sections = [
               { title: "Overview", items: [menuItems[0]] },
@@ -207,12 +198,6 @@ export default function Sidebar({
           })()}
         </div>
 
-        {/*
-          FIX 2: Logout is now a separate, fixed-height footer region with its
-          own top border + padding + background, pinned via flex layout
-          (not `mt-auto` fighting the scroll container). It never overlaps
-          the nav list no matter how tall the list content is.
-        */}
         <div className="relative shrink-0 border-t border-[#1e2238] bg-[#0d0f1d]/80 backdrop-blur-sm px-6 py-5">
           <button
             onClick={onLogout}
@@ -236,7 +221,6 @@ export default function Sidebar({
         </div>
       </aside>
 
-      {/* Mobile Bottom Nav */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 shadow-2xl bg-[#0d0f1d] border-t border-[#1e2238]">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(800px_circle_at_50%_0%,rgba(100,74,255,0.18),transparent_55%)]" />
 

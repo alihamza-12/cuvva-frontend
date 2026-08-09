@@ -11,17 +11,6 @@ import { httpClient } from "../../app/api/httpClient";
 const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
 const MAX_RECENT = 10;
 
-/**
- * frontend/src/pages/customer/CustomerHome.jsx
- *
- * "Get insured" landing page. No backend changes required:
- *  - Recently Viewed is 100% client-side, persisted in localStorage by
- *    PlateSearchBar.jsx on every successful search (survives refresh/
- *    relaunch on this device/browser).
- *  - Buy Again reuses your EXISTING "GET /api/policies/my" route (already
- *    in policies.js) and filters client-side for status === "Expired",
- *    deduping by vehicle — no new backend endpoint needed.
- */
 export default function CustomerHome() {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -31,13 +20,11 @@ export default function CustomerHome() {
   const [buyAgainVehicles, setBuyAgainVehicles] = useState([]);
   const [buyAgainLoading, setBuyAgainLoading] = useState(true);
 
-  // --- Dropdown Support Navigation ---
   const handleSupportNav = () => {
-    setShowDropdown(false); // Close dropdown first
-    navigate("/customer/support"); // Then open chat support
+    setShowDropdown(false); 
+    navigate("/customer/support"); 
   };
 
-  // --- Recently Viewed: read from localStorage on mount ---
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]");
@@ -47,8 +34,6 @@ export default function CustomerHome() {
     }
   }, []);
 
-  // Called by PlateSearchBar the moment a search succeeds, so the new
-  // vehicle appears instantly without re-reading localStorage.
   const handleVehicleFound = useCallback((vehicle) => {
     setRecentlyViewed((prev) =>
       [vehicle, ...prev.filter((v) => v._id !== vehicle._id)].slice(0, MAX_RECENT),
@@ -61,15 +46,12 @@ export default function CustomerHome() {
       try {
         localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
       } catch {
-        // ignore storage errors
+
       }
       return next;
     });
   }, []);
 
-  // --- Buy Again: derived from your EXISTING "my policies" endpoint ----
-  // No new backend route — reuses GET /api/policies/my, which already
-  // returns this customer's policies populated with vehicleId details.
   useEffect(() => {
     let mounted = true;
 
@@ -81,8 +63,6 @@ export default function CustomerHome() {
 
         const policies = res.data?.policies || [];
 
-        // Keep only Expired policies, then dedupe by vehicle, keeping
-        // each vehicle's most recently expired policy.
         const expired = policies
           .filter((p) => p.status === "Expired" && p.vehicleId)
           .sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
@@ -121,11 +101,10 @@ export default function CustomerHome() {
 
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <h1 className="text-[26px] font-extrabold tracking-tight">Get insured</h1>
-        
-        {/* 3 Dots Dropdown Container */}
+
         <div className="relative">
           <button
             type="button"
@@ -136,18 +115,16 @@ export default function CustomerHome() {
             <MoreHorizontal size={18} className="text-white" />
           </button>
 
-          {/* Dropdown Menu */}
           {showDropdown && (
             <>
-              {/* Invisible overlay to close dropdown when clicking outside */}
+            
               <div
                 className="fixed inset-0 z-40"
                 onClick={() => setShowDropdown(false)}
               />
 
-              {/* The dark dropdown card matching your screenshot exactly */}
               <div className="absolute right-0 mt-2 w-44 bg-[#17181c] rounded-xl shadow-2xl py-1.5 z-50 border border-white/10">
-                {/* Option 1: Help centre (No Icon) */}
+                
                 <button
                   onClick={handleSupportNav}
                   className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
@@ -155,7 +132,6 @@ export default function CustomerHome() {
                   <span className="text-[15px] font-semibold text-white">Help centre</span>
                 </button>
 
-                {/* Option 2: Chat to us (No Icon) */}
                 <button
                   onClick={handleSupportNav}
                   className="w-full flex items-center px-4 py-2.5 text-left hover:bg-[#262626] transition-colors"
@@ -168,18 +144,15 @@ export default function CustomerHome() {
         </div>
       </div>
 
-      {/* Search */}
       <div className="pt-5">
         <PlateSearchBar onVehicleFound={handleVehicleFound} />
       </div>
 
-      {/* Recently Viewed — localStorage backed */}
       <RecentlyViewedSection
         vehicles={recentlyViewed}
         onDismiss={handleDismissRecent}
       />
 
-      {/* Buy Again — derived from existing GET /api/policies/my */}
       <BuyAgainSection vehicles={buyAgainVehicles} loading={buyAgainLoading} />
     </div>
   );

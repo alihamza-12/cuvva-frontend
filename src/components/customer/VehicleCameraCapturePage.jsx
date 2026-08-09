@@ -3,39 +3,6 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, HelpCircle, Zap, ZapOff, Camera } from "lucide-react";
 import { ResultMessageView } from "./ResultMessagePage";
 
-/**
- * frontend/src/pages/customer/VehicleCameraCapturePage.jsx
- *
- * Live camera capture screen — opened when the customer taps
- * "Open camera" on VehiclePhotoCapturePage.jsx. Matches the reference
- * screenshot: live camera feed, car-outline overlay (with the vehicle's
- * registration plate rendered inside it), flash toggle, and a bottom
- * sheet with title/instructions, "Take photo" button, and an "FAQ" link.
- *
- * Route suggestion: /customer/policies/photos/:step/camera
- *
- * REAL CAMERA: uses the browser's native `getUserMedia` API (no library
- * needed) to show a live back-camera feed, matching your screenshot's
- * actual live video background — this is NOT a static image/placeholder.
- * Requires HTTPS (or localhost) to work, per browser security rules.
- *
- * "Take photo" captures a frame from the video onto a hidden <canvas>,
- * runs it through a (currently simulated) processing/upload step, and:
- *   - on success: stores it as a data URL in navigation state, then
- *     advances to the next photo step (or checkout on the last one) —
- *     the SAME step progression pattern as before.
- *   - on failure: shows a full-screen error result overlay
- *     (ResultMessageView, from ResultMessagePage.jsx) instead of
- *     silently advancing, and keeps the camera session alive underneath
- *     so the customer can dismiss the error and try again immediately.
- *
- * Where captured photos ultimately get uploaded to (which backend
- * endpoint — none currently exists in vehicles.js/policies.js) is a
- * decision for you — the `processingFailed` flag below is a placeholder
- * for that real check; wire your actual upload/validation call in where
- * marked.
- */
-
 const STEP_CONFIG = {
   front: { label: "front", next: "back" },
   back: { label: "back", next: "left" },
@@ -66,7 +33,7 @@ export default function VehicleCameraCapturePage() {
     async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "environment" } }, // back camera on phones
+          video: { facingMode: { ideal: "environment" } }, 
           audio: false,
         });
         if (cancelled) {
@@ -93,10 +60,7 @@ export default function VehicleCameraCapturePage() {
   }, []);
 
   const toggleFlash = async () => {
-    // Real device torch control via the MediaStreamTrack API, where
-    // supported (mostly Android Chrome). iOS Safari does not support
-    // this, so this may silently no-op there — the UI toggle state
-    // still updates either way for visual feedback.
+
     setFlashOn((prev) => !prev);
 
     const track = streamRef.current?.getVideoTracks?.()[0];
@@ -106,7 +70,7 @@ export default function VehicleCameraCapturePage() {
         try {
           await track.applyConstraints({ advanced: [{ torch: !flashOn }] });
         } catch (err) {
-          // Torch control not supported on this device — ignore.
+
         }
       }
     }
@@ -126,13 +90,7 @@ export default function VehicleCameraCapturePage() {
       capturedPhotoDataUrl = canvas.toDataURL("image/jpeg", 0.9);
     }
 
-    // --- Simulated processing/upload step ---
-    // TEMP: forced to always fail right now, per request, so the error
-    // overlay shows every time "Take photo" is tapped. Replace this
-    // with your real upload/validation call once you have one, e.g.:
-    //   const result = await uploadVehiclePhoto(capturedPhotoDataUrl, step);
-    //   const processingFailed = !result.success;
-    const processingFailed = true; // <- forced true: always show the error for now
+    const processingFailed = true; 
 
     if (processingFailed) {
       setPhotoError({
@@ -144,7 +102,7 @@ export default function VehicleCameraCapturePage() {
         ],
         okLabel: "Try again after an hour",
       });
-      return; // keep the camera running so they can retry immediately
+      return; 
     }
 
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -176,7 +134,7 @@ export default function VehicleCameraCapturePage() {
         flexDirection: "column",
       }}
     >
-      {/* Live camera feed */}
+
       <div
         style={{
           position: "relative",
@@ -219,7 +177,6 @@ export default function VehicleCameraCapturePage() {
           </div>
         )}
 
-        {/* Header overlay */}
         <div
           style={{
             position: "absolute",
@@ -275,7 +232,6 @@ export default function VehicleCameraCapturePage() {
           </button>
         </div>
 
-        {/* Flash toggle */}
         <button
           type="button"
           onClick={toggleFlash}
@@ -303,7 +259,6 @@ export default function VehicleCameraCapturePage() {
           )}
         </button>
 
-        {/* Car outline overlay with registration plate */}
         <div
           style={{
             position: "absolute",
@@ -319,7 +274,6 @@ export default function VehicleCameraCapturePage() {
         </div>
       </div>
 
-      {/* Bottom instructions sheet */}
       <div
         style={{
           background: "#000",

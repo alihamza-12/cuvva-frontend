@@ -45,7 +45,7 @@ export default function PolicyDetailPage() {
       setError("");
 
       try {
-        // Backend allows Sub Admin access to: GET /api/policies/my
+
         const res = await httpClient.get("/api/policies/my");
         const list = res?.data?.policies || res?.data?.policy || [];
         const found = Array.isArray(list)
@@ -149,7 +149,6 @@ export default function PolicyDetailPage() {
       const res = await httpClient.put(`/api/policies/${policy._id}`, payload);
       setUpdateSuccess(res?.data?.message || "Policy updated successfully.");
 
-      // Refresh policy record from scope list
       const refreshed = await httpClient.get("/api/policies/my");
       const list = refreshed?.data?.policies || [];
       const found = Array.isArray(list)

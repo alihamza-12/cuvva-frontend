@@ -5,21 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { getMyPolicies } from "../../app/api/policyApi";
 import policyImg from "/policyimg.png";
 
-/**
- * frontend/src/components/customer/PoliciesPage.jsx
- *
- * Customer -> Policies tab
- * - Click from CustomerBottomNav => this page renders.
- * - Calls GET /api/policies/my (via getMyPolicies) — SAME working API
- *   call as before, untouched.
- * - Renders ALL policies (Upcoming / Active / Expired / Cancelled) in a
- *   single flat list, each card showing a dynamic status badge derived
- *   from startDate/endDate (combined with startTime/endTime).
- */
-
-// Combines a date-only field (e.g. "2026-06-17T00:00:00.000Z") with a
-// separate "HH:MM" time-of-day field (e.g. "01:59") into one real
-// Date/time. The backend stores date and time-of-day separately.
 const combineDateAndTime = (dateValue, timeValue) => {
   if (!dateValue) return null;
   const datePart = new Date(dateValue);
@@ -80,23 +65,19 @@ export default function PoliciesPage() {
   }, []);
 
   const sortedPolicies = useMemo(() => {
-    // Show ALL policies (Active, Upcoming, Expired, Cancelled). The
-    // expired status badge is simply hidden on each card (see render),
-    // but the policy itself remains visible.
+
     return [...policies].sort(
       (a, b) => new Date(b.endDate) - new Date(a.endDate),
     );
   }, [policies]);
 
   const handleGetQuote = () => {
-    // Reuses the existing Get Insured search screen — no new page needed.
+
     navigate("/customer");
   };
 
   const handleOpenPolicy = (policy) => {
-    // Full policy object is already in memory (fetched above via
-    // getMyPolicies), so it's passed directly via router state — no
-    // second network call needed.
+
     navigate("/customer/policies/detail", { state: { policy } });
   };
 
@@ -106,9 +87,7 @@ export default function PoliciesPage() {
 
     let durationLabel = "";
     if (start && end) {
-      // Guard against an end time that's technically "earlier" than the
-      // start time on the same date — treat that as spanning into the
-      // next day instead of a negative/zero duration.
+
       if (end <= start) {
         end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
       }
@@ -135,7 +114,7 @@ export default function PoliciesPage() {
 
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-end px-4 pt-4">
         <div className="relative">
           <button
@@ -180,7 +159,6 @@ export default function PoliciesPage() {
         <h1 className="text-[28px] font-extrabold tracking-tight">Policies</h1>
       </div>
 
-      {/* Hero: "Let's hit the road" */}
       <div className="px-4 pt-5">
         <div className="relative overflow-hidden rounded-2xl bg-[#1c1d22] p-5">
           <div className="max-w-[62%]">
@@ -240,11 +218,9 @@ export default function PoliciesPage() {
                     ? `${vehicle.make} ${vehicle.model}`
                     : registration || "Vehicle";
                 // Use the API's stored status field directly so the badge reflects
-                // exactly what the backend reports.
+
                 const status = policy?.status || "Upcoming";
-                // Only show a badge for Active/Upcoming policies. Any other
-                // status (Expired, Cancelled, etc.) keeps the card visible
-                // but shows NO badge at all.
+
                 const showBadge = status === "Active" || status === "Upcoming";
 
                 return (
@@ -271,9 +247,7 @@ export default function PoliciesPage() {
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        {/* Badge only shows for Active/Upcoming. Expired or
-                            any other status keeps the card visible but with
-                            NO badge at all. */}
+          
                         {showBadge && (
                           <span
                             className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${STATUS_STYLES[status] || STATUS_STYLES.Upcoming}`}

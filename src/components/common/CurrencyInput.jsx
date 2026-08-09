@@ -1,28 +1,6 @@
 import React from "react";
 import { NumericFormat } from "react-number-format";
 
-/**
- * frontend/src/components/common/CurrencyInput.jsx
- *
- * Reusable formatted GBP currency input using `react-number-format`.
- *
- * NEW STANDARD — DIRECT DECIMAL STORAGE
- * -------------------------------------
- * We NO LONGER store pence. Everything is a decimal Number (e.g. `123.44`).
- *
- * - Display: ALWAYS shows the `£` prefix and a decimal point with 2 digits
- *   (e.g. `£0.00`). As the user types `1`, `2`, `3`, `4`, `4` it progressively
- *   masks to `£123.44` (the last two digits become the pence).
- * - Value contract: `value` is the raw decimal (Number or string) e.g.
- *   `123.44`. `onChange` exposes that SAME raw decimal value to the parent
- *   form state — no `* 100` / `/ 100` anywhere.
- * - Styling: pass a `className` to match the surrounding dark theme
- *   (super-admin purple / sub-admin cyan). `accentClass` sets the
- *   focus border colour.
- */
-
-// Backward-compat helpers. Per the new standard they are IDENTITY-style:
-// they take a decimal value and return the same decimal value. No pence math.
 export const currencyToPence = (value) => {
   if (value === "" || value == null) return "";
   const n = Number(value);
@@ -51,7 +29,7 @@ export default function CurrencyInput({
   accentClass = "focus:border-[#644aff]",
   name,
 }) {
-  // Normalise the raw decimal value for the input.
+
   const numericValue =
     value === "" || value == null ? undefined : Number(value);
 
@@ -69,8 +47,7 @@ export default function CurrencyInput({
         fixedDecimalScale
         allowNegative={false}
         isAllowed={(values) => {
-          // Drop leading zeros like "0" before the integer part unless it's
-          // the only digit, and cap length.
+
           const { formattedValue } = values;
           return formattedValue.replace(/[£,.]/g, "").length <= 12;
         }}
@@ -78,7 +55,7 @@ export default function CurrencyInput({
         onValueChange={(values) => {
           const { floatValue } = values;
           if (onChange) {
-            // Expose the raw decimal number (e.g. 123.44). If empty, expose "".
+
             onChange(floatValue == null ? "" : floatValue);
           }
         }}

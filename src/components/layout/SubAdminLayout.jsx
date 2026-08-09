@@ -35,7 +35,7 @@ export function SubAdminLayout() {
     try {
       await httpClient.post("/api/auth/logout");
     } catch (err) {
-      // ignore logout failure; still clear client state
+
     } finally {
       try {
         localStorage.clear();

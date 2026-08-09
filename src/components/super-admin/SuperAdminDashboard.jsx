@@ -14,7 +14,6 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-// Child Component Interfaces
 import Sidebar from "./Sidebar";
 import OverviewGrid from "./OverviewGrid";
 import AccountManagement from "./AccountManagement";
@@ -29,34 +28,29 @@ import CreateUser from "./CreateUser";
 import CreatePolicy from "./CreatePolicy";
 import CreateVehicle from "./CreateVehicle";
 
-// Use shared axios instance so the 401->refresh interceptor applies
 const api = httpClient;
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Navigation Routing States
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Data State Arrays
   const [subAdmins, setSubAdmins] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [policies, setPolicies] = useState([]);
 
-  // UI Presentation States
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [systemAlert, setSystemAlert] = useState(null);
 
-  // Resilient Synchronizer Pattern to protect against single-route crashes
   const fetchGlobalMetricsData = useCallback(async () => {
     setIsSyncing(true);
     setSystemAlert(null);
 
     try {
-      // Execute endpoints in parallel safely by mapping individual catches
+
       const [resSub, resCust, resVeh, resPol] = await Promise.all([
         api.get("/api/management/subadmins").catch((err) => ({
           error: true,
@@ -80,13 +74,11 @@ export default function SuperAdminDashboard() {
         })),
       ]);
 
-      // Handle structural telemetry state allocations safely
       setSubAdmins(resSub.data?.subAdmins || []);
       setCustomers(resCust.data?.customers || []);
       setVehicles(resVeh.data?.vehicles || []);
       setPolicies(resPol.data?.policies || []);
 
-      // Evaluate if any background modules are experiencing localized failures
       const localizedErrors = [resSub, resCust, resVeh, resPol]
         .filter((res) => res.error)
         .map((res) => res.message);
@@ -108,12 +100,10 @@ export default function SuperAdminDashboard() {
     }
   }, []);
 
-  // Hook Registration
   useEffect(() => {
     fetchGlobalMetricsData();
   }, [fetchGlobalMetricsData]);
 
-  // Keep the dashboard tab in sync with URL query (?tab=...)
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = (searchParams.get("tab") || "overview").toLowerCase();
@@ -135,7 +125,6 @@ export default function SuperAdminDashboard() {
     setActiveTab(allowedTabs.has(tab) ? tab : "overview");
   }, [location.search]);
 
-  // Session Invalidation Protocol
   const handleSessionRevocation = async () => {
     try {
       await api.post("/api/auth/logout");
@@ -145,7 +134,7 @@ export default function SuperAdminDashboard() {
         err,
       );
     } finally {
-      // Clear ALL client-side session state (as requested)
+
       try {
         localStorage.clear();
       } catch (e) {
@@ -158,12 +147,10 @@ export default function SuperAdminDashboard() {
         console.warn("sessionStorage.clear() failed", e);
       }
 
-      // Force immediate fallback redirect
       navigate("/login", { replace: true });
     }
   };
 
-  // Initial Bootup State Component
   if (loading) {
     return (
       <div className="min-h-screen bg-[#060814] flex flex-col items-center justify-center gap-4 text-xs tracking-wider text-[#8a8fbc]">
@@ -177,16 +164,15 @@ export default function SuperAdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#060814] text-white flex font-sans antialiased selection:bg-[#644aff]/30 selection:text-white">
-      {/* GLOBAL SYSTEM NAVIGATION DRAWER */}
+
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onLogout={handleSessionRevocation}
       />
 
-      {/* MASTER APPLICATION CONTENT BLOCK */}
       <div className="flex flex-col flex-1 max-h-screen overflow-y-auto">
-{/* HEADER BAR PROVISIONS */}
+
         <header className="h-16 border-b border-[#1e2238] px-4 md:px-8 flex items-center justify-between gap-4 sticky top-0 bg-[#060814]/90 backdrop-blur-md z-40 shrink-0">
           <div className="flex items-center gap-3">
             <h1 className="hidden sm:block text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
@@ -201,7 +187,7 @@ export default function SuperAdminDashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Manual Sync Trigger */}
+            
             <button
               onClick={fetchGlobalMetricsData}
               disabled={isSyncing}
@@ -220,7 +206,6 @@ export default function SuperAdminDashboard() {
           </div>
         </header>
 
-{/* SYSTEM STATUS BANNER NOTIFICATION CONSOLE */}
         {systemAlert && (
           <div className="flex items-center gap-2 px-4 py-3 text-xs font-medium border-b md:px-8 bg-amber-500/10 border-amber-500/20 text-amber-400 animate-fadeIn">
             <AlertTriangle size={14} className="shrink-0 animate-pulse" />
@@ -228,21 +213,19 @@ export default function SuperAdminDashboard() {
           </div>
         )}
 
-{/* RENDER VIEW CONTROLLER MAIN CANVAS */}
         <main className="flex-1 w-full p-4 space-y-8 sm:p-6 lg:p-10">
-          {/* TAB FRAME 1: VIEW METRICS AND INSIGHTS DASHBOARD */}
+          
           {activeTab === "overview" && (
             <OverviewGrid
               counts={{
                 subAdmins: subAdmins.length,
-                customers: customers.length, // Resolved Omission Bug: Now fully integrated
+                customers: customers.length, 
                 vehicles: vehicles.length,
                 policies: policies.length,
               }}
             />
           )}
 
-          {/* TAB FRAME 2: IDENTITY REGISTER ENGINE */}
           {activeTab === "accounts" && (
             <AccountManagement
               subAdmins={subAdmins}
@@ -266,7 +249,6 @@ export default function SuperAdminDashboard() {
             />
           )}
 
-          {/* TAB FRAME 3: VEHICLE CATALOG CATALOG MANAGEMENT */}
           {activeTab === "own-vehicles" && (
             <OwnVehiclesManagement
               axiosInstance={api}
@@ -291,7 +273,6 @@ export default function SuperAdminDashboard() {
             />
           )}
 
-          {/* TAB FRAME 4: COVERAGE INSURANCE ENGINE METADATA */}
           {activeTab === "policies" && (
             <PolicyContracts
               policies={policies}

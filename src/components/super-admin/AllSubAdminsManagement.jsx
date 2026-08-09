@@ -58,14 +58,13 @@ export default function AllSubAdminsManagement({ axiosInstance, onRefresh }) {
     }
   };
 
-  // Edit modal state
   const [editOpen, setEditOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
 
   const [editFullName, setEditFullName] = useState("");
   const [editEmail, setEditEmail] = useState("");
-  const [editExpiresAt, setEditExpiresAt] = useState(""); // YYYY-MM-DD
+  const [editExpiresAt, setEditExpiresAt] = useState(""); 
   const [editPassword, setEditPassword] = useState("");
   const [editPasswordConfirm, setEditPasswordConfirm] = useState("");
 
@@ -145,7 +144,6 @@ export default function AllSubAdminsManagement({ axiosInstance, onRefresh }) {
 
       if (wantsPasswordChange) payload.password = editPassword;
 
-      // Uses sub-admin update route (must exist in backend)
       await axiosInstance.patch(
         `/api/management/subadmins/${editTarget._id}`,
         payload,
@@ -163,7 +161,7 @@ export default function AllSubAdminsManagement({ axiosInstance, onRefresh }) {
 
   return (
     <div className="w-full animate-fadeIn">
-      {/* Edit Modal */}
+
       {editOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"

@@ -1,18 +1,4 @@
-/**
- * frontend/src/utils/profileLocalStorage.js
- *
- * Shared localStorage read/write helpers for the Profile sub-pages that
- * explicitly have NO backend endpoint (per instruction: "make sure that
- * this component work through local storage i donot want to implement
- * backend for this components"): Bank account details, Payment
- * methods, Discount code, App rating.
- *
- * Everything here is 100% client-side and device-local — it does NOT
- * sync across devices/sessions, is NOT sent to any server, and is
- * wiped if the user clears site data. This is intentional per your
- * request, not an oversight; flagged here and in each consuming file
- * so it's never mistaken for real persisted backend data.
- */
+
 
 const KEYS = {
   BANK_DETAILS: "cuvva_bank_details",
@@ -43,8 +29,7 @@ function safeSet(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
     return true;
   } catch {
-    // localStorage unavailable/full — fail silently, matches the
-    // existing RecentlyViewed pattern elsewhere in the app.
+
     return false;
   }
 }
@@ -61,43 +46,19 @@ export const saveAppliedDiscounts = (list) => safeSet(KEYS.DISCOUNT_CODE, list);
 export const getAppRating = () => safeGet(KEYS.APP_RATING, null);
 export const saveAppRating = (rating) => safeSet(KEYS.APP_RATING, rating);
 
-// --- Added for AccountDetailsPage.jsx's sub-pages ---
-// Preferred first name: User.js has no "preferredName" field distinct
-// from fullName, and there's no PATCH route exposed to a Customer for
-// this specific field — stored locally only, purely as a display
-// override (does NOT change the real fullName used elsewhere).
 export const getPreferredName = () => safeGet(KEYS.PREFERRED_NAME, null);
 export const savePreferredName = (name) => safeSet(KEYS.PREFERRED_NAME, name);
 
-// Residential address: User.js DOES have a real `address` object
-// field, but there is no route exposing/editing it for a Customer
-// (customers.js's PATCH /:id only accepts fullName/email/expiresAt/
-// password, and is Admin-only anyway) — stored locally only until a
-// real PATCH /customers/me endpoint supports it.
 export const getResidentialAddress = () => safeGet(KEYS.RESIDENTIAL_ADDRESS, null);
 export const saveResidentialAddress = (address) => safeSet(KEYS.RESIDENTIAL_ADDRESS, address);
 
-// Marketing preferences: no such field exists anywhere on User.js.
 export const getMarketingPreferences = () =>
   safeGet(KEYS.MARKETING_PREFERENCES, { cuvvaChoice: "stay-in-loop", toyotaOffers: false });
 export const saveMarketingPreferences = (prefs) => safeSet(KEYS.MARKETING_PREFERENCES, prefs);
 
-// "My identity" extra fields (date of birth, gender, driving licence
-// number, verification-photo status) — dateOfBirth exists on User.js
-// but isn't returned by /customers/me's current .select() list;
-// gender/licence number/verification photos don't exist on the
-// schema at all. Stored locally purely so the UI has something to
-// show/edit until a real identity-verification backend exists.
 export const getIdentityExtra = () => safeGet(KEYS.IDENTITY_EXTRA, null);
 export const saveIdentityExtra = (extra) => safeSet(KEYS.IDENTITY_EXTRA, extra);
 
-// --- Previous incidents (AccountDetailsPage.jsx "Previous incidents" row) ---
-// No incidents/claims collection exists anywhere in the backend schema
-// (Policy.js/User.js) — this whole feature is 100% client-side/
-// localStorage per instruction, purely so the UI can be built and
-// demoed now. Each incident, once added, is permanently locked (no
-// edit/delete) to match the reference app's real behavior ("Once you
-// add an incident, it's not possible to edit or delete it.").
 export const getPreviousIncidents = () => safeGet(KEYS.PREVIOUS_INCIDENTS, []);
 export const savePreviousIncidents = (list) => safeSet(KEYS.PREVIOUS_INCIDENTS, list);
 export const addPreviousIncident = (incident) => {
@@ -107,30 +68,11 @@ export const addPreviousIncident = (incident) => {
   return next;
 };
 
-// Whether the customer has confirmed "I've declared all incidents" or
-// "No incidents to declare" at least once — drives whether the
-// declaration confirmation sheet needs to show again.
 export const getIncidentsDeclarationDone = () =>
   safeGet(KEYS.INCIDENTS_DECLARATION_DONE, false);
 export const saveIncidentsDeclarationDone = (done) =>
   safeSet(KEYS.INCIDENTS_DECLARATION_DONE, done);
 
-// --- Car clubs (CarClubsPage.jsx and its sub-screens) ---
-// No car-club/ownership/lending schema exists anywhere in the backend
-// (Policy.js/Vehicle.js/User.js) — this whole feature is 100%
-// client-side/localStorage, same reasoning as Previous incidents
-// above. Two independent lists are tracked:
-//   1. JOINED_CAR_CLUBS — array of local-club IDs (from
-//      carClubsData.json's "localClubs") that this user has tapped
-//      "Join the club" on. Drives whether CarClubsPage shows the
-//      "Your clubs" section (joined clubs) vs. the empty-state
-//      "Share your car" hero card (skipped once ANY club — created OR
-//      joined — exists).
-//   2. CREATED_CAR_CLUBS — array of clubs this user created themselves
-//      via "Create your Cuvva car club" (currently gated behind a
-//      "You can't create a car club yet" info modal per instruction,
-//      so this list stays empty for now, but the read/write helpers
-//      exist ready for when that flow is really built out).
 export const getJoinedCarClubIds = () => safeGet(KEYS.JOINED_CAR_CLUBS, []);
 export const saveJoinedCarClubIds = (ids) => safeSet(KEYS.JOINED_CAR_CLUBS, ids);
 export const addJoinedCarClub = (clubId) => {

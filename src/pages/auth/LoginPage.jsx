@@ -9,7 +9,6 @@ import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useLoginMutation } from "../../app/api/authApi";
 import { setCredentials } from "../../features/authSlice";
 
-// Schema checking both requirements during final submission
 const loginSchema = z.object({
   email: z
     .string()
@@ -21,7 +20,7 @@ const loginSchema = z.object({
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [step, setStep] = useState(1); // Track current wizard node (1: Email, 2: Password)
+  const [step, setStep] = useState(1); 
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading, error: apiError }] = useLoginMutation();
 
@@ -38,7 +37,6 @@ export default function Login() {
 
   const currentEmail = watch("email");
 
-  // Validate the email field completely before transitioning to step 2
   const handleNextStep = async (e) => {
     e.preventDefault();
     const isEmailValid = await trigger("email");
@@ -59,7 +57,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen w-full relative flex flex-col justify-between p-6 md:p-12 bg-[#060814] overflow-hidden select-none">
-      {/* Top Header Layer: Authentic Brand Mark */}
+
       <div className="z-10 flex items-center w-full gap-2 mx-auto max-w-7xl">
         <svg className="text-white fill-current w-7 h-7" viewBox="0 0 32 32">
           <path d="M16 0C7.16 0 0 7.16 0 16s7.16 16 16 16 16-7.16 16-16S24.84 0 16 0zm0 26c-5.52 0-10-4.48-10-10 0-1.33.26-2.6.73-3.77 2.14 2.25 5.17 3.65 8.54 3.65 3.37 0 6.4-1.4 8.54-3.65.47 1.17.73 2.44.73 3.77 0 5.52-4.48 10-10 10z" />
@@ -69,10 +67,9 @@ export default function Login() {
         </span>
       </div>
 
-      {/* Center Layout Container */}
       <div className="z-10 flex items-center justify-center w-full my-auto">
         <div className="w-full max-w-[460px] bg-white rounded-2xl p-8 md:p-10 shadow-2xl transition-all duration-300 relative">
-          {/* Back Action Trigger (Only shows on Password step) */}
+          
           {step === 2 && (
             <button
               type="button"
@@ -96,7 +93,7 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Global Context Errors (Server Rejections) */}
+            
             {apiError && (
               <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-[#ef4444] text-xs font-semibold text-center">
                 {apiError?.data?.message ||
@@ -104,7 +101,6 @@ export default function Login() {
               </div>
             )}
 
-            {/* ================= STEP 1: EMAIL CAPTURE ================= */}
             {step === 1 && (
               <div className="flex flex-col gap-2 animate-fadeIn">
                 <label className="text-[14px] font-bold text-[#31354c] tracking-wide">
@@ -137,7 +133,6 @@ export default function Login() {
               </div>
             )}
 
-            {/* ================= STEP 2: PASSWORD ENTRY ================= */}
             {step === 2 && (
               <div className="flex flex-col gap-2 animate-fadeIn">
                 <label className="text-[14px] font-bold text-[#31354c] tracking-wide">
@@ -184,7 +179,6 @@ export default function Login() {
               </div>
             )}
 
-            {/* Bottom Redirect Anchor */}
             <div className="pt-2 text-center">
               <p className="text-[14.5px] font-medium text-[#0f111a]">
                 No account?{" "}
@@ -202,7 +196,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Bottom Footer Frame Layer */}
       <div className="flex items-center w-full gap-2 mx-auto transform translate-y-4 pointer-events-none max-w-7xl opacity-10 md:translate-y-8">
         <svg className="text-white fill-current w-7 h-7" viewBox="0 0 32 32">
           <path d="M16 0C7.16 0 0 7.16 0 16s7.16 16 16 16 16-7.16 16-16S24.84 0 16 0zm0 26c-5.52 0-10-4.48-10-10 0-1.33.26-2.6.73-3.77 2.14 2.25 5.17 3.65 8.54 3.65 3.37 0 6.4-1.4 8.54-3.65.47 1.17.73 2.44.73 3.77 0 5.52-4.48 10-10 10z" />

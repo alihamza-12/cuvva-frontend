@@ -6,12 +6,10 @@ import { selectCurrentUser } from "../features/authSlice";
 export default function ProtectedRoute({ children, allowedRoles }) {
   const user = useSelector(selectCurrentUser);
 
-  // If not logged in, boot to login page
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // If logged in but role doesn't match the specific route allowance
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/" replace />;
   }

@@ -15,14 +15,13 @@ export default function AccountManagement({
   const [searchQuery, setSearchQuery] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState(null);
 
-  // Edit modal
   const [editOpen, setEditOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
 
   const [editFullName, setEditFullName] = useState("");
   const [editEmail, setEditEmail] = useState("");
-  const [editExpiresAt, setEditExpiresAt] = useState(""); // YYYY-MM-DD
+  const [editExpiresAt, setEditExpiresAt] = useState(""); 
   const [editPassword, setEditPassword] = useState("");
   const [editPasswordConfirm, setEditPasswordConfirm] = useState("");
 
@@ -58,7 +57,6 @@ export default function AccountManagement({
     setEditFullName(record.fullName || "");
     setEditEmail(record.email || "");
 
-    // expiresAt is Date in backend; in lists it may come as ISO string
     const raw = record.expiresAt || null;
     if (raw) {
       const d = new Date(raw);
@@ -109,7 +107,6 @@ export default function AccountManagement({
       return;
     }
 
-    // Password optional; only validate if provided
     const wantsPasswordChange =
       editPassword.trim().length > 0 || editPasswordConfirm.trim().length > 0;
     if (wantsPasswordChange) {
@@ -155,7 +152,7 @@ export default function AccountManagement({
   return (
     <div className="w-full animate-fadeIn">
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-2xl">
-        {/* Header Section */}
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#1e2238] pb-6 mb-6 gap-6">
           <div>
             <h3 className="text-xl font-bold tracking-wide text-white">
@@ -167,7 +164,7 @@ export default function AccountManagement({
           </div>
 
           <div className="flex flex-col w-full gap-3 sm:flex-row md:w-auto">
-            {/* Search Input */}
+          
             <div className="relative w-full sm:w-64">
               <Search
                 size={16}
@@ -197,7 +194,6 @@ export default function AccountManagement({
               )}
             </div>
 
-            {/* View Switcher */}
             <div className="flex bg-[#060814] p-1 rounded-xl border border-[#1e2238] self-start">
               <button
                 onClick={() => setActiveDirectoryTab("subAdmins")}
@@ -223,7 +219,6 @@ export default function AccountManagement({
           </div>
         </div>
 
-        {/* Directory Table */}
         <div className="overflow-x-auto text-xs">
           {filteredList.length === 0 ? (
             <div className="text-center py-16 text-[#6b7280]">
@@ -300,7 +295,7 @@ export default function AccountManagement({
 
                     <td className="py-4 pr-2 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {/* Edit button */}
+                  
                         <button
                           type="button"
                           disabled={
@@ -314,7 +309,6 @@ export default function AccountManagement({
                           Edit
                         </button>
 
-                        {/* Manage Status button */}
                         <button
                           type="button"
                           disabled={actionLoadingId === userRecord._id}
@@ -339,7 +333,6 @@ export default function AccountManagement({
         </div>
       </div>
 
-      {/* Edit Modal */}
       {editOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"

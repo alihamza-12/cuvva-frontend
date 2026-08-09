@@ -4,12 +4,11 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env?.VITE_API_BASE_URL || "http://localhost:3000"}/api`,
-    // 👇 CRITICAL: Enforces the browser to attach secure cookies automatically
+
     credentials: "include",
 
     prepareHeaders: (headers) => {
-      // Note: You no longer need to pull tokens from Redux state to set Authorization headers!
-      // The browser automatically slips your httpOnly cookies into the request headers.
+
       return headers;
     },
   }),
@@ -27,7 +26,7 @@ export const authApi = createApi({
         method: "POST",
       }),
     }),
-    // ... your remaining dashboard endpoints stay exactly the same!
+
   }),
 });
 

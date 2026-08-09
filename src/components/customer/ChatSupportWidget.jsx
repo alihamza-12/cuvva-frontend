@@ -16,7 +16,7 @@ import {
   Info,
 } from "lucide-react";
 import chatBotAvatar from "/chat-bot-avatar.png";
-import cuvvaLogo from "/cuvva-logo-white.png"; // If this doesn't show, change to "/cuvva-logo-grey.png"
+import cuvvaLogo from "/cuvva-logo-white.png"; 
 import chatBotRepliesData from "../../data/chatBotRepliesData.json";
 import chatHelpArticlesData from "../../data/chatHelpArticlesData.json";
 import termsData from "../../data/termsData.json";
@@ -42,12 +42,11 @@ export default function ChatSupportWidget({ onClose, customerFirstName = "there"
   const [screen, setScreen] = useState("hub");
   const [activeArticleId, setActiveArticleId] = useState(null);
 
-  // Guarantee the close button always goes back
   const handleClose = () => {
     if (onClose) {
       onClose();
     } else {
-      navigate(-1); // Goes back to the previous page
+      navigate(-1); 
     }
   };
 
@@ -90,10 +89,6 @@ export default function ChatSupportWidget({ onClose, customerFirstName = "there"
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* HUB — chat1.jpeg                                                   */
-/* ------------------------------------------------------------------ */
-
 function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversation, onOpenArticle }) {
   const [query, setQuery] = useState("");
 
@@ -105,7 +100,7 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
 
   return (
     <div className="min-h-screen">
-      {/* Purple gradient header */}
+
       <div
         className="px-5 pb-10 pt-5"
         style={{
@@ -113,7 +108,7 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
         }}
       >
         <div className="flex items-center justify-between">
-          {/* Cuvva Logo */}
+        
           <img src={cuvvaLogo} alt="Cuvva" className="h-6 w-auto" draggable={false} />
           <div className="flex items-center">
             <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] border-2 border-[#1c0839] flex items-center justify-center overflow-hidden -mr-2 z-30">
@@ -140,7 +135,7 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
       </div>
 
       <div className="px-4 -mt-4 pb-10">
-        {/* Messages / Help card */}
+        
         <div className="rounded-2xl bg-white shadow-[0_2px_20px_rgba(0,0,0,0.08)] overflow-hidden">
           <button
             type="button"
@@ -162,7 +157,6 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
           </button>
         </div>
 
-        {/* Search for help */}
         <div className="mt-4 rounded-2xl bg-white shadow-[0_2px_20px_rgba(0,0,0,0.08)] overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-3.5 border-b border-[#f0f0f0]">
             <input
@@ -196,7 +190,6 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
           )}
         </div>
 
-        {/* Send us a message */}
         <button
           type="button"
           onClick={onOpenConversation}
@@ -209,7 +202,6 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
           <ArrowUp size={20} className="text-[#6337d9] rotate-90 shrink-0" />
         </button>
 
-        {/* Operational status banner */}
         <div className="mt-6 rounded-t-2xl bg-[#f4f2ff] px-4 py-4 flex items-center gap-3">
           <span className="w-9 h-9 rounded-full bg-[#d5f5ec] flex items-center justify-center shrink-0">
             <CheckCircle2 size={18} className="text-[#1fa97e]" fill="#1fa97e" />
@@ -230,10 +222,6 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* MESSAGES LIST — chat2.jpeg                                         */
-/* ------------------------------------------------------------------ */
 
 function MessagesListScreen({ onBack, onClose, onOpenConversation }) {
   const [messages, setMessages] = useState([]);
@@ -305,10 +293,6 @@ function MessagesListScreen({ onBack, onClose, onOpenConversation }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* CONVERSATION — chat3.jpeg / chat45.jpeg                            */
-/* ------------------------------------------------------------------ */
-
 function ConversationScreen({ onClose }) {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -333,7 +317,7 @@ function ConversationScreen({ onClose }) {
   };
 
   const respondAsBot = (userText) => {
-    // Safe fallbacks added here to prevent crashes if JSON is missing
+
     const matchedQuickReply = chatBotRepliesData?.quickReplies?.find(
       (q) => q.label.toLowerCase() === userText.trim().toLowerCase(),
     );
@@ -341,7 +325,7 @@ function ConversationScreen({ onClose }) {
     const replyText = matchedQuickReply
       ? matchedQuickReply.reply
       : fallbacks[Math.floor(Math.random() * fallbacks.length)];
-      
+
     setTimeout(() => pushMessage("bot", replyText), 500);
   };
 
@@ -360,7 +344,7 @@ function ConversationScreen({ onClose }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
+      
       <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#f0f0f0]">
         <div className="flex items-center gap-3">
           <span className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] overflow-hidden shrink-0">
@@ -381,7 +365,6 @@ function ConversationScreen({ onClose }) {
         </button>
       </div>
 
-      {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-4">
         <p className="text-center text-[13px] text-[#a5a5aa] mb-4">{SUPPORT_HOURS_LINE}</p>
 
@@ -390,13 +373,11 @@ function ConversationScreen({ onClose }) {
           <p className="text-[13px] text-[#8a8a8f] leading-relaxed">{AI_DISCLAIMER}</p>
         </div>
 
-        {/* Bot's opening message */}
         <BotBubble
           avatarLabel="Cuvva Support Bot 🤖 AI Agent"
           text={"Hello 👋  How can we help?\nChoose an option below or type your message:"}
         />
 
-        {/* Real saved conversation history */}
         {messages.map((m) =>
           m.sender === "bot" ? (
             <BotBubble key={m.id} text={m.text} />
@@ -405,7 +386,6 @@ function ConversationScreen({ onClose }) {
           ),
         )}
 
-        {/* FIXED: Safe optional chaining so it NEVER crashes if JSON is missing */}
         {chatBotRepliesData?.quickReplies?.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {chatBotRepliesData.quickReplies.map((q) => (
@@ -424,7 +404,6 @@ function ConversationScreen({ onClose }) {
         <div ref={scrollRef} />
       </div>
 
-      {/* Text-only input */}
       <div className="border-t border-[#f0f0f0] px-3 pt-3 pb-4">
         <div className="flex items-center gap-2 rounded-full bg-[#f2f2f2] px-4 py-2.5">
           <input
@@ -490,11 +469,6 @@ function UserBubble({ text }) {
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* ARTICLE — chat4-13.jpeg (shared renderer for all 3 non-terms help  */
-/* articles: vehicle-photo, contact-support, vehicle-modifications)   */
-/* ------------------------------------------------------------------ */
 
 function ArticleScreen({ articleId, onClose }) {
   const article = chatHelpArticlesData?.articles?.[articleId];
@@ -620,12 +594,6 @@ function ArticleBlock({ block }) {
   }
 }
 
-/**
- * Bold-leading-phrase renderer for list items like "Take it from the
- * front of the car. This gives us...". The first sentence (up to the
- * period) is bold in the reference screenshot, and the rest is
- * plain body text.
- */
 function renderWithBoldLead(text) {
   const match = text.match(/^([^\.]+\.)(\s*)(.*)$/s);
   if (!match) return text;
@@ -638,12 +606,6 @@ function renderWithBoldLead(text) {
     </>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* TERMS — chat14-44.jpeg (reuses the SAME termsData.json already      */
-/* built for TermsPage.jsx — identical document, just a different      */
-/* renderer wrapper matching this overlay's header style).             */
-/* ------------------------------------------------------------------ */
 
 function TermsScreen({ onClose }) {
   return (
@@ -721,11 +683,6 @@ function TermsBlock({ block }) {
   }
 }
 
-/**
- * Splits paragraph/list-item text on email addresses and renders them
- * in a muted gray-blue, same convention already established in
- * TermsPage.jsx / FonPage.jsx / PrivacyPolicyPage.jsx.
- */
 const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
 
 function renderWithEmailLinks(text) {

@@ -1,23 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle } from "lucide-react";
 
-/**
- * frontend/src/components/customer/ConnectedAccountsPage.jsx
- *
- * "Connected accounts" — opened from AccountDetailsPage.jsx's
- * "Connected accounts" row. Matches reference: header, title,
- * subtitle, a disabled "Connected" pill for Apple, and a tappable
- * white "Connect with Google" pill.
- *
- * NO BACKEND SUPPORT exists for OAuth/social sign-in providers
- * anywhere in auth.js (login/signup are email+password only per
- * auth.js's routes: /register, /login, /logout, /refresh-token) —
- * there is no Apple/Google OAuth integration at all. Both pills are
- * static/placeholder: "Apple" is shown as already connected (visually
- * matching the reference) since sign-in method can't be verified from
- * this app; "Connect with Google" logs to console rather than
- * launching a real OAuth flow, since none exists.
- */
 export default function ConnectedAccountsPage() {
   const navigate = useNavigate();
 

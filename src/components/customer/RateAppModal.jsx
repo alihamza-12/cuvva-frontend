@@ -3,35 +3,6 @@ import { createPortal } from "react-dom";
 import { X, Star, Sparkles } from "lucide-react";
 import { getAppRating, saveAppRating } from "../../utils/profileLocalStorage";
 
-/**
- * frontend/src/components/customer/RateAppModal.jsx
- *
- * "Rate the app" bottom sheet — opened by tapping the "Rate the app"
- * row on ProfilePage.jsx. No reference screenshot was provided for
- * this one, so it's polished to feel consistent with the rest of the
- * app's dark bottom-sheet style (PaymentMethodsSheet.jsx) rather than
- * left as a flat/plain layout: a small icon badge above the title,
- * larger interactive stars with a soft glow + scale-up on selection,
- * a live "You rated us X stars" caption that updates as you tap, and
- * a disabled-until-chosen Submit button.
- *
- * STACKING FIX: rendered via a React portal straight into
- * document.body (instead of inline inside ProfilePage's tree), with a
- * z-index (z-[100]) higher than CustomerBottomNav's z-50. Without
- * this, the sheet — despite being `position: fixed` — could end up
- * stacking BELOW the bottom nav bar (same z-index, different
- * stacking context via CustomerLayout's tree), causing the nav to
- * visibly cut across the sheet's bottom edge instead of the sheet
- * covering the full screen. The portal guarantees this sheet always
- * renders on top and reaches true screen edges, everywhere it's used.
- *
- * NO BACKEND ENDPOINT exists for app ratings, and this does NOT link
- * out to a real App Store / Play Store review page (no such URL was
- * provided). The chosen star rating is saved 100% client-side via
- * localStorage (profileLocalStorage.js) purely so the UI can show
- * your previous rating on a future visit — it is NOT sent anywhere or
- * tied to a real published review. Flagged clearly.
- */
 export default function RateAppModal({ onClose }) {
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
@@ -42,8 +13,6 @@ export default function RateAppModal({ onClose }) {
     if (existing) setRating(existing);
   }, []);
 
-  // Lock background scroll while the sheet is open, same as a native
-  // bottom sheet would.
   useEffect(() => {
     const original = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -73,7 +42,7 @@ export default function RateAppModal({ onClose }) {
 
   const handleSubmit = () => {
     if (rating === 0) return;
-    // localStorage only — no backend/app-store integration exists.
+
     saveAppRating(rating);
     setSubmitted(true);
   };
@@ -100,7 +69,6 @@ export default function RateAppModal({ onClose }) {
           </button>
         </div>
 
-        {/* Icon accent badge */}
         <div className="w-14 h-14 rounded-full bg-[#7c6bff]/15 flex items-center justify-center mx-auto mt-1">
           <Sparkles size={24} className="text-[#7c6bff]" />
         </div>

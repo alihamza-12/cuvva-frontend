@@ -1,35 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle } from "lucide-react";
 
-/**
- * frontend/src/pages/customer/PolicyReceiptPage.jsx
- *
- * "Receipt" screen — opened from the Receipt quick-action / Payment
- * information row on PolicyDetailPage.jsx. Matches the reference
- * screenshot: back arrow + help icon header, bold "Receipt" title, a
- * card with issue date/time + line-item breakdown + total, and a
- * separate "Grand total" pill below it.
- *
- * DATA SOURCE: the policy object is passed via router state from
- * PolicyDetailPage.jsx (already in memory, no new API call).
- *
- * IMPORTANT — LINE-ITEM BREAKDOWN IS ESTIMATED, NOT REAL DATA:
- * Your Policy.js schema only stores ONE total figure (`premiumAmount`,
- * in pence). There is no backend field for "Insurance premium",
- * "Insurance premium tax", or "Admin fee" as separate line items — so
- * this page reconstructs a plausible breakdown FROM the total using a
- * fixed, clearly-labeled split (12% IPT — the UK's actual standard
- * Insurance Premium Tax rate — plus a fixed admin fee, with the base
- * premium as the remainder). This is presented as an ESTIMATE so the
- * UI isn't empty, but it is NOT sourced from real backend data. If you
- * want a truthful receipt, the backend needs to store these three
- * amounts separately when a policy is created (e.g. at checkout time,
- * when the actual premium calculation happens) rather than only the
- * combined total.
- */
-
-const UK_IPT_RATE = 0.12; // standard UK Insurance Premium Tax rate
-const ADMIN_FEE_PENCE = 1071; // matches the reference screenshot's £10.71 admin fee
+const UK_IPT_RATE = 0.12; 
+const ADMIN_FEE_PENCE = 1071; 
 
 export default function PolicyReceiptPage() {
   const navigate = useNavigate();

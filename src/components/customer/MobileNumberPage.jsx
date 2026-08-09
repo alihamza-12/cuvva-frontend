@@ -2,27 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle, Check, Plus } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
 
-/**
- * frontend/src/components/customer/MobileNumberPage.jsx
- *
- * "Your mobile number" — opened from AccountDetailsPage.jsx's "Mobile
- * phone" row. Matches reference: header, "Main mobile number" section
- * showing the real phone with a green "Verified ✓" label, "Also
- * contact me on..." section with an "Add another mobile number" row.
- *
- * BACKEND GAP — User.js DOES have a `phone` field, but the
- * `/customers/me` route's current `.select(...)` list
- * ("fullName email role status expiresAt createdBy createdAt") does
- * NOT include `phone`, so `customer.phone` will be undefined until
- * that's fixed on the backend. Shows "Not added yet" instead of
- * fabricating a number when missing. The "Verified" label is a
- * static visual matching the reference — there's no real
- * `phoneVerified` flag on the schema.
- *
- * "Add another mobile number" navigates to AddMobileNumberPage.jsx,
- * which makes the real PATCH /customers/me call to save it (see that
- * file for the actual UK-mobile-format validation + backend wiring).
- */
 export default function MobileNumberPage() {
   const navigate = useNavigate();
   const { data } = useGetMyProfileQuery();
@@ -34,9 +13,7 @@ export default function MobileNumberPage() {
   };
 
   const handleNotWiredUp = (label) => {
-    // Was mangled to `console.log\`${label}...\`)` (missing opening
-    // parenthesis) in a previous paste — fixed to a normal function
-    // call, which would otherwise throw the moment this ran.
+
     console.log(`${label} tapped — not wired up yet.`);
   };
 

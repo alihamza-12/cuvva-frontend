@@ -28,13 +28,11 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
     fetchCustomers();
   }, [fetchCustomers]);
 
-  // Client-side filter: only customers associated with current sub-admin scope
-  // Backend should ultimately enforce ownership; this is a UI-level helper.
   const filteredCustomers = useMemo(() => {
     let list = customers;
 
     list = list.filter((c) => {
-      // Common pattern in this repo is createdBy.role. We keep it safe.
+
       return (
         c?.createdBy?.role === "Super Admin" ||
         c?.createdBy?.role === "Sub Admin"
@@ -50,7 +48,6 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
     );
   }, [customers, normalizedQuery]);
 
-  // Status toggle (reused pattern from super-admin component)
   const toggleStatus = async (e, userId, currentStatus) => {
     e.stopPropagation();
     setActionLoadingId(userId);
@@ -69,8 +66,6 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
       setActionLoadingId(null);
     }
   };
-
-  // NOTE: edit modal is intentionally omitted for now; keep sub-admin UI minimal.
 
   return (
     <div className="w-full animate-fadeIn">

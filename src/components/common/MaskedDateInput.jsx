@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-/**
- * frontend/src/components/common/MaskedDateInput.jsx
- *
- * Reusable masked date input in DD/MM/YYYY format.
- *
- * - Users can click/tab into any position and type over individual
- *   digits without clearing the whole field.
- * - Value contract: `value` is the ISO date string `YYYY-MM-DD`
- *   (or "" for empty). It is converted to `DD/MM/YYYY` for display and
- *   converted back to `YYYY-MM-DD` in `onChange`.
- */
 export const isoToMasked = (iso) => {
   if (!iso) return "";
   const s = String(iso).split("T")[0];

@@ -63,7 +63,7 @@ export default function CreatePolicy({
           setLocalVehicles(res.data?.vehicles || []);
         }
       } catch (err) {
-        // Keep UX clean: show error only on submit, not instantly.
+
       }
     };
 
@@ -99,7 +99,7 @@ export default function CreatePolicy({
     const payload = {
       customerId: form.customerId,
       vehicleId: form.vehicleId,
-      // Send the raw decimal value directly (e.g. 123.44). No pence math.
+
       premiumAmount: form.premiumAmount,
       startDate: form.startDate,
       endDate: form.endDate,

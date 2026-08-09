@@ -5,42 +5,6 @@ import InlineWheelField from "./InlineWheelField";
 import InlineDateField from "./InlineDateField";
 import { addPreviousIncident } from "../../utils/profileLocalStorage";
 
-/**
- * frontend/src/components/customer/AddIncidentPage.jsx
- *
- * "Add incident" — opened from PreviousIncidentsPage.jsx's "Add an
- * incident" row (or from the "Add an incident" button inside the
- * declaration confirmation sheet). Matches all of your reference
- * screenshots for this flow:
- *
- *   - "Type of incident" wheel (Accident / Theft / Glass / Fire /
- *     Weather / Vandalism / Other) — expands inline, not an overlay.
- *   - "Date" field — expands inline into a full month calendar grid.
- *   - Type-specific extra fields:
- *       Accident -> "Was anyone injured?" (Yes/No wheel) + "Who was
- *         at fault?" (Me / The other driver / Joint fault or
- *         unresolved wheel) + "Understanding fault status" info sheet
- *         link ("More about fault status.").
- *       Theft -> "What was stolen?" (Vehicle / Contents wheel).
- *       Glass / Fire / Weather / Vandalism / Other -> no extra
- *         fields, just Type + Date.
- *   - "Add incident" button — dim/disabled purple until all REQUIRED
- *     fields for the selected type are filled, bright purple +
- *     enabled once they are.
- *   - Tapping "Add incident" opens the "Add incident details?"
- *     confirmation sheet ("Once you add an incident, it's not
- *     possible to edit or delete it.") with "Confirm incident
- *     details" (saves + navigates back) and "Keep editing" (closes
- *     the sheet, stays on the form) buttons.
- *
- * ALL OF THIS IS 100% LOCAL STORAGE — there is no incidents/claims
- * collection anywhere in the backend schema (Policy.js/User.js), so
- * per instruction this entire feature runs client-side only via
- * profileLocalStorage.js. Once "confirmed", an incident is permanent
- * (no edit/delete UI exists anywhere), matching the reference app's
- * real "contact us to edit" behavior.
- */
-
 const INCIDENT_TYPES = [
   { value: "Accident", label: "Accident" },
   { value: "Theft", label: "Theft" },
@@ -80,7 +44,7 @@ export default function AddIncidentPage() {
   const [faultStatus, setFaultStatus] = useState(null);
   const [stolenItem, setStolenItem] = useState(null);
 
-  const [openField, setOpenField] = useState(null); // "type" | "date" | "injured" | "fault" | "stolen" | null
+  const [openField, setOpenField] = useState(null); 
   const [showFaultInfo, setShowFaultInfo] = useState(false);
   const [showConfirmSheet, setShowConfirmSheet] = useState(false);
 
@@ -93,8 +57,6 @@ export default function AddIncidentPage() {
     else navigate("/customer/profile/account/incidents", { replace: true });
   };
 
-  // Required-fields validation per type, matching exactly what the
-  // reference screenshots show gating the "Add incident" button.
   const isComplete = (() => {
     if (!incidentType) return false;
     if (incidentType === "Accident") {
@@ -103,7 +65,7 @@ export default function AddIncidentPage() {
     if (incidentType === "Theft") {
       return Boolean(stolenItem);
     }
-    // Glass / Fire / Weather / Vandalism / Other only need type + date.
+
     return true;
   })();
 
@@ -133,7 +95,7 @@ export default function AddIncidentPage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -147,11 +109,6 @@ export default function AddIncidentPage() {
         <div className="w-10 h-10" />
       </div>
 
-      {/* Content */}
-      {/* pb-28 (not pb-32) — this page has no bottom nav (it's rendered
-          outside CustomerLayout, see AppRouter.jsx), so we only need
-          enough bottom padding to clear the sticky "Add incident"
-          button itself, not a nav bar + button. */}
       <div className="flex-1 px-4 pt-4 pb-28 space-y-3">
         <InlineWheelField
           label="Type of incident"
@@ -160,9 +117,7 @@ export default function AddIncidentPage() {
           value={incidentType}
           onChange={(val) => {
             setIncidentType(val);
-            // Reset type-specific fields when the type changes so
-            // stale answers from a previous type selection can never
-            // leak into a saved incident of a different type.
+
             setInjured(null);
             setFaultStatus(null);
             setStolenItem(null);
@@ -227,10 +182,6 @@ export default function AddIncidentPage() {
         )}
       </div>
 
-      {/* Sticky "Add incident" button — pinned to the true bottom edge
-          (bottom-4, not bottom-24) since there's no bottom nav on this
-          screen to clear anymore now that it's routed outside
-          CustomerLayout. */}
       <div className="fixed bottom-4 left-4 right-4 z-40">
         <button
           type="button"
@@ -246,7 +197,6 @@ export default function AddIncidentPage() {
         </button>
       </div>
 
-      {/* "Understanding fault status" info sheet */}
       {showFaultInfo && (
         <div className="fixed inset-0 z-50 flex items-end">
           <button
@@ -302,7 +252,6 @@ export default function AddIncidentPage() {
         </div>
       )}
 
-      {/* "Add incident details?" confirmation sheet */}
       {showConfirmSheet && (
         <div className="fixed inset-0 z-50 flex items-end">
           <button

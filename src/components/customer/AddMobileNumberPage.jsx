@@ -6,40 +6,6 @@ import {
   useUpdatePhoneNumberMutation,
 } from "../../app/api/profileApi";
 
-/**
- * frontend/src/components/customer/AddMobileNumberPage.jsx
- *
- * "Add another mobile number" — opened from MobileNumberPage.jsx's
- * "Add another mobile number" row. Follows the same pattern as
- * AddEmailPage.jsx: header (back + help), title, subtitle, single
- * pill input, sticky "Next" button (disabled until the number is a
- * VALID UK mobile format, enabled once it is).
- *
- * PHONE VALIDATION: matches standard UK mobile number formats —
- *   07XXX XXXXXX / 07XXXXXXXXX
- *   +44 7XXX XXXXXX / +447XXXXXXXXX
- *   0044 7XXX XXXXXX / 00447XXXXXXXXX
- * Spaces and hyphens inside the number are allowed/ignored for
- * validation purposes (e.g. "07588 566474" and "07588566474" are both
- * accepted). This is a UK-specific format per your reference
- * screenshot showing a +44 number — deliberately NOT a generic
- * international phone validator. Runs live as you type (once you've
- * typed something) and again as a hard guard on submit.
- *
- * Calls PATCH /api/customers/me with { phone } to set/update the
- * phone field on the User model. On success:
- *   - Shows a success message ("Mobile number added successfully").
- *   - Clears the input back to empty.
- *   - Shows the just-added number in a second, DISABLED input below,
- *     confirming it's been saved.
- * On failure, shows the real error message from the backend.
- *
- * NOTE: The User model has a single `phone` field (not an array),
- * so adding a number here overwrites any previously saved number.
- */
-
-// UK mobile format: 07xxx xxxxxx, +447xxx xxxxxx, or 00447xxx xxxxxx —
-// spaces/hyphens between digit groups are tolerated.
 const UK_MOBILE_REGEX = /^(?:\+44\s?7|0044\s?7|07)\d{3}[\s-]?\d{6}$/;
 
 export default function AddMobileNumberPage() {
@@ -50,7 +16,7 @@ export default function AddMobileNumberPage() {
 
   const [phoneInput, setPhoneInput] = useState("");
   const [addedPhone, setAddedPhone] = useState("");
-  const [status, setStatus] = useState(null); // null | "success" | "error"
+  const [status, setStatus] = useState(null); 
   const [errorMessage, setErrorMessage] = useState("");
   const [touched, setTouched] = useState(false);
 
@@ -72,8 +38,6 @@ export default function AddMobileNumberPage() {
     const trimmed = phoneInput.trim();
     setTouched(true);
 
-    // Hard guard — re-validates even if this were somehow triggered
-    // without going through the disabled-button UI.
     if (!UK_MOBILE_REGEX.test(trimmed)) {
       setStatus("error");
       setErrorMessage("Enter a valid mobile number, like 07588 566474");
@@ -86,8 +50,7 @@ export default function AddMobileNumberPage() {
 
     try {
       await updatePhoneNumber(trimmed).unwrap();
-      // Refetch so MobileNumberPage.jsx and AccountDetailsPage.jsx
-      // show the updated phone immediately when the user goes back.
+
       await refetch();
       setAddedPhone(trimmed);
       setPhoneInput("");
@@ -104,7 +67,7 @@ export default function AddMobileNumberPage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-black">
-      {/* Header */}
+
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -124,7 +87,6 @@ export default function AddMobileNumberPage() {
         </button>
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-4 pt-4 pb-32">
         <h1 className="text-[24px] font-extrabold text-white leading-tight">
           Add another mobile number
@@ -167,8 +129,6 @@ export default function AddMobileNumberPage() {
           </p>
         )}
 
-        {/* Live format-validation error — separate from the
-            backend/status error below. */}
         {showFormatError && (
           <p className="text-[13px] text-[#e05a5a] mt-3">
             Enter a valid UK mobile number, like 07588 566474
@@ -184,8 +144,6 @@ export default function AddMobileNumberPage() {
           <p className="text-[13px] text-[#e05a5a] mt-4">{errorMessage}</p>
         )}
 
-        {/* Just-added number shown here, disabled, confirming it's
-            saved — appears only after a successful add. */}
         {addedPhone && (
           <div className="mt-3">
             <span className="block text-[12px] text-[#8a8a92] px-1 mb-1.5">
@@ -202,8 +160,6 @@ export default function AddMobileNumberPage() {
         )}
       </div>
 
-      {/* Sticky footer — button color reflects whether the input has
-          a VALID UK mobile number, not just any text. */}
       <div className="fixed z-40 bottom-24 left-4 right-4">
         <button
           type="button"

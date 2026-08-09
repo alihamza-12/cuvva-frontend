@@ -2,28 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, HelpCircle, Check, Plus } from "lucide-react";
 import { useGetMyProfileQuery } from "../../app/api/profileApi";
 
-/**
- * frontend/src/components/customer/EmailAddressPage.jsx
- *
- * "Your email address" — opened from AccountDetailsPage.jsx's "Email"
- * row. Matches reference: header, "Main email" section showing the
- * real verified email with a green "Verified" checkmark, "Your other
- * email addresses" section listing any additional saved addresses,
- * plus an "Add another email address" row that now navigates to a
- * dedicated AddEmailPage.jsx (matching its own reference screenshot)
- * instead of a plain window.prompt().
- *
- * REAL DATA: customer.email and customer.additionalEmails from
- * GET /customers/me (same query already used elsewhere — RTK Query
- * dedupes it, no second network call). The "Verified" checkmark is a
- * static visual matching the reference — there's no real
- * `emailVerified` flag on User.js, so this is NOT based on actual
- * verification state. Flagged, not faked.
- *
- * Additional emails are stored in the database in the
- * `additionalEmails` array on the User model — added via
- * AddEmailPage.jsx's real backend call (useAddAdditionalEmailMutation).
- */
 export default function EmailAddressPage() {
   const navigate = useNavigate();
   const { data } = useGetMyProfileQuery();

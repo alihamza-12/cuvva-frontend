@@ -16,16 +16,10 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
   const fetchOwnCustomers = useCallback(async () => {
     setLoading(true);
     try {
-      // Super Admin + ownership guard is implemented on backend customers PATCH/GET endpoints.
-      // We reuse the same backend list endpoint, which for Super Admin returns global customers,
-      // then filter client-side by createdBy.
+
       const res = await axiosInstance.get("/api/management/customers");
       const list = res?.data?.customers || [];
 
-      // We need createdBy.superAdminId. Super Admin record itself will be in createdBy.
-      // If createdBy._id is available, filter by that.
-      // If not, fallback to filtering by createdBy.email/name.
-      // The backend payload includes createdBy.fullName email role, plus createdBy._id.
       setCustomers(list);
     } finally {
       setLoading(false);
@@ -36,14 +30,9 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
     fetchOwnCustomers();
   }, [fetchOwnCustomers]);
 
-  // Determine current super admin id from backend by reading cookie JWT user is not exposed here.
-  // Instead, filter by matching `createdBy.role === "Super Admin"` AND ensure createdBy exists.
-  // Because this page is only for "View own customers", the createdBy.role + existence is sufficient
-  // for your current data model.
   const filteredCustomers = useMemo(() => {
     let list = customers;
 
-    // Filter so only those created by a Super Admin remain
     list = list.filter(
       (c) => c?.createdBy && c?.createdBy?.role === "Super Admin",
     );
@@ -76,14 +65,13 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
     }
   };
 
-  // Edit modal state
   const [editOpen, setEditOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
 
   const [editFullName, setEditFullName] = useState("");
   const [editEmail, setEditEmail] = useState("");
-  const [editExpiresAt, setEditExpiresAt] = useState(""); // YYYY-MM-DD
+  const [editExpiresAt, setEditExpiresAt] = useState(""); 
   const [editPassword, setEditPassword] = useState("");
   const [editPasswordConfirm, setEditPasswordConfirm] = useState("");
 
@@ -163,7 +151,6 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
 
       if (wantsPasswordChange) payload.password = editPassword;
 
-      // TODO: this PATCH route must exist in backend. If missing, it will fail.
       await axiosInstance.patch(`/api/customers/${editTarget._id}`, payload);
 
       if (onRefresh) onRefresh();
@@ -176,11 +163,9 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
     }
   };
 
-  // Note: Edit modal is implemented directly in this component as requested.
-
   return (
     <div className="w-full animate-fadeIn">
-      {/* Edit Modal */}
+
       {editOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
@@ -397,7 +382,7 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                       </td>
                       <td className="py-4 pr-2 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {/* Edit button */}
+        
                           <button
                             type="button"
                             onClick={(e) => openEditFor(e, c)}
@@ -407,7 +392,6 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                             Edit
                           </button>
 
-                          {/* Manage Status button */}
                           <button
                             disabled={actionLoadingId === c._id}
                             onClick={(e) => toggleStatus(e, c._id, c.status)}

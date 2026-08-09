@@ -4,13 +4,8 @@ import { ArrowLeft, Car, ShieldAlert } from "lucide-react";
 import { getVehicleByRegistration } from "../../app/api/vehicleApi";
 import { updateVehicle } from "../../app/api/vehicleUpdateApi";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 const FUEL_TYPES = ["PETROL", "DIESEL", "ELECTRIC", "HYBRID"];
 
-// Converts an ISO date string / Date into the yyyy-MM-dd shape <input type="date"> needs.
 const toDateInputValue = (value) => {
   if (!value) return "";
   const d = new Date(value);
@@ -18,8 +13,6 @@ const toDateInputValue = (value) => {
   return d.toISOString().slice(0, 10);
 };
 
-// Builds the full edit-form state from a fetched vehicle record.
-// Every field on the Vehicle schema (except _id / createdBy / timestamps) lives here.
 const buildFormFromVehicle = (vehicle) => ({
   registration: vehicle?.registration || "",
   make: vehicle?.make || "",
@@ -50,9 +43,6 @@ const buildFormFromVehicle = (vehicle) => ({
   wheelplan: vehicle?.wheelplan || "",
 });
 
-// Converts the form state back into the payload shape the API expects
-// (numbers as numbers, blank strings as undefined so we don't wipe fields
-// the user didn't intend to touch, dates as ISO strings).
 const buildPayloadFromForm = (form) => {
   const numOrUndef = (v) => (v === "" || v == null ? undefined : Number(v));
   const strOrUndef = (v) => (v === "" || v == null ? undefined : v);
@@ -85,10 +75,6 @@ const buildPayloadFromForm = (form) => {
     wheelplan: strOrUndef(form.wheelplan),
   };
 };
-
-// ---------------------------------------------------------------------------
-// Small presentational helpers (keeps the JSX below readable)
-// ---------------------------------------------------------------------------
 
 const FieldLabel = ({ children }) => (
   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
@@ -138,10 +124,6 @@ const ReadRow = ({ label, value }) => (
     <div className="text-xs font-semibold text-white">{value ?? "N/A"}</div>
   </div>
 );
-
-// ---------------------------------------------------------------------------
-// Main component
-// ---------------------------------------------------------------------------
 
 export default function VehicleDetailPage() {
   const { registration } = useParams();
@@ -219,8 +201,7 @@ export default function VehicleDetailPage() {
       setIsEditMode(false);
 
       if (registrationChanged) {
-        // Registration is the route key, so navigate to the new URL and
-        // let the effect above re-fetch using the updated value.
+
         navigate(`/admin/vehicles/${payload.registration}`, { replace: true });
       } else {
         await fetchVehicle(vehicle.registration);
@@ -284,7 +265,6 @@ export default function VehicleDetailPage() {
               )}
             </div>
 
-            {/* Header card */}
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -307,7 +287,7 @@ export default function VehicleDetailPage() {
                   onSubmit={(e) => e.preventDefault()}
                   className="mt-4 space-y-6"
                 >
-                  {/* --- Core Identity --- */}
+              
                   <div>
                     <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#00f0ff] uppercase">
                       Core Identity
@@ -346,7 +326,6 @@ export default function VehicleDetailPage() {
                     </div>
                   </div>
 
-                  {/* --- Technical Specifications --- */}
                   <div>
                     <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#00f0ff] uppercase">
                       Technical Specifications
@@ -391,7 +370,6 @@ export default function VehicleDetailPage() {
                     </div>
                   </div>
 
-                  {/* --- DVLA Compliance --- */}
                   <div>
                     <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#00f0ff] uppercase">
                       DVLA Compliance Status
@@ -534,7 +512,6 @@ export default function VehicleDetailPage() {
               )}
             </div>
 
-            {/* Read-only system metadata card (never editable) */}
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
               <h3 className="mb-3 text-xs font-bold tracking-wider text-white uppercase">
                 System Metadata
