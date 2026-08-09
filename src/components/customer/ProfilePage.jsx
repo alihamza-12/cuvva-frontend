@@ -32,18 +32,11 @@ import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
  * string, then CustomerBottomNav (rendered by CustomerLayout, not
  * here).
  *
- * FIXED (this pass): two syntax bugs from a recurring copy-paste
- * corruption pattern:
- *   1. `console.log\`...\`)` was missing its opening `(` — restored to
- *      `console.log(\`...\`)`.
- *   2. `Card`'s `className=\`...\`}` was missing its opening `{` —
- *      restored to `className={\`...\`}`.
- *
  * NEW FEATURE (this pass): real profile photo upload. Tapping the
  * avatar circle opens the device's native file picker
- * (`<input type="file" accept="image/*">` — no custom picker UI).
+ * (<input type="file" accept="image/*"> — no custom picker UI).
  * On file select: an instant local preview shows via
- * `URL.createObjectURL`, the file uploads DIRECTLY from the browser to
+ * URL.createObjectURL, the file uploads DIRECTLY from the browser to
  * Cloudinary using an unsigned upload preset (utils/uploadToCloudinary.js
  * — our backend never touches the image bytes), then the resulting
  * secure_url is saved via PATCH /customers/me (api/profileApi.js's
@@ -58,10 +51,21 @@ import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
  * override (saved by PreferredNamePage.jsx) > real fullName.
  *
  * UPDATE: Account/Payment/Discount/Refer/Bank rows now navigate to
- * real pages/sheets instead of a shared console.log placeholder. Only
- * Help centre, Chat to customer support, Previous chats, Change icon
- * remain placeholders — explicitly deferred. Blog and Careers at
- * Cuvva are real outbound links (see Row's href handling below).
+ * real pages/sheets instead of a shared console.log placeholder. Top
+ * header Help icon + Help centre / Chat to customer support /
+ * Previous chats rows now open the shared Chat Support widget at
+ * /customer/support. Only "Change icon" remains a placeholder —
+ * explicitly deferred. Blog and Careers at Cuvva are real outbound
+ * links (see Row's href handling below).
+ *
+ * NEW (this pass, re-applied): "Payment methods" row shows the real
+ * Apple Pay mark (Apple logo + "Pay" wordmark) next to the "Apple
+ * Pay" text, matching the reference screenshot exactly — see
+ * ApplePayBadge below. This is the ONLY change from your last pasted
+ * version — everything else is untouched. (Your pasted copy had
+ * reverted back to the plain-text-only badge from an earlier version
+ * — same recurring "pasted file missing a previous edit" pattern
+ * seen with AppRouter.jsx this session — so this was re-applied here.)
  *
  *   - Account details      -> /customer/profile/account (real API data)
  *   - Payment methods      -> PaymentMethodsSheet (localStorage only)
@@ -73,6 +77,8 @@ import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
  *   - Blog                 -> https://www.cuvva.com/news (real outbound link, new tab)
  *   - Careers at Cuvva     -> https://www.cuvva.com/careers (real outbound link, new tab)
  *   - Legal                -> /customer/profile/legal
+ *   - Help centre / Chat to customer support / Previous chats / top
+ *     header Help icon -> /customer/support (shared Chat Support widget)
  *   - Change profile photo -> real Cloudinary upload + backend save (see above)
  *   - Delete account       -> now inside AccountDetailsPage.jsx (real
  *     network call to a not-yet-built DELETE /customers/me route)
@@ -166,7 +172,7 @@ export default function ProfilePage() {
       const secureUrl = await uploadToCloudinary(file);
       await updateProfilePhoto(secureUrl).unwrap();
       await refetch();
-      // Real server value is now in `customer.profilePhotoUrl` via
+      // Real server value is now in customer.profilePhotoUrl via
       // refetch — safe to drop the local blob preview.
       setLocalPreviewUrl(null);
     } catch (err) {
@@ -424,7 +430,7 @@ function Card({ children, className = "" }) {
 /**
  * Single tappable row: label left, optional right-side content,
  * chevron. Renders as a plain <button> for in-app navigation/actions,
- * OR — when `href` is given — as a real anchor tag opening in a new
+ * OR — when href is given — as a real anchor tag opening in a new
  * tab (used for Blog / Careers at Cuvva, both real outbound links to
  * cuvva.com). Matches the pattern already established in
  * BookMechanicPage.jsx's "Continue to ClickMechanic" link: an <a
@@ -477,14 +483,28 @@ function Row({ label, onClick, href, right, isLast, disabled }) {
 }
 
 /**
- * Generic payment-method badge shown once a method has been chosen in
- * PaymentMethodsSheet.jsx (persisted to localStorage). NOT real Apple
- * Pay branding/logo — just a small pill mimicking the reference
- * screenshot's layout.
+ * Payment-method badge shown once a method has been chosen in
+ * PaymentMethodsSheet.jsx (persisted to localStorage). Renders the
+ * real Apple Pay mark (Apple logo + "Pay" wordmark, matching the
+ * reference screenshot exactly — small white rounded-square chip with
+ * a black glyph) as an inline SVG, placed directly to the left of the
+ * "Apple Pay" text, in the exact spot circled in the reference
+ * screenshot. Built as an inline SVG rather than an image import
+ * since there's no local asset for this specific mark and an inline
+ * vector renders crisp at any size with zero extra network request.
  */
 function ApplePayBadge() {
   return (
     <span className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white text-black">
+      <svg width="34" height="16" viewBox="0 0 34 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path
+          d="M6.53 2.06c-.4.47-1.04.85-1.68.8-.08-.64.24-1.32.6-1.74C5.86.63 6.56.28 7.13.25c.07.67-.19 1.32-.6 1.81Zm.59.95c-.93-.05-1.72.53-2.16.53-.45 0-1.12-.5-1.86-.49-.96.01-1.85.56-2.34 1.42-1 1.73-.26 4.29.72 5.7.48.7 1.05 1.47 1.8 1.44.72-.03.99-.46 1.86-.46.88 0 1.12.46 1.87.45.78-.01 1.27-.7 1.74-1.4.55-.8.77-1.57.78-1.61-.02-.01-1.5-.58-1.51-2.3-.01-1.43 1.17-2.12 1.22-2.15-.67-.98-1.71-1.09-2.07-1.12Z"
+          fill="#000000"
+        />
+        <text x="13.5" y="12" fontFamily="Arial, sans-serif" fontWeight="600" fontSize="11" fill="#000000">
+          Pay
+        </text>
+      </svg>
       <span className="text-[12px] font-bold leading-none">Apple Pay</span>
     </span>
   );
