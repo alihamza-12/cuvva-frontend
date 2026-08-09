@@ -21,6 +21,7 @@ import {
   getPreferredName,
 } from "../../utils/profileLocalStorage";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
+import Spinner from "../common/Spinner";
 
 export default function ProfilePage() {
   const { data, isLoading, error, refetch } = useGetMyProfileQuery();
@@ -66,7 +67,6 @@ export default function ProfilePage() {
   const avatarSrc = localPreviewUrl || customer?.profilePhotoUrl || null;
 
   const handleNotWiredUp = (label) => {
-
     console.log(`${label} tapped — not wired up yet.`);
   };
 
@@ -108,7 +108,6 @@ export default function ProfilePage() {
       dispatch(logOut());
       navigate("/login", { replace: true });
     } catch {
-
       dispatch(logOut());
       navigate("/login", { replace: true });
     }
@@ -117,14 +116,13 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen pb-32 text-white bg-black">
-        <p className="text-white/80">Loading profile...</p>
+        <Spinner size="md" />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
-
       <div className="flex items-center justify-between px-4 pt-4">
         <div className="w-9 h-9" />
         <h1 className="text-[18px] font-extrabold">Profile</h1>
@@ -310,7 +308,9 @@ export default function ProfilePage() {
       {showPaymentSheet && (
         <PaymentMethodsSheet onClose={() => setShowPaymentSheet(false)} />
       )}
-      {showRateModal && <RateAppModal onClose={() => setShowRateModal(false)} />}
+      {showRateModal && (
+        <RateAppModal onClose={() => setShowRateModal(false)} />
+      )}
     </div>
   );
 }
