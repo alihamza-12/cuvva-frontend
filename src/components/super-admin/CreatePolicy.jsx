@@ -7,7 +7,7 @@ import {
   Car,
   ShieldCheck,
 } from "lucide-react";
-import CurrencyInput, { currencyToPence } from "../common/CurrencyInput";
+import CurrencyInput from "../common/CurrencyInput";
 import MaskedDateInput from "../common/MaskedDateInput";
 import MaskedTimeInput from "../common/MaskedTimeInput";
 
@@ -99,8 +99,8 @@ export default function CreatePolicy({
     const payload = {
       customerId: form.customerId,
       vehicleId: form.vehicleId,
-      // Convert pounds (e.g. "123") to pence (12300) to match backend schema.
-      premiumAmount: currencyToPence(form.premiumAmount),
+      // Send the raw decimal value directly (e.g. 123.44). No pence math.
+      premiumAmount: form.premiumAmount,
       startDate: form.startDate,
       endDate: form.endDate,
       startTime: form.startTime,

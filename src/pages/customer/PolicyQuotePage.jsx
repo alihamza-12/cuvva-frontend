@@ -162,7 +162,7 @@ export default function PolicyQuotePage() {
         vehicle,
         durationHours,
         coverageType,
-        premiumAmount: quote.premiumPence, // pence, matches Policy.premiumAmount
+        premiumAmount: quote.premiumGBP, // direct decimal pounds, matches Policy.premiumAmount
         excess: quote.excess,
       },
     });

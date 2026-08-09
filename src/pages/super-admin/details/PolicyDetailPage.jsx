@@ -5,10 +5,7 @@ import { ArrowLeft, FileText, Car, User, ShieldAlert } from "lucide-react";
 import Sidebar from "../../../components/super-admin/Sidebar";
 import { getPolicyById } from "../../../app/api/policyApi";
 import { updatePolicyById } from "../../../app/api/policyUpdateApi";
-import CurrencyInput, {
-  currencyToPence,
-  penceToCurrency,
-} from "../../../components/common/CurrencyInput";
+import CurrencyInput from "../../../components/common/CurrencyInput";
 import MaskedDateInput from "../../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../../components/common/MaskedTimeInput";
 
@@ -71,7 +68,7 @@ export default function PolicyDetailPage() {
   useEffect(() => {
     if (!policy) return;
     setEditForm({
-      premiumAmount: penceToCurrency(policy.premiumAmount),
+      premiumAmount: Number(policy.premiumAmount),
       startDate: policy.startDate
         ? new Date(policy.startDate).toISOString().split("T")[0]
         : "",
@@ -124,7 +121,7 @@ export default function PolicyDetailPage() {
 
     try {
       const payload = {
-        premiumAmount: currencyToPence(editForm.premiumAmount),
+        premiumAmount: editForm.premiumAmount,
         startDate: editForm.startDate,
         endDate: editForm.endDate,
         startTime: editForm.startTime,
@@ -292,7 +289,11 @@ export default function PolicyDetailPage() {
                         Premium Amount
                       </div>
                       <div className="text-xs font-semibold text-white">
-                        £{policy.premiumAmount}
+                        £
+                        {typeof policy.premiumAmount === "number" ||
+                        policy.premiumAmount
+                          ? Number(policy.premiumAmount).toFixed(2)
+                          : ""}
                       </div>
                     </div>
 

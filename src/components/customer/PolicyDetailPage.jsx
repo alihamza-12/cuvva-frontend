@@ -148,8 +148,8 @@ export default function PolicyDetailPage() {
         : policy?.coverageType || "—";
 
   const totalCostLabel =
-    typeof policy?.premiumAmount === "number"
-      ? `£${(policy.premiumAmount / 100).toFixed(2)}`
+    typeof policy?.premiumAmount === "number" || policy?.premiumAmount
+      ? `£${Number(policy.premiumAmount).toFixed(2)}`
       : "—";
 
   const handleCopyPolicyNumber = () => {

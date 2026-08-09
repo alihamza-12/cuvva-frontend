@@ -53,17 +53,19 @@ export default function PolicyReceiptPage() {
     );
   }
 
-  const totalPence =
-    typeof policy?.premiumAmount === "number" ? policy.premiumAmount : 0;
+  const totalAmount =
+    typeof policy?.premiumAmount === "number" || policy?.premiumAmount
+      ? Number(policy.premiumAmount)
+      : 0;
 
-  // Estimate breakdown: total = premium + (premium * IPT) + adminFee
+  // Estimate breakdown (all in decimal pounds): total = premium + (premium * IPT) + adminFee
   // => premium = (total - adminFee) / (1 + IPT)
-  const adminFeePence = Math.min(ADMIN_FEE_PENCE, totalPence);
-  const remainderPence = totalPence - adminFeePence;
-  const premiumPence = Math.round(remainderPence / (1 + UK_IPT_RATE));
-  const taxPence = remainderPence - premiumPence;
+  const adminFee = Math.min(ADMIN_FEE_PENCE / 100, totalAmount);
+  const remainder = totalAmount - adminFee;
+  const premium = Math.round((remainder / (1 + UK_IPT_RATE)) * 100) / 100;
+  const tax = Math.round((remainder - premium) * 100) / 100;
 
-  const formatGBP = (pence) => `£${(pence / 100).toFixed(2)}`;
+  const formatGBP = (amount) => `£${Number(amount).toFixed(2)}`;
 
   const issuedAt = policy?.createdAt ? new Date(policy.createdAt) : null;
   const issuedLabel = issuedAt
@@ -102,12 +104,12 @@ export default function PolicyReceiptPage() {
           <p className="text-[13px] text-[#9497a1]">{issuedLabel}</p>
         </div>
 
-        <ReceiptRow label="Insurance premium" value={formatGBP(premiumPence)} />
-        <ReceiptRow label="Insurance premium tax" value={formatGBP(taxPence)} />
-        <ReceiptRow label="Admin fee" value={formatGBP(adminFeePence)} />
+        <ReceiptRow label="Insurance premium" value={formatGBP(premium)} />
+        <ReceiptRow label="Insurance premium tax" value={formatGBP(tax)} />
+        <ReceiptRow label="Admin fee" value={formatGBP(adminFee)} />
         <ReceiptRow
           label="Your total price"
-          value={formatGBP(totalPence)}
+          value={formatGBP(totalAmount)}
           bold
           isLast
         />
@@ -117,7 +119,7 @@ export default function PolicyReceiptPage() {
       <div className="mx-4 mt-3 rounded-2xl bg-[#17181c] px-4 py-4 flex items-center justify-between">
         <span className="text-[15px] font-bold text-white">Grand total</span>
         <span className="text-[15px] font-bold text-[#8a7bff]">
-          {formatGBP(totalPence)}
+          {formatGBP(totalAmount)}
         </span>
       </div>
     </div>

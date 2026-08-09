@@ -132,7 +132,7 @@ export default function OwnPoliciesManagement({ policies = [], onRefresh }) {
                       {p.coverageType || "Comprehensive"}
                     </span>
                     <span className="px-2.5 py-0.5 bg-green-500/10 border border-green-500/20 text-green-400 font-extrabold rounded text-xs inline-flex items-center">
-                      £{p.premiumAmount}
+                      £{Number(p.premiumAmount).toFixed(2)}
                     </span>
                   </div>
                 </div>

@@ -97,7 +97,7 @@ export function SubAdminOwnPolicies({ policies = [], onRefresh }) {
           </span>
         </div>
 
-<div className="space-y-3">
+        <div className="space-y-3">
           {filteredPolicies.length === 0 ? (
             <div className="text-center py-16 text-[#6b7280] font-medium tracking-wide">
               No policies found for your search.
@@ -130,7 +130,7 @@ export function SubAdminOwnPolicies({ policies = [], onRefresh }) {
                       {p.coverageType || "Comprehensive"}
                     </span>
                     <span className="px-2.5 py-0.5 bg-green-500/10 border border-green-500/20 text-green-400 font-extrabold rounded text-xs inline-flex items-center">
-                      £{p.premiumAmount}
+                      £{Number(p.premiumAmount).toFixed(2)}
                     </span>
                   </div>
                 </div>

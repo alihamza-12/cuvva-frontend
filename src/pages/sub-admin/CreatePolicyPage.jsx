@@ -1,9 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { httpClient } from "../../app/api/httpClient";
-import CurrencyInput, {
-  currencyToPence,
-} from "../../components/common/CurrencyInput";
+import CurrencyInput from "../../components/common/CurrencyInput";
 import MaskedDateInput from "../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../components/common/MaskedTimeInput";
 
@@ -121,7 +119,7 @@ export default function CreatePolicyPage() {
       const payload = {
         customerId: form.customerId,
         vehicleId: form.vehicleId,
-        premiumAmount: currencyToPence(form.premiumAmount),
+        premiumAmount: form.premiumAmount,
         startDate: form.startDate,
         endDate: form.endDate,
         startTime: form.startTime,

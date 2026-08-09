@@ -3,10 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Car, FileText, User, ShieldAlert } from "lucide-react";
 
 import { httpClient } from "../../app/api/httpClient";
-import CurrencyInput, {
-  currencyToPence,
-  penceToCurrency,
-} from "../../components/common/CurrencyInput";
+import CurrencyInput from "../../components/common/CurrencyInput";
 import MaskedDateInput from "../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../components/common/MaskedTimeInput";
 
@@ -84,7 +81,7 @@ export default function PolicyDetailPage() {
     if (!policy) return;
 
     setEditForm({
-      premiumAmount: penceToCurrency(policy.premiumAmount),
+      premiumAmount: Number(policy.premiumAmount),
       startDate: policy.startDate
         ? new Date(policy.startDate).toISOString().split("T")[0]
         : "",
@@ -137,7 +134,7 @@ export default function PolicyDetailPage() {
 
     try {
       const payload = {
-        premiumAmount: currencyToPence(editForm.premiumAmount),
+        premiumAmount: editForm.premiumAmount,
         startDate: editForm.startDate,
         endDate: editForm.endDate,
         startTime: editForm.startTime,
@@ -300,7 +297,11 @@ export default function PolicyDetailPage() {
                         Premium Amount
                       </div>
                       <div className="text-xs font-semibold text-white">
-                        £{policy.premiumAmount}
+                        £
+                        {typeof policy.premiumAmount === "number" ||
+                        policy.premiumAmount
+                          ? Number(policy.premiumAmount).toFixed(2)
+                          : ""}
                       </div>
                     </div>
 
@@ -373,15 +374,15 @@ export default function PolicyDetailPage() {
                         </select>
                       </div>
 
-<MaskedDateInput
-                          label="Start Date"
-                          value={editForm.startDate}
-                          onChange={(v) =>
-                            setEditForm({ ...editForm, startDate: v })
-                          }
-                          required
-                          accentClass="focus:border-[#00f0ff]"
-                        />
+                      <MaskedDateInput
+                        label="Start Date"
+                        value={editForm.startDate}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, startDate: v })
+                        }
+                        required
+                        accentClass="focus:border-[#00f0ff]"
+                      />
 
                       <div className="space-y-1">
                         <MaskedTimeInput
@@ -396,14 +397,14 @@ export default function PolicyDetailPage() {
                       </div>
 
                       <MaskedDateInput
-                          label="End Date"
-                          value={editForm.endDate}
-                          onChange={(v) =>
-                            setEditForm({ ...editForm, endDate: v })
-                          }
-                          required
-                          accentClass="focus:border-[#00f0ff]"
-                        />
+                        label="End Date"
+                        value={editForm.endDate}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, endDate: v })
+                        }
+                        required
+                        accentClass="focus:border-[#00f0ff]"
+                      />
 
                       <div className="space-y-1">
                         <MaskedTimeInput
