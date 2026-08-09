@@ -25,68 +25,15 @@ import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 /**
  * frontend/src/components/customer/ProfilePage.jsx
  *
- * Customer tab: Profile — full rebuild matching the 3-screenshot
- * reference (top -> mid-scroll -> bottom-scroll): avatar/name header,
- * Account card, "Refer a friend" promo card, Car sharing card,
- * Support card, Feedback card, About card, Settings cards, version
- * string, then CustomerBottomNav (rendered by CustomerLayout, not
- * here).
+ * Customer tab: Profile. See original file header for full docs.
  *
- * NEW FEATURE (this pass): real profile photo upload. Tapping the
- * avatar circle opens the device's native file picker
- * (<input type="file" accept="image/*"> — no custom picker UI).
- * On file select: an instant local preview shows via
- * URL.createObjectURL, the file uploads DIRECTLY from the browser to
- * Cloudinary using an unsigned upload preset (utils/uploadToCloudinary.js
- * — our backend never touches the image bytes), then the resulting
- * secure_url is saved via PATCH /customers/me (api/profileApi.js's
- * updateProfilePhoto mutation). On success the Profile cache is
- * invalidated so the avatar updates everywhere. On any failure the
- * local preview is discarded and an honest error message shows.
- *
- * UPDATE: header name now shows the saved PREFERRED name instead of
- * always showing the real fullName — same priority order used by
- * AccountDetailsPage.jsx / PreferredNamePage.jsx: server
- * customer.preferredName (once the backend returns it) > localStorage
- * override (saved by PreferredNamePage.jsx) > real fullName.
- *
- * UPDATE: Account/Payment/Discount/Refer/Bank rows now navigate to
- * real pages/sheets instead of a shared console.log placeholder. Top
- * header Help icon + Help centre / Chat to customer support /
- * Previous chats rows now open the shared Chat Support widget at
- * /customer/support. Only "Change icon" remains a placeholder —
- * explicitly deferred. Blog and Careers at Cuvva are real outbound
- * links (see Row's href handling below).
- *
- * NEW (this pass, re-applied): "Payment methods" row shows the real
- * Apple Pay mark (Apple logo + "Pay" wordmark) next to the "Apple
- * Pay" text, matching the reference screenshot exactly — see
- * ApplePayBadge below. This is the ONLY change from your last pasted
- * version — everything else is untouched. (Your pasted copy had
- * reverted back to the plain-text-only badge from an earlier version
- * — same recurring "pasted file missing a previous edit" pattern
- * seen with AppRouter.jsx this session — so this was re-applied here.)
- *
- *   - Account details      -> /customer/profile/account (real API data)
- *   - Payment methods      -> PaymentMethodsSheet (localStorage only)
- *   - Apply discount code  -> /customer/profile/discount-code (localStorage only)
- *   - Refer a friend       -> /customer/profile/refer (no backend, static referral link)
- *   - Your discounts       -> /customer/profile/discounts (localStorage only)
- *   - Bank details         -> /customer/profile/bank-details (localStorage only)
- *   - Rate the app         -> RateAppModal (localStorage only)
- *   - Blog                 -> https://www.cuvva.com/news (real outbound link, new tab)
- *   - Careers at Cuvva     -> https://www.cuvva.com/careers (real outbound link, new tab)
- *   - Legal                -> /customer/profile/legal
- *   - Help centre / Chat to customer support / Previous chats / top
- *     header Help icon -> /customer/support (shared Chat Support widget)
- *   - Change profile photo -> real Cloudinary upload + backend save (see above)
- *   - Delete account       -> now inside AccountDetailsPage.jsx (real
- *     network call to a not-yet-built DELETE /customers/me route)
- *
- * "Refer a friend" illustration on THIS page (small promo card):
- * referfriendillustration.png — the dedicated ReferFriendPage.jsx uses
- * a separate illustration (referillustration.png) for ITS OWN
- * reference screenshot — two different images, not a mix-up.
+ * FIX (this pass): the "Payment methods" row's Apple Pay badge had the
+ * "Apple Pay" text sitting INSIDE the white icon chip (because the
+ * white `bg-white` span wrapped both the Apple-logo+"Pay" SVG AND a
+ * separate "Apple Pay" text span). The Apple logo + "Pay" wordmark
+ * already IS the Apple Pay mark, so the extra text was redundant and
+ * visually wrong. Removed the inner "Apple Pay" text span so the
+ * white chip now shows ONLY the Apple Pay mark (Apple logo + "Pay").
  */
 export default function ProfilePage() {
   const { data, isLoading, error, refetch } = useGetMyProfileQuery();
@@ -109,9 +56,7 @@ export default function ProfilePage() {
   // Header name: prefer the saved preferred name (server value first,
   // then the localStorage fallback saved by PreferredNamePage.jsx),
   // falling back to the real fullName, then a generic placeholder.
-  // Only replaces the FIRST word of fullName with the preferred name
-  // (matching how "Preferred first name" is scoped everywhere else in
-  // this app) rather than replacing the whole name.
+  // Only replaces the FIRST word of fullName with the preferred name.
   const name = useMemo(() => {
     const fullName = customer?.fullName;
     if (!fullName) return "Your account";
@@ -147,9 +92,6 @@ export default function ProfilePage() {
   };
 
   const handleAvatarTap = () => {
-    // Programmatically clicking the hidden <input type="file"> is
-    // what actually opens the OS's native picker (photo library /
-    // camera / file browser) — no custom UI needed for that part.
     fileInputRef.current?.click();
   };
 
@@ -162,8 +104,7 @@ export default function ProfilePage() {
 
     setPhotoError(null);
 
-    // Instant local preview so the UI feels responsive immediately,
-    // before the network round-trip to Cloudinary even starts.
+    // Instant local preview so the UI feels responsive immediately.
     const objectUrl = URL.createObjectURL(file);
     setLocalPreviewUrl(objectUrl);
     setIsUploadingPhoto(true);
@@ -172,12 +113,8 @@ export default function ProfilePage() {
       const secureUrl = await uploadToCloudinary(file);
       await updateProfilePhoto(secureUrl).unwrap();
       await refetch();
-      // Real server value is now in customer.profilePhotoUrl via
-      // refetch — safe to drop the local blob preview.
       setLocalPreviewUrl(null);
     } catch (err) {
-      // Never silently pretend the upload worked — discard the
-      // preview and surface a real, honest error message.
       setLocalPreviewUrl(null);
       setPhotoError(
         err?.message || "Couldn't update your photo. Please try again.",
@@ -226,9 +163,6 @@ export default function ProfilePage() {
 
       {/* Avatar / name / member since */}
       <div className="flex flex-col items-center pt-4 pb-2">
-        {/* Hidden native file input — accept="image/*" is what makes
-            mobile browsers offer "Camera" as an option alongside the
-            photo library / file browser, with zero custom UI. */}
         <input
           ref={fileInputRef}
           type="file"
@@ -400,9 +334,7 @@ export default function ProfilePage() {
       {showPaymentSheet && (
         <PaymentMethodsSheet onClose={() => setShowPaymentSheet(false)} />
       )}
-      {showRateModal && (
-        <RateAppModal onClose={() => setShowRateModal(false)} />
-      )}
+      {showRateModal && <RateAppModal onClose={() => setShowRateModal(false)} />}
     </div>
   );
 }
@@ -430,16 +362,8 @@ function Card({ children, className = "" }) {
 /**
  * Single tappable row: label left, optional right-side content,
  * chevron. Renders as a plain <button> for in-app navigation/actions,
- * OR — when href is given — as a real anchor tag opening in a new
- * tab (used for Blog / Careers at Cuvva, both real outbound links to
- * cuvva.com). Matches the pattern already established in
- * BookMechanicPage.jsx's "Continue to ClickMechanic" link: an <a
- * target="_blank" rel="noopener noreferrer"> is used instead of a
- * window.open() call inside an onClick handler, because anchor-tag
- * navigation is treated as a genuine user-initiated action by mobile
- * browsers (iOS Safari in particular) and reliably opens a new tab,
- * whereas script-triggered window.open() can get silently blocked as
- * a popup on some mobile browsers/webviews.
+ * OR — when href is given — as a real anchor tag opening in a new tab
+ * (used for Blog / Careers at Cuvva).
  */
 function Row({ label, onClick, href, right, isLast, disabled }) {
   const sharedClassName = `w-full flex items-center justify-between gap-3 px-4 py-4 hover:bg-white/[0.03] transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
@@ -485,27 +409,47 @@ function Row({ label, onClick, href, right, isLast, disabled }) {
 /**
  * Payment-method badge shown once a method has been chosen in
  * PaymentMethodsSheet.jsx (persisted to localStorage). Renders the
- * real Apple Pay mark (Apple logo + "Pay" wordmark, matching the
- * reference screenshot exactly — small white rounded-square chip with
- * a black glyph) as an inline SVG, placed directly to the left of the
- * "Apple Pay" text, in the exact spot circled in the reference
- * screenshot. Built as an inline SVG rather than an image import
- * since there's no local asset for this specific mark and an inline
- * vector renders crisp at any size with zero extra network request.
+ * real Apple Pay mark (Apple logo + "Pay" wordmark) as a small white
+ * rounded chip with a black glyph, built as inline SVG.
+ *
+ * The white chip contains ONLY the Apple logo + "Pay" wordmark — the
+ * "Apple Pay" text no longer sits inside the icon. (The logo + "Pay"
+ * wordmark together already read as "Apple Pay", so the extra text
+ * was redundant and was wrongly appearing inside the badge.)
  */
 function ApplePayBadge() {
   return (
-    <span className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white text-black">
-      <svg width="34" height="16" viewBox="0 0 34 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path
-          d="M6.53 2.06c-.4.47-1.04.85-1.68.8-.08-.64.24-1.32.6-1.74C5.86.63 6.56.28 7.13.25c.07.67-.19 1.32-.6 1.81Zm.59.95c-.93-.05-1.72.53-2.16.53-.45 0-1.12-.5-1.86-.49-.96.01-1.85.56-2.34 1.42-1 1.73-.26 4.29.72 5.7.48.7 1.05 1.47 1.8 1.44.72-.03.99-.46 1.86-.46.88 0 1.12.46 1.87.45.78-.01 1.27-.7 1.74-1.4.55-.8.77-1.57.78-1.61-.02-.01-1.5-.58-1.51-2.3-.01-1.43 1.17-2.12 1.22-2.15-.67-.98-1.71-1.09-2.07-1.12Z"
-          fill="#000000"
-        />
-        <text x="13.5" y="12" fontFamily="Arial, sans-serif" fontWeight="600" fontSize="11" fill="#000000">
-          Pay
-        </text>
-      </svg>
-      <span className="text-[12px] font-bold leading-none">Apple Pay</span>
+    <span className="flex items-center gap-1.5" aria-label="Apple Pay">
+      {/* White chip contains ONLY the Apple Pay mark (icon keeps its bg) */}
+      <span className="flex items-center justify-center px-2 py-1 bg-white rounded-md">
+        <svg
+          width="34"
+          height="16"
+          viewBox="0 0 34 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            d="M6.53 2.06c-.4.47-1.04.85-1.68.8-.08-.64.24-1.32.6-1.74C5.86.63 6.56.28 7.13.25c.07.67-.19 1.32-.6 1.81Zm.59.95c-.93-.05-1.72.53-2.16.53-.45 0-1.12-.5-1.86-.49-.96.01-1.85.56-2.34 1.42-1 1.73-.26 4.29.72 5.7.48.7 1.05 1.47 1.8 1.44.72-.03.99-.46 1.86-.46.88 0 1.12.46 1.87.45.78-.01 1.27-.7 1.74-1.4.55-.8.77-1.57.78-1.61-.02-.01-1.5-.58-1.51-2.3-.01-1.43 1.17-2.12 1.22-2.15-.67-.98-1.71-1.09-2.07-1.12Z"
+            fill="#000000"
+          />
+          <text
+            x="13.5"
+            y="12"
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif"
+            fontWeight="600"
+            fontSize="11"
+            fill="#000000"
+          >
+            Pay
+          </text>
+        </svg>
+      </span>
+      {/* "Apple Pay" text — OUTSIDE the white chip, no background */}
+      <span className="text-[12px] font-bold leading-none text-white">
+        Apple Pay
+      </span>
     </span>
   );
 }
