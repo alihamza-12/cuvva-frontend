@@ -6,7 +6,15 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <!-- sizes + ?v=2 cache-buster so iPhone definitely fetches the new opaque icon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Keep the installed PWA at the device width.
+      The 16px mobile form-control rule in src/styles/index.css prevents
+      iOS from automatically zooming when an input receives focus.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <meta name="theme-color" content="#7B5CFA" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
