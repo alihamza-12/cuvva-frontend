@@ -43,16 +43,16 @@ export default function CarClubsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black pb-32 text-white">
+    <div className="min-h-screen pb-32 text-white bg-black">
       <div className="flex items-center justify-between px-4 pt-4">
-        <h1 className="text-[18px] font-bold">Car clubs</h1>
+        {/* <h1 className="text-[18px] font-bold">Car clubs</h1> */}
 
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => navigate("/customer/support")}
             aria-label="Info"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5"
+            className="flex items-center justify-center border rounded-full h-9 w-9 border-white/10 bg-white/5"
           >
             <Info size={17} className="text-white" />
           </button>
@@ -61,7 +61,7 @@ export default function CarClubsPage() {
             type="button"
             onClick={() => navigate("/customer/support")}
             aria-label="Help"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5"
+            className="flex items-center justify-center border rounded-full h-9 w-9 border-white/10 bg-white/5"
           >
             <MessageCircleQuestion size={17} className="text-white" />
           </button>
@@ -149,12 +149,12 @@ export default function CarClubsPage() {
           <img
             src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&q=60"
             alt=""
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 object-cover w-full h-full"
             style={{ filter: "blur(18px) saturate(1.4)" }}
             draggable={false}
           />
 
-          <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white/95 px-5 py-3">
+          <span className="absolute flex items-center gap-2 px-5 py-3 -translate-x-1/2 -translate-y-1/2 rounded-full left-1/2 top-1/2 whitespace-nowrap bg-white/95">
             <Camera size={16} className="text-black" />
             <span className="text-[14px] font-bold text-black">
               Add car photo
@@ -165,13 +165,13 @@ export default function CarClubsPage() {
         <button
           type="button"
           onClick={openCarError}
-          className="flex w-full items-center gap-3 px-4 py-4"
+          className="flex items-center w-full gap-3 px-4 py-4"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#242429]">
             <ToyotaLogo />
           </span>
 
-          <span className="min-w-0 flex-1 text-left">
+          <span className="flex-1 min-w-0 text-left">
             <span className="block text-[15px] font-semibold text-white">
               Toyota Aygo
             </span>
@@ -185,7 +185,7 @@ export default function CarClubsPage() {
 
         {!hasAnyClub && (
           <>
-            <div className="flex items-center justify-between border-t border-white/5 px-4 py-4">
+            <div className="flex items-center justify-between px-4 py-4 border-t border-white/5">
               <span className="text-[14px] text-[#9497a1]">Next step</span>
               <span className="text-[15px] font-bold text-white">
                 Set price per hour/day
@@ -245,11 +245,11 @@ export default function CarClubsPage() {
             <img
               src={tip.image}
               alt=""
-              className="h-12 w-12 shrink-0 rounded-xl object-cover"
+              className="object-cover w-12 h-12 shrink-0 rounded-xl"
               draggable={false}
             />
 
-            <span className="min-w-0 flex-1 text-left">
+            <span className="flex-1 min-w-0 text-left">
               <span className="block text-[15px] font-semibold text-white">
                 {tip.title}
               </span>
@@ -265,7 +265,7 @@ export default function CarClubsPage() {
         <button
           type="button"
           onClick={() => navigate("/customer/car-clubs/resources/tips-sharing")}
-          className="flex w-full items-center justify-between border-t border-white/5 px-4 py-4"
+          className="flex items-center justify-between w-full px-4 py-4 border-t border-white/5"
         >
           <span className="text-[15px] font-semibold text-white">
             All car sharing resources
@@ -288,7 +288,7 @@ export default function CarClubsPage() {
               type="button"
               aria-label="Close"
               onClick={() => setShowCarError(false)}
-              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5"
+              className="absolute flex items-center justify-center w-8 h-8 rounded-full right-4 top-4 bg-white/5"
             >
               <X size={17} className="text-white" />
             </button>
@@ -333,7 +333,7 @@ function ClubRow({ club, memberCount, onClick, isLast }) {
         <img
           src={club.clubPhoto}
           alt=""
-          className="h-11 w-11 shrink-0 rounded-xl object-cover"
+          className="object-cover h-11 w-11 shrink-0 rounded-xl"
           draggable={false}
         />
       ) : (
@@ -345,7 +345,7 @@ function ClubRow({ club, memberCount, onClick, isLast }) {
         </span>
       )}
 
-      <span className="min-w-0 flex-1 text-left">
+      <span className="flex-1 min-w-0 text-left">
         <span className="block text-[15px] font-semibold text-white">
           {club.name}
         </span>
@@ -355,7 +355,7 @@ function ClubRow({ club, memberCount, onClick, isLast }) {
         </span>
 
         {club.isNew ? (
-          <span className="mt-1 flex items-center gap-1">
+          <span className="flex items-center gap-1 mt-1">
             <Sparkles size={12} className="text-[#7c6bff]" />
             <span className="text-[13px] font-semibold text-[#7c6bff]">
               New
@@ -370,7 +370,7 @@ function ClubRow({ club, memberCount, onClick, isLast }) {
                     key={index}
                     src={avatar}
                     alt=""
-                    className="h-4 w-4 rounded-full border border-black object-cover"
+                    className="object-cover w-4 h-4 border border-black rounded-full"
                     draggable={false}
                   />
                 ) : (
