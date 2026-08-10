@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-    /* Define custom branding tokens natively in CSS */
     --color-cuvva-bg: #0b0d19;
     --color-cuvva-card: #13172d;
     --color-cuvva-border: #22294a;
@@ -12,36 +11,50 @@
     --color-cuvva-red: #ef4444;
     --color-cuvva-amber: #f59e0b;
 
-    /* Custom Glow Effect Utilities */
-    --shadow-glow-purple: 0 0 15px rgba(255, 59, 87, 0.35);
+    --shadow-glow-purple:
+        0 0 15px rgba(255, 59, 87, 0.35);
 }
 
 @layer base {
     html {
         width: 100%;
         min-height: 100%;
+
+        background-color: #000000;
+
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
-        background-color: #000000;
     }
 
     body {
         width: 100%;
         min-width: 0;
         min-height: 100%;
+
         margin: 0;
         overflow-x: hidden;
+
         overscroll-behavior-x: none;
+
         background-color: #000000;
         color: #ffffff;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+
+        font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "SF Pro Display",
+            "SF Pro Text",
+            "Inter",
+            sans-serif;
     }
 
     #root {
         width: 100%;
         min-width: 0;
+
         min-height: 100vh;
         min-height: 100dvh;
+
         overflow-x: clip;
     }
 
@@ -58,7 +71,6 @@
         max-width: 100%;
     }
 
-    /* Avoid delayed taps and accidental double-tap page zoom. */
     button,
     a,
     input,
@@ -68,9 +80,7 @@
     }
 
     /*
-     * iOS Safari zooms the page when a focused form control has a computed
-     * font size below 16px. Several customer inputs use Tailwind text-[15px],
-     * so enforce 16px for form controls on phone-sized screens.
+     * Prevent automatic iPhone input zoom.
      */
     @media (max-width: 768px) {
         input:not([type="checkbox"]):not([type="radio"]),
@@ -82,67 +92,126 @@
 }
 
 @layer components {
-    /* Safe-area spacing only for customer routes. */
+    /*
+     * Applied only to customer routes.
+     *
+     * The extra 1rem creates more space below the
+     * iPhone status bar and Dynamic Island.
+     */
     .customer-app-shell {
         width: 100%;
         min-width: 0;
+
         min-height: 100vh;
         min-height: 100dvh;
+
         overflow-x: clip;
-        padding-top: env(safe-area-inset-top, 0px);
-        padding-left: env(safe-area-inset-left, 0px);
-        padding-right: env(safe-area-inset-right, 0px);
-        background: #000000;
+
+        padding-top:
+            calc(
+                env(safe-area-inset-top, 0px) + 1rem
+            );
+
+        padding-left:
+            env(safe-area-inset-left, 0px);
+
+        padding-right:
+            env(safe-area-inset-right, 0px);
+
+        background-color: #000000;
         color: #ffffff;
     }
 
-    /* Support is outside CustomerLayout, so it owns its safe-area spacing. */
+    /*
+     * Chat support is outside CustomerLayout,
+     * so it has separate safe-area handling.
+     */
     .support-app-shell {
-        padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
-        padding-left: env(safe-area-inset-left, 0px);
-        padding-right: env(safe-area-inset-right, 0px);
-        background: #000000;
+        padding-top:
+            calc(
+                env(safe-area-inset-top, 0px) + 0.75rem
+            );
+
+        padding-left:
+            env(safe-area-inset-left, 0px);
+
+        padding-right:
+            env(safe-area-inset-right, 0px);
+
+        background-color: #000000;
     }
 
     .support-app-content {
-        min-height: calc(100dvh - env(safe-area-inset-top, 0px) - 0.75rem);
+        min-height:
+            calc(
+                100dvh -
+                env(safe-area-inset-top, 0px) -
+                0.75rem
+            );
+
         overflow: hidden;
-        border-radius: 1.75rem 1.75rem 0 0;
-        background: #ffffff;
+
+        border-radius:
+            1.75rem 1.75rem 0 0;
+
+        background-color: #ffffff;
     }
 
     .cuvva-card {
-        background-color: var(--color-cuvva-card);
-        border: 1px solid var(--color-cuvva-border);
+        background-color:
+            var(--color-cuvva-card);
+
+        border:
+            1px solid var(--color-cuvva-border);
+
         border-radius: 1rem;
     }
 
     .cuvva-input {
         width: 100%;
-        background-color: rgba(255, 255, 255, 0.02);
-        border: 1px solid var(--color-cuvva-border);
-        border-radius: 0.75rem;
+
         padding: 0.75rem 1rem;
+
+        background-color:
+            rgba(255, 255, 255, 0.02);
+
+        border:
+            1px solid var(--color-cuvva-border);
+
+        border-radius: 0.75rem;
+
         color: #ffffff;
         outline: none;
+
         transition: all 0.2s;
     }
 
     .cuvva-input:focus {
-        border-color: var(--color-cuvva-purple);
-        box-shadow: 0 0 0 2px rgba(255, 59, 87, 0.2);
+        border-color:
+            var(--color-cuvva-purple);
+
+        box-shadow:
+            0 0 0 2px
+            rgba(255, 59, 87, 0.2);
     }
 
     .btn-primary {
-        background-color: var(--color-cuvva-purple);
         padding: 0.75rem 1.5rem;
+
+        background-color:
+            var(--color-cuvva-purple);
+
         border-radius: 0.75rem;
     }
 
     .btn-secondary {
-        background-color: transparent;
-        border: 1px solid var(--color-cuvva-border);
         padding: 0.75rem 1.5rem;
+
+        background-color: transparent;
+
+        border:
+            1px solid var(--color-cuvva-border);
+
         border-radius: 0.75rem;
     }
 }

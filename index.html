@@ -20,7 +20,7 @@
 
     <script>
       /*
-       * Phone-sized touch devices use a fixed 90% scale.
+       * Phone-sized touch devices use a fixed 95% scale.
        * Tablets and desktop devices use 100%.
        */
       (function () {
@@ -36,7 +36,7 @@
         var isPhone =
           hasCoarsePointer && shortestSide <= 600;
 
-        var scale = isPhone ? "0.90" : "1";
+        var scale = isPhone ? "0.95" : "1";
 
         var viewport =
           document.getElementById("app-viewport");
@@ -54,7 +54,7 @@
       })();
     </script>
 
-    <meta name="theme-color" content="#7B5CFA" />
+    <meta name="theme-color" content="#000000" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
