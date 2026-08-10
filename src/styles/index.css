@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-    /* Define custom branding tokens natively in CSS */
+    /* Custom branding colors */
     --color-cuvva-bg: #0b0d19;
     --color-cuvva-card: #13172d;
     --color-cuvva-border: #22294a;
@@ -12,16 +12,19 @@
     --color-cuvva-red: #ef4444;
     --color-cuvva-amber: #f59e0b;
 
-    /* Custom Glow Effect Utilities */
-    --shadow-glow-purple: 0 0 15px rgba(255, 59, 87, 0.35);
+    /* Custom glow effect */
+    --shadow-glow-purple:
+        0 0 15px rgba(255, 59, 87, 0.35);
 }
 
 @layer base {
     html {
         width: 100%;
         min-height: 100%;
+
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
+
         background-color: var(--color-cuvva-bg);
     }
 
@@ -29,20 +32,34 @@
         width: 100%;
         min-width: 0;
         min-height: 100%;
+
         margin: 0;
         overflow-x: hidden;
+
         overscroll-behavior-x: none;
+
         background-color: var(--color-cuvva-bg);
         color: #ffffff;
+
         font-family: 'Inter', sans-serif;
     }
 
     #root {
         width: 100%;
         min-width: 0;
+
         min-height: 100vh;
         min-height: 100dvh;
+
         overflow-x: clip;
+
+        /*
+         * Keep the application below the iPhone status bar,
+         * Dynamic Island and notch.
+         */
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-left: env(safe-area-inset-left, 0px);
+        padding-right: env(safe-area-inset-right, 0px);
     }
 
     *,
@@ -58,7 +75,9 @@
         max-width: 100%;
     }
 
-    /* Avoid delayed taps and accidental double-tap page zoom. */
+    /*
+     * Prevent delayed taps and accidental double-tap zoom.
+     */
     button,
     a,
     input,
@@ -68,9 +87,8 @@
     }
 
     /*
-     * iOS Safari zooms the page when a focused form control has a computed
-     * font size below 16px. Several customer inputs use Tailwind text-[15px],
-     * so enforce 16px for form controls on phone-sized screens.
+     * iOS automatically zooms focused form elements when
+     * their font size is smaller than 16px.
      */
     @media (max-width: 768px) {
         input:not([type="checkbox"]):not([type="radio"]),
@@ -90,30 +108,38 @@
 
     .cuvva-input {
         width: 100%;
+
+        padding: 0.75rem 1rem;
+
         background-color: rgba(255, 255, 255, 0.02);
         border: 1px solid var(--color-cuvva-border);
         border-radius: 0.75rem;
-        padding: 0.75rem 1rem;
+
         color: #ffffff;
         outline: none;
+
         transition: all 0.2s;
     }
 
     .cuvva-input:focus {
         border-color: var(--color-cuvva-purple);
-        box-shadow: 0 0 0 2px rgba(255, 59, 87, 0.2);
+
+        box-shadow:
+            0 0 0 2px rgba(255, 59, 87, 0.2);
     }
 
     .btn-primary {
-        background-color: var(--color-cuvva-purple);
         padding: 0.75rem 1.5rem;
+
+        background-color: var(--color-cuvva-purple);
         border-radius: 0.75rem;
     }
 
     .btn-secondary {
+        padding: 0.75rem 1.5rem;
+
         background-color: transparent;
         border: 1px solid var(--color-cuvva-border);
-        padding: 0.75rem 1.5rem;
         border-radius: 0.75rem;
     }
 }

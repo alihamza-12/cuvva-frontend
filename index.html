@@ -2,27 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <!-- sizes + ?v=2 cache-buster so iPhone definitely fetches the new opaque icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2" />
-    <!--
-      Keep the installed PWA at the device width.
-      The 16px mobile form-control rule in src/styles/index.css prevents
-      iOS from automatically zooming when an input receives focus.
-    -->
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/apple-touch-icon.png?v=2"
+    />
+
     <meta
+      id="app-viewport"
       name="viewport"
       content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
+
+    <script>
+      /*
+       * Phones use a fixed 85% scale.
+       * Tablets and desktop devices use 100%.
+       */
+      (function () {
+        var hasCoarsePointer =
+          window.matchMedia &&
+          window.matchMedia("(pointer: coarse)").matches;
+
+        var shortestSide = Math.min(
+          window.screen.width,
+          window.screen.height
+        );
+
+        var isPhone = hasCoarsePointer && shortestSide <= 600;
+        var scale = isPhone ? "0.85" : "1";
+        var viewport = document.getElementById("app-viewport");
+
+        viewport.setAttribute(
+          "content",
+          "width=device-width, initial-scale=" +
+            scale +
+            ", minimum-scale=" +
+            scale +
+            ", maximum-scale=" +
+            scale +
+            ", user-scalable=no, viewport-fit=cover"
+        );
+      })();
+    </script>
+
     <meta name="theme-color" content="#7B5CFA" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
     <title>Cuvva</title>
   </head>
+
   <body>
     <div id="root"></div>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
