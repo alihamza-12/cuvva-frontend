@@ -45,7 +45,7 @@ export default function CarClubsPage() {
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
       <div className="flex items-center justify-between px-4 pt-4">
-        {/* <h1 className="text-[18px] font-bold">Car clubs</h1> */}
+        <h1 className="text-[18px] font-bold">Car clubs</h1>
 
         <div className="flex items-center gap-2">
           <button
