@@ -20,7 +20,7 @@
 
     <script>
       /*
-       * Phones use a fixed 85% scale.
+       * Phone-sized touch devices use a fixed 90% scale.
        * Tablets and desktop devices use 100%.
        */
       (function () {
@@ -33,9 +33,13 @@
           window.screen.height
         );
 
-        var isPhone = hasCoarsePointer && shortestSide <= 600;
-        var scale = isPhone ? "0.85" : "1";
-        var viewport = document.getElementById("app-viewport");
+        var isPhone =
+          hasCoarsePointer && shortestSide <= 600;
+
+        var scale = isPhone ? "0.90" : "1";
+
+        var viewport =
+          document.getElementById("app-viewport");
 
         viewport.setAttribute(
           "content",
@@ -65,6 +69,9 @@
   <body>
     <div id="root"></div>
 
-    <script type="module" src="/src/main.jsx"></script>
+    <script
+      type="module"
+      src="/src/main.jsx"
+    ></script>
   </body>
 </html>

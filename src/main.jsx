@@ -9,7 +9,9 @@ import './styles/index.css';
 
 /*
  * Keep the installed phone application at its configured scale.
- * Phones use 85% and larger screens use 100%.
+ *
+ * Phone-sized touch devices use 90% scale.
+ * Tablets and desktop devices use 100% scale.
  */
 const isPhoneScreen = () => {
   const hasCoarsePointer =
@@ -20,20 +22,27 @@ const isPhoneScreen = () => {
     window.screen.height
   );
 
-  return hasCoarsePointer && shortestSide <= 600;
+  return (
+    hasCoarsePointer &&
+    shortestSide <= 600
+  );
 };
 
 /*
- * Prevent pinch zoom while allowing normal one-finger scrolling.
+ * Prevent pinch-to-zoom on phones while keeping normal
+ * one-finger vertical scrolling enabled.
  */
 const preventPhonePinchZoom = (event) => {
-  if (isPhoneScreen() && event.touches?.length > 1) {
+  if (
+    isPhoneScreen() &&
+    event.touches?.length > 1
+  ) {
     event.preventDefault();
   }
 };
 
 /*
- * Prevent Safari gesture zoom in standalone PWA mode.
+ * Prevent Safari gesture zoom in installed PWA mode.
  */
 const preventPhoneGestureZoom = (event) => {
   if (isPhoneScreen()) {
