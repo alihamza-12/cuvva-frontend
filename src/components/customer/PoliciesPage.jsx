@@ -112,10 +112,18 @@ export default function PoliciesPage() {
     return [durationLabel, dateLabel].filter(Boolean).join(" · ");
   };
 
+  const policySectionLabel =
+    sortedPolicies.length > 0 &&
+    sortedPolicies.every((policy) =>
+      ["Expired", "Cancelled"].includes(policy?.status),
+    )
+      ? "Past"
+      : "Your policies";
+
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
 
-      <div className="flex items-center justify-end px-4 pt-4">
+      <div className="flex items-start justify-end px-4 pt-3 min-h-12">
         <div className="relative">
           <button
             type="button"
@@ -155,8 +163,8 @@ export default function PoliciesPage() {
         </div>
       </div>
 
-      <div className="px-4 pt-2">
-        <h1 className="text-[28px] font-extrabold tracking-tight">Policies</h1>
+      <div className="px-4 pt-3">
+        <h1 className="text-[26px] font-extrabold tracking-tight leading-none">Policies</h1>
       </div>
 
       <div className="px-4 pt-5">
@@ -207,7 +215,7 @@ export default function PoliciesPage() {
         ) : (
           <section>
             <h2 className="text-[15px] font-bold text-[#9497a1] mb-3">
-              Your policies
+              {policySectionLabel}
             </h2>
             <div className="space-y-3">
               {sortedPolicies.map((policy) => {

@@ -51,7 +51,8 @@ export default function ChatSupportWidget({ onClose, customerFirstName = "there"
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white text-[#151517] overflow-y-auto">
+    <div className="support-app-shell fixed inset-0 z-[100] text-[#151517] overflow-y-auto">
+      <div className="support-app-content">
       {screen === "hub" && (
         <HubScreen
           customerFirstName={customerFirstName}
@@ -85,6 +86,7 @@ export default function ChatSupportWidget({ onClose, customerFirstName = "there"
       )}
 
       {screen === "terms" && <TermsScreen onClose={handleClose} />}
+      </div>
     </div>
   );
 }
@@ -102,17 +104,17 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
     <div className="min-h-screen">
 
       <div
-        className="px-5 pb-10 pt-5"
+        className="pb-12 px-7 pt-7"
         style={{
           background: "linear-gradient(180deg, #000000 0%, #1c0839 45%, #1c0839 75%, #57456a 100%)",
         }}
       >
         <div className="flex items-center justify-between">
         
-          <img src={cuvvaLogo} alt="Cuvva" className="h-6 w-auto" draggable={false} />
+          <img src={cuvvaLogo} alt="Cuvva" className="w-auto h-9" draggable={false} />
           <div className="flex items-center">
             <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] border-2 border-[#1c0839] flex items-center justify-center overflow-hidden -mr-2 z-30">
-              <img src={chatBotAvatar} alt="" className="w-full h-full object-cover" draggable={false} />
+              <img src={chatBotAvatar} alt="" className="object-cover w-full h-full" draggable={false} />
             </span>
             <span className="w-9 h-9 rounded-full bg-[#f4c9c9] border-2 border-[#1c0839] overflow-hidden -mr-2 z-20" />
             <span className="w-9 h-9 rounded-full bg-[#3a2e2e] border-2 border-[#1c0839] overflow-hidden z-10" />
@@ -120,21 +122,21 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center ml-2"
+              className="flex items-center justify-center ml-2 rounded-full w-9 h-9 bg-white/10"
             >
               <X size={18} className="text-white" />
             </button>
           </div>
         </div>
 
-        <h1 className="mt-8 text-[26px] font-extrabold text-white leading-tight">
+        <h1 className="mt-12 text-[29px] font-extrabold text-white leading-[1.2]">
           Hey {customerFirstName} 👋
           <br />
           How can we help?
         </h1>
       </div>
 
-      <div className="px-4 -mt-4 pb-10">
+      <div className="px-5 pb-10 -mt-5">
         
         <div className="rounded-2xl bg-white shadow-[0_2px_20px_rgba(0,0,0,0.08)] overflow-hidden">
           <button
@@ -148,7 +150,7 @@ function HubScreen({ customerFirstName, onClose, onOpenMessages, onOpenConversat
           <button
             type="button"
             onClick={() => onOpenArticle(HELP_ARTICLES[0].id)}
-            className="w-full flex items-center justify-between px-4 py-4"
+            className="flex items-center justify-between w-full px-4 py-4"
           >
             <span className="text-[16px] font-bold text-[#151517]">Help</span>
             <span className="w-6 h-6 rounded-full bg-[#6337d9] flex items-center justify-center">
@@ -240,7 +242,7 @@ function MessagesListScreen({ onBack, onClose, onOpenConversation }) {
           type="button"
           onClick={onBack}
           aria-label="Back"
-          className="w-9 h-9 flex items-center justify-center"
+          className="flex items-center justify-center w-9 h-9"
         >
           <ChevronLeft size={24} className="text-[#151517]" />
         </button>
@@ -276,7 +278,7 @@ function MessagesListScreen({ onBack, onClose, onOpenConversation }) {
           className="w-full flex items-center gap-3 px-4 py-4 border-b border-[#f0f0f0]"
         >
           <span className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] shrink-0 overflow-hidden">
-            <img src={chatBotAvatar} alt="" className="w-full h-full object-cover" draggable={false} />
+            <img src={chatBotAvatar} alt="" className="object-cover w-full h-full" draggable={false} />
           </span>
           <span className="flex-1 min-w-0 text-left">
             <span className="flex items-center gap-2">
@@ -343,12 +345,12 @@ function ConversationScreen({ onClose }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col min-h-screen">
       
       <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#f0f0f0]">
         <div className="flex items-center gap-3">
           <span className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] overflow-hidden shrink-0">
-            <img src={chatBotAvatar} alt="" className="w-full h-full object-cover" draggable={false} />
+            <img src={chatBotAvatar} alt="" className="object-cover w-full h-full" draggable={false} />
           </span>
           <span>
             <span className="block text-[17px] font-bold text-[#151517]">Cuvva Support Bot</span>
@@ -365,7 +367,7 @@ function ConversationScreen({ onClose }) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-4">
+      <div className="flex-1 px-4 pt-4 pb-4 overflow-y-auto">
         <p className="text-center text-[13px] text-[#a5a5aa] mb-4">{SUPPORT_HOURS_LINE}</p>
 
         <div className="flex items-start gap-3.5 rounded-2xl border border-[#e4e4e7] px-4 py-3.5 mb-4">
@@ -416,13 +418,13 @@ function ConversationScreen({ onClose }) {
             placeholder="Ask a question..."
             className="flex-1 bg-transparent text-[15px] text-[#151517] placeholder:text-[#a5a5aa] focus:outline-none"
           />
-          <button type="button" disabled aria-label="Attach file (disabled)" className="opacity-40 cursor-not-allowed">
+          <button type="button" disabled aria-label="Attach file (disabled)" className="cursor-not-allowed opacity-40">
             <Paperclip size={18} className="text-[#151517]" />
           </button>
           <button type="button" disabled aria-label="Send a GIF (disabled)" className="opacity-40 cursor-not-allowed text-[11px] font-bold border border-[#151517] rounded px-1">
             GIF
           </button>
-          <button type="button" disabled aria-label="Record voice message (disabled)" className="opacity-40 cursor-not-allowed">
+          <button type="button" disabled aria-label="Record voice message (disabled)" className="cursor-not-allowed opacity-40">
             <Mic size={18} className="text-[#151517]" />
           </button>
           <button
@@ -448,7 +450,7 @@ function BotBubble({ avatarLabel, text }) {
       {avatarLabel && (
         <div className="flex items-center gap-2 mb-1.5">
           <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] overflow-hidden shrink-0">
-            <img src={chatBotAvatar} alt="" className="w-full h-full object-cover" draggable={false} />
+            <img src={chatBotAvatar} alt="" className="object-cover w-full h-full" draggable={false} />
           </span>
           <span className="text-[13px] font-semibold text-[#151517]">{avatarLabel}</span>
         </div>
@@ -462,7 +464,7 @@ function BotBubble({ avatarLabel, text }) {
 
 function UserBubble({ text }) {
   return (
-    <div className="mb-4 flex justify-end">
+    <div className="flex justify-end mb-4">
       <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-[#6337d9] px-4 py-3">
         <p className="text-[15px] text-white leading-relaxed whitespace-pre-line">{text}</p>
       </div>
@@ -531,7 +533,7 @@ function ArticleBlock({ block }) {
 
     case "list":
       return (
-        <ul className="list-disc pl-5 space-y-2">
+        <ul className="pl-5 space-y-2 list-disc">
           {block.items.map((item, i) => (
             <li key={i} className="text-[16px] text-[#151517] leading-relaxed">
               {renderWithBoldLead(item)}
@@ -542,7 +544,7 @@ function ArticleBlock({ block }) {
 
     case "orderedList":
       return (
-        <ol className="list-decimal pl-5 space-y-2">
+        <ol className="pl-5 space-y-2 list-decimal">
           {block.items.map((item, i) => (
             <li key={i} className="text-[16px] text-[#151517] leading-relaxed">
               {item}
@@ -670,7 +672,7 @@ function TermsBlock({ block }) {
       return <p className="text-[16px] text-[#151517] leading-relaxed">{renderWithEmailLinks(block.text)}</p>;
     case "list":
       return (
-        <ul className="list-disc pl-5 space-y-2">
+        <ul className="pl-5 space-y-2 list-disc">
           {block.items.map((item, i) => (
             <li key={i} className="text-[16px] text-[#151517] leading-relaxed">
               {renderWithEmailLinks(item)}

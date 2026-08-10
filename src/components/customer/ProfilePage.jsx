@@ -123,9 +123,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
-      <div className="flex items-center justify-between px-4 pt-4">
-        <div className="w-9 h-9" />
-        <h1 className="text-[18px] font-extrabold">Profile</h1>
+      <div className="flex items-start justify-end px-4 pt-3 min-h-12">
         <button
           type="button"
           onClick={() => navigate("/customer/support")}
@@ -136,7 +134,11 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="flex flex-col items-center pt-4 pb-2">
+      <h1 className="px-4 pt-3 text-[26px] font-extrabold tracking-tight leading-none">
+        Profile
+      </h1>
+
+      <div className="flex flex-col items-center pt-8 pb-2">
         <input
           ref={fileInputRef}
           type="file"
@@ -318,7 +320,7 @@ export default function ProfilePage() {
 /** Grey uppercase-ish section label, matches "Account" / "Support" / etc. */
 function SectionLabel({ children }) {
   return (
-    <p className="text-[13px] font-bold text-[#9497a1] px-4 mt-6 mb-2">
+    <p className="text-[14px] font-medium text-[#a7a7ad] px-7 mt-7 mb-3">
       {children}
     </p>
   );

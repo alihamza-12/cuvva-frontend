@@ -15,8 +15,8 @@ export default function RecentlyViewedSection({ vehicles = [], onDismiss }) {
   };
 
   return (
-    <section className="pt-5">
-      <h2 className="px-4 text-[13px] font-semibold text-[#b5b6bd] mb-2">
+    <section className="pt-7">
+      <h2 className="px-7 text-[14px] font-medium text-[#a7a7ad] mb-3">
         Recently viewed
       </h2>
 
@@ -24,12 +24,12 @@ export default function RecentlyViewedSection({ vehicles = [], onDismiss }) {
         {vehicles.map((vehicle) => (
           <div
             key={vehicle._id}
-            className="relative shrink-0 w-[220px]"
+            className="relative shrink-0 w-[232px]"
           >
             <button
               type="button"
               onClick={() => handleSelect(vehicle)}
-              className="w-full flex items-center gap-2.5 bg-[#17181c] hover:bg-[#1d1e23] active:scale-[0.99] transition-all rounded-2xl p-3 text-left"
+              className="w-full min-h-[76px] flex items-center gap-3 bg-[#1b1c21] hover:bg-[#202126] active:scale-[0.99] transition-all rounded-[22px] px-4 py-3.5 text-left"
             >
               <CarBrandIcon make={vehicle.make} size={38} />
               <div className="min-w-0">

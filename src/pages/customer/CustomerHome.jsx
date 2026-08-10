@@ -102,9 +102,8 @@ export default function CustomerHome() {
   return (
     <div className="min-h-screen pb-32 text-white bg-black">
 
-      <div className="flex items-center justify-between px-4 pt-4">
-        <h1 className="text-[26px] font-extrabold tracking-tight">Get insured</h1>
-
+      {/* Top action stays near the status bar; the title sits lower like the app. */}
+      <div className="flex items-start justify-end px-4 pt-3 min-h-12">
         <div className="relative">
           <button
             type="button"
@@ -143,6 +142,10 @@ export default function CustomerHome() {
           )}
         </div>
       </div>
+
+      <h1 className="px-4 mt-3 text-[26px] font-extrabold tracking-tight leading-none">
+        Get insured
+      </h1>
 
       <div className="pt-5">
         <PlateSearchBar onVehicleFound={handleVehicleFound} />

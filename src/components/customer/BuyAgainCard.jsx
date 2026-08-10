@@ -9,7 +9,7 @@ export default function BuyAgainCard({ vehicle, onSelect }) {
     <button
       type="button"
       onClick={() => onSelect?.(vehicle)}
-      className="w-full flex items-center gap-3 bg-[#17181c] hover:bg-[#1d1e23] active:scale-[0.99] transition-all rounded-2xl p-3.5 text-left"
+      className="w-full min-h-[82px] flex items-center gap-4 bg-[#1b1c21] hover:bg-[#202126] active:scale-[0.99] transition-all rounded-[22px] px-4 py-4 text-left"
     >
       <CarBrandIcon make={make} size={44} />
 

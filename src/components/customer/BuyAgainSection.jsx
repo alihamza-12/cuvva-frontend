@@ -13,8 +13,8 @@ export default function BuyAgainSection({ vehicles = [], loading = false }) {
 
   if (loading) {
     return (
-      <section className="px-4 pt-5">
-        <h2 className="text-[13px] font-semibold text-[#b5b6bd] mb-2">
+      <section className="px-4 pt-7">
+        <h2 className="px-3 text-[14px] font-medium text-[#a7a7ad] mb-3">
           Buy again
         </h2>
         <div className="h-[72px] rounded-2xl bg-[#17181c] animate-pulse" />
@@ -25,8 +25,8 @@ export default function BuyAgainSection({ vehicles = [], loading = false }) {
   if (!vehicles.length) return null;
 
   return (
-    <section className="px-4 pt-5">
-      <h2 className="text-[13px] font-semibold text-[#b5b6bd] mb-2">
+    <section className="px-4 pt-7">
+      <h2 className="px-3 text-[14px] font-medium text-[#a7a7ad] mb-3">
         Buy again
       </h2>
       <div className="space-y-2">
