@@ -63,7 +63,7 @@ import CarClubDetailPage from "../components/customer/CarClubDetailPage";
 import CreateCarClubPage from "../components/customer/CreateCarClubPage";
 import CarClubResourcePage from "../components/customer/CarClubResourcePage";
 import ChatSupportPage from "../components/customer/ChatSupportWidget";
-import Screen, { BackHeader } from "../components/layout/Screen";
+import Screen from "../components/layout/Screen";
 
 const TempForgot = () => (
   <div className="flex items-center justify-center min-h-screen text-white bg-[#060814]">
@@ -153,102 +153,102 @@ export default function AppRouter() {
         >
           <Route index element={<Screen><CustomerHome /></Screen>} />
           <Route path="car-clubs" element={<Screen><CarClubsPage /></Screen>} />
-          <Route path="car-clubs/create" element={<Screen header={<BackHeader title="New car club" />}><CreateCarClubPage /></Screen>} />
-          <Route path="car-clubs/:clubId" element={<Screen header={<BackHeader title="Car club" />}><CarClubDetailPage /></Screen>} />
+          <Route path="car-clubs/create" element={<Screen><CreateCarClubPage /></Screen>} />
+          <Route path="car-clubs/:clubId" element={<Screen><CarClubDetailPage /></Screen>} />
           <Route path="policies" element={<Screen><PoliciesPage /></Screen>} />
           <Route path="profile" element={<Screen><ProfilePage /></Screen>} />
-          <Route path="profile/account" element={<Screen header={<BackHeader title="Account" />}><AccountDetailsPage /></Screen>} />
+          <Route path="profile/account" element={<Screen><AccountDetailsPage /></Screen>} />
           <Route
             path="profile/bank-details"
-            element={<Screen header={<BackHeader title="Bank details" />}><BankAccountDetailsPage /></Screen>}
+            element={<Screen><BankAccountDetailsPage /></Screen>}
           />
-          <Route path="profile/discount-code" element={<Screen header={<BackHeader title="Discount code" />}><DiscountCodePage /></Screen>} />
-          <Route path="profile/discounts" element={<Screen header={<BackHeader title="Your discounts" />}><YourDiscountsPage /></Screen>} />
-          <Route path="profile/refer" element={<Screen header={<BackHeader title="Refer a friend" />}><ReferFriendPage /></Screen>} />
+          <Route path="profile/discount-code" element={<Screen><DiscountCodePage /></Screen>} />
+          <Route path="profile/discounts" element={<Screen><YourDiscountsPage /></Screen>} />
+          <Route path="profile/refer" element={<Screen><ReferFriendPage /></Screen>} />
           
           <Route
             path="profile/account/preferred-name"
-            element={<Screen header={<BackHeader title="Preferred name" />}><PreferredNamePage /></Screen>}
+            element={<Screen><PreferredNamePage /></Screen>}
           />
-          <Route path="profile/account/email" element={<Screen header={<BackHeader title="Email address" />}><EmailAddressPage /></Screen>} />
-          <Route path="profile/account/email/add" element={<Screen header={<BackHeader title="Add email" />}><AddEmailPage /></Screen>} />
-          <Route path="profile/account/mobile" element={<Screen header={<BackHeader title="Mobile number" />}><MobileNumberPage /></Screen>} />
+          <Route path="profile/account/email" element={<Screen><EmailAddressPage /></Screen>} />
+          <Route path="profile/account/email/add" element={<Screen><AddEmailPage /></Screen>} />
+          <Route path="profile/account/mobile" element={<Screen><MobileNumberPage /></Screen>} />
           <Route
             path="profile/account/mobile/add"
-            element={<Screen header={<BackHeader title="Add mobile number" />}><AddMobileNumberPage /></Screen>}
+            element={<Screen><AddMobileNumberPage /></Screen>}
           />
           <Route
             path="profile/account/connected"
-            element={<Screen header={<BackHeader title="Connected accounts" />}><ConnectedAccountsPage /></Screen>}
+            element={<Screen><ConnectedAccountsPage /></Screen>}
           />
-          <Route path="profile/account/identity" element={<Screen header={<BackHeader title="Identity" />}><MyIdentityPage /></Screen>} />
+          <Route path="profile/account/identity" element={<Screen><MyIdentityPage /></Screen>} />
           <Route
             path="profile/account/address"
-            element={<Screen header={<BackHeader title="Residential address" />}><ResidentialAddressPage /></Screen>}
+            element={<Screen><ResidentialAddressPage /></Screen>}
           />
           <Route
             path="profile/account/marketing"
-            element={<Screen header={<BackHeader title="Marketing preferences" />}><MarketingPreferencesPage /></Screen>}
+            element={<Screen><MarketingPreferencesPage /></Screen>}
           />
           <Route
             path="profile/account/delete"
-            element={<Screen header={<BackHeader title="Delete account" />}><DeleteAccountInfoPage /></Screen>}
+            element={<Screen><DeleteAccountInfoPage /></Screen>}
           />
           <Route
             path="profile/account/incidents"
-            element={<Screen header={<BackHeader title="Previous incidents" />}><PreviousIncidentsPage /></Screen>}
+            element={<Screen><PreviousIncidentsPage /></Screen>}
           />
-          <Route path="profile/legal" element={<Screen header={<BackHeader title="Legal" />}><LegalPage /></Screen>} />
-          <Route path="profile/legal/privacy" element={<Screen header={<BackHeader title="Privacy policy" />}><PrivacyPolicyPage /></Screen>} />
-          <Route path="profile/legal/terms" element={<Screen header={<BackHeader title="Terms" />}><TermsPage /></Screen>} />
-          <Route path="profile/legal/fon" element={<Screen header={<BackHeader title="Fair usage" />}><FonPage /></Screen>} />
+          <Route path="profile/legal" element={<Screen><LegalPage /></Screen>} />
+          <Route path="profile/legal/privacy" element={<Screen><PrivacyPolicyPage /></Screen>} />
+          <Route path="profile/legal/terms" element={<Screen><TermsPage /></Screen>} />
+          <Route path="profile/legal/fon" element={<Screen><FonPage /></Screen>} />
         </Route>
         
-        <Route path="/customer/policies/new" element={<Screen header={<BackHeader title="New policy" />}><PolicyQuotePage /></Screen>} />
+        <Route path="/customer/policies/new" element={<Screen><PolicyQuotePage /></Screen>} />
         <Route
           path="/customer/policies/documents"
-          element={<Screen header={<BackHeader title="Policy documents" />}><PolicyDocumentsPage /></Screen>}
+          element={<Screen><PolicyDocumentsPage /></Screen>}
         />
         <Route
           path="/customer/policies/documents/ipid"
-          element={<Screen header={<BackHeader title="Insurance summary" />}><InsuranceSummaryPage /></Screen>}
+          element={<Screen><InsuranceSummaryPage /></Screen>}
         />
         <Route
           path="/customer/policies/documents/wording"
-          element={<Screen header={<BackHeader title="Policy wording" />}><PolicyWordingPage /></Screen>}
+          element={<Screen><PolicyWordingPage /></Screen>}
         />
         <Route
           path="/customer/policies/photos/:step"
-          element={<Screen header={<BackHeader title="Photos" />}><VehiclePhotoCapturePage /></Screen>}
+          element={<Screen><VehiclePhotoCapturePage /></Screen>}
         />
         <Route
           path="/customer/policies/photos/:step/camera"
-          element={<Screen header={<BackHeader title="Camera" />}><VehicleCameraCapturePage /></Screen>}
+          element={<Screen><VehicleCameraCapturePage /></Screen>}
         />
         
         <Route
           path="/customer/car-clubs/resources/:resourceId"
-          element={<Screen header={<BackHeader title="Resource" />}><CarClubResourcePage /></Screen>}
+          element={<Screen><CarClubResourcePage /></Screen>}
         />
         
         <Route path="/customer/support" element={<Screen><ChatSupportPage /></Screen>} />
         <Route
           path="/customer/policies/detail"
-          element={<Screen header={<BackHeader title="Policy details" />}><CustomerPolicyDetailPage /></Screen>}
+          element={<Screen><CustomerPolicyDetailPage /></Screen>}
         />
         <Route
           path="/customer/policies/receipt"
-          element={<Screen header={<BackHeader title="Receipt" />}><PolicyReceiptPage /></Screen>}
+          element={<Screen><PolicyReceiptPage /></Screen>}
         />
-        <Route path="/customer/policies/claim" element={<Screen header={<BackHeader title="Make a claim" />}><MakeAClaimPage /></Screen>} />
+        <Route path="/customer/policies/claim" element={<Screen><MakeAClaimPage /></Screen>} />
         <Route
           path="/customer/policies/mechanic"
-          element={<Screen header={<BackHeader title="Book a mechanic" />}><BookMechanicPage /></Screen>}
+          element={<Screen><BookMechanicPage /></Screen>}
         />
         
         <Route
           path="/customer/profile/account/incidents/add"
-          element={<Screen header={<BackHeader title="Add incident" />}><AddIncidentPage /></Screen>}
+          element={<Screen><AddIncidentPage /></Screen>}
         />
         
         <Route
