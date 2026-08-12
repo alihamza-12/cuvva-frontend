@@ -4,6 +4,7 @@ import { httpClient } from "../../app/api/httpClient";
 import CurrencyInput from "../../components/common/CurrencyInput";
 import MaskedDateInput from "../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../components/common/MaskedTimeInput";
+import { normalizeTime } from "../../utils/normalizeTime";
 
 function Field({ label, children }) {
   return (
@@ -114,6 +115,23 @@ export default function CreatePolicyPage() {
       return;
     }
 
+    const normalizedStartTime = normalizeTime(form.startTime);
+    const normalizedEndTime = normalizeTime(form.endTime);
+
+    if (normalizedStartTime === null || normalizedEndTime === null) {
+      setError("Enter a valid time (e.g. 09:30 or 5 PM)");
+      return;
+    }
+
+    if (
+      form.startDate === form.endDate &&
+      normalizedEndTime <= normalizedStartTime
+    ) {
+      setError("End time must be after start time");
+      return;
+    }
+
+
     setSubmitting(true);
     try {
       const payload = {
@@ -122,8 +140,8 @@ export default function CreatePolicyPage() {
         premiumAmount: form.premiumAmount,
         startDate: form.startDate,
         endDate: form.endDate,
-        startTime: form.startTime,
-        endTime: form.endTime,
+        startTime: normalizedStartTime,
+        endTime: normalizedEndTime,
         policyType: form.policyType,
         coverageType: form.coverageType,
         underwriter: form.underwriter,

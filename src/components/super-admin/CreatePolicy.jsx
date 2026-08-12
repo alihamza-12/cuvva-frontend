@@ -10,6 +10,7 @@ import {
 import CurrencyInput from "../common/CurrencyInput";
 import MaskedDateInput from "../common/MaskedDateInput";
 import MaskedTimeInput from "../common/MaskedTimeInput";
+import { normalizeTime } from "../../utils/normalizeTime";
 
 export default function CreatePolicy({
   axiosInstance,
@@ -94,6 +95,23 @@ export default function CreatePolicy({
     e.preventDefault();
     setFormError("");
     setFormSuccess("");
+    const normalizedStartTime = normalizeTime(form.startTime);
+    const normalizedEndTime = normalizeTime(form.endTime);
+
+    if (normalizedStartTime === null || normalizedEndTime === null) {
+      setFormError("Enter a valid time (e.g. 09:30 or 5 PM)");
+      return;
+    }
+
+    if (
+      form.startDate === form.endDate &&
+      normalizedEndTime <= normalizedStartTime
+    ) {
+      setFormError("End time must be after start time");
+      return;
+    }
+
+
     setSubmitting(true);
 
     const payload = {
@@ -103,8 +121,8 @@ export default function CreatePolicy({
       premiumAmount: form.premiumAmount,
       startDate: form.startDate,
       endDate: form.endDate,
-      startTime: form.startTime,
-      endTime: form.endTime,
+      startTime: normalizedStartTime,
+      endTime: normalizedEndTime,
       policyType: form.policyType,
       coverageType: form.coverageType,
       underwriter: form.underwriter,
