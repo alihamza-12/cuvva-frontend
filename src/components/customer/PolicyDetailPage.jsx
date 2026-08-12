@@ -45,51 +45,6 @@ export default function PolicyDetailPage() {
       ? `${ownerFirstName}'s ${vehicle.make} ${vehicle.model || ""}`.trim()
       : `${vehicle?.make || ""} ${vehicle?.model || ""}`.trim() || "Vehicle";
 
-  const combineDateAndTime = (dateValue, timeValue) => {
-    if (!dateValue) return null;
-    const datePart = new Date(dateValue);
-    if (Number.isNaN(datePart.getTime())) return null;
-    const combined = new Date(datePart);
-    if (timeValue && /^\d{1,2}:\d{2}$/.test(timeValue)) {
-      const [hours, minutes] = timeValue.split(":").map(Number);
-      combined.setUTCHours(hours, minutes, 0, 0);
-    }
-    return combined;
-  };
-
-  const start = combineDateAndTime(policy?.startDate, policy?.startTime);
-  let end = combineDateAndTime(policy?.endDate, policy?.endTime);
-  if (start && end && end <= start) {
-    end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
-  }
-
-  const formatTime = (d) =>
-    d
-      ? d.toLocaleTimeString(undefined, {
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true,
-        })
-      : "--";
-
-  const formatDayDate = (d) =>
-    d
-      ? d.toLocaleDateString(undefined, {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        })
-      : "";
-
-  const durationLabel = (() => {
-    if (!start || !end) return "";
-    const totalMinutes = Math.round((end - start) / (1000 * 60));
-    if (totalMinutes < 60) return `${totalMinutes}m`;
-    const hours = Math.round(totalMinutes / 60);
-    return `${hours}h`;
-  })();
-
   const dynamicStatus = policy?.status || "Upcoming";
 
   const showBadge = dynamicStatus === "Active" || dynamicStatus === "Upcoming";
@@ -199,10 +154,10 @@ export default function PolicyDetailPage() {
           <div>
             <p className="text-[12px] text-[#9497a1]">Start</p>
             <p className="text-[19px] font-extrabold text-white mt-0.5">
-              {formatTime(start)}
+              {policy.startTime}
             </p>
             <p className="text-[12px] text-[#9497a1] mt-0.5">
-              {formatDayDate(start)}
+              {new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric", year: "numeric" }).format(new Date(policy.startDate))}
             </p>
           </div>
 
@@ -210,7 +165,7 @@ export default function PolicyDetailPage() {
             <div className="w-px h-4 bg-white/10" />
             <div className="flex items-center gap-1 text-[12px] text-[#9497a1]">
               <Timer size={13} className="text-[#9497a1]" />
-              <span>{durationLabel}</span>
+              <span>{(() => { const [sh, sm] = String(policy.startTime).split(":").map(Number); const [eh, em] = String(policy.endTime).split(":").map(Number); return `${eh * 60 + em - (sh * 60 + sm)}m`; })()}</span>
             </div>
             <div className="w-px h-4 bg-white/10" />
           </div>
@@ -218,10 +173,10 @@ export default function PolicyDetailPage() {
           <div className="text-right">
             <p className="text-[12px] text-[#9497a1]">End</p>
             <p className="text-[19px] font-extrabold text-white mt-0.5">
-              {formatTime(end)}
+              {policy.endTime}
             </p>
             <p className="text-[12px] text-[#9497a1] mt-0.5">
-              {formatDayDate(end)}
+              {new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric", year: "numeric" }).format(new Date(policy.endDate))}
             </p>
           </div>
         </div>
