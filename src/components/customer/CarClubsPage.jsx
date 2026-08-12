@@ -43,7 +43,7 @@ export default function CarClubsPage() {
   };
 
   return (
-    <div className="min-h-screen pb-32 text-white bg-black">
+    <div className="text-white pb-32">
       <div className="flex items-start justify-end px-4 pt-3 min-h-12">
         <div className="flex items-center gap-2">
           <button

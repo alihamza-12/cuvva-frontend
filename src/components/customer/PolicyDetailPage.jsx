@@ -148,7 +148,7 @@ export default function PolicyDetailPage() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-black">
+    <div className="text-white">
 
       <div className="sticky top-0 z-10 px-4 pt-4 pb-2 bg-black/95 backdrop-blur-sm">
         <button

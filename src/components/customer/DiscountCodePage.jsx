@@ -35,7 +35,7 @@ export default function DiscountCodePage() {
   };
 
   return (
-    <div className="relative flex flex-col min-h-screen text-white bg-black">
+    <div className="relative flex flex-col text-white">
 
       <div className="relative z-10 flex items-center justify-between px-4 pt-4">
         <button

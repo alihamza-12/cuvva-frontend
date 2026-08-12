@@ -29,7 +29,7 @@ export default function MyIdentityPage() {
   };
 
   return (
-    <div className="min-h-screen pb-40 text-white bg-black">
+    <div className="text-white pb-40">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"

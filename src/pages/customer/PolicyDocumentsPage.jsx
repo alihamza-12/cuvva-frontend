@@ -29,7 +29,7 @@ export default function PolicyDocumentsPage() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-black">
+    <div className="text-white">
 
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <button

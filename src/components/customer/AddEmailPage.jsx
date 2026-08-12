@@ -65,7 +65,7 @@ export default function AddEmailPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen text-white bg-black">
+    <div className="flex flex-col text-white">
 
       <div className="flex items-center justify-between px-4 pt-4">
         <button

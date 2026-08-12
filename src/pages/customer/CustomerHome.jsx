@@ -169,7 +169,7 @@ export default function CustomerHome() {
   }, []);
 
   return (
-    <div className="min-h-screen pb-32 text-white bg-black">
+    <div className="text-white pb-32">
       {/*
        * The action button remains near the top.
        * The page heading is displayed underneath it.

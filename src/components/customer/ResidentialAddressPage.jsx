@@ -34,7 +34,7 @@ export default function ResidentialAddressPage() {
 
   return (
 
-    <div className="min-h-screen bg-black text-white pb-40">
+    <div className="text-white pb-40">
       <div className="flex items-center px-4 pt-4">
         <button
           type="button"

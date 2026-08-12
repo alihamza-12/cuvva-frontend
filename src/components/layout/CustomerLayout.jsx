@@ -4,7 +4,7 @@ import CustomerBottomNav from "../customer/CustomerBottomNav";
 
 export default function CustomerLayout() {
   return (
-    <div className="customer-app-shell">
+    <div>
       <Outlet />
       <CustomerBottomNav />
     </div>

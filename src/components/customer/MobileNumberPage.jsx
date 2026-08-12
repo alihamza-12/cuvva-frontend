@@ -18,7 +18,7 @@ export default function MobileNumberPage() {
   };
 
   return (
-    <div className="min-h-screen pb-10 text-white bg-black">
+    <div className="text-white pb-10">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"

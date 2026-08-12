@@ -122,7 +122,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen pb-32 text-white bg-black">
+    <div className="text-white pb-32">
       <div className="flex items-start justify-end px-4 pt-3 min-h-12">
         <button
           type="button"

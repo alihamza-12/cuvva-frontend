@@ -134,7 +134,7 @@ export default function PolicyQuotePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen text-white bg-black">
+    <div className="flex flex-col text-white">
 
       <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-black/95 backdrop-blur-sm">
         <button

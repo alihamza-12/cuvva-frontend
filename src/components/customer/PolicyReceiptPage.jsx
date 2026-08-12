@@ -46,7 +46,7 @@ export default function PolicyReceiptPage() {
     : "—";
 
   return (
-    <div className="min-h-screen text-white bg-black">
+    <div className="text-white">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4">
         <button
