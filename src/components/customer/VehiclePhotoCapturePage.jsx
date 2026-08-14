@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, HelpCircle, X, Check } from "lucide-react";
 
@@ -47,11 +46,14 @@ export default function VehiclePhotoCapturePage() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        // This page is rendered inside Screen, which already adds top safe-area
+        // spacing. Subtract it so the bottom action stays inside the viewport.
+        minHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 1rem)",
         background: "#0e0e12",
         color: "#fff",
         display: "flex",
         flexDirection: "column",
+        boxSizing: "border-box",
       }}
     >
 
@@ -151,7 +153,13 @@ export default function VehiclePhotoCapturePage() {
         </p>
       </div>
 
-      <div style={{ padding: "0 24px 40px 24px" }}>
+      <div
+        style={{
+          padding:
+            "0 24px max(32px, calc(env(safe-area-inset-bottom, 0px) + 16px)) 24px",
+          flexShrink: 0,
+        }}
+      >
         <button
           type="button"
           onClick={handleOpenCamera}

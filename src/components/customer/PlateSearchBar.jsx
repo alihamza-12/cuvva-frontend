@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
+  AlertCircle,
   Loader2,
   Search,
 } from "lucide-react";
@@ -8,7 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import {
-  getVehicleByRegistration,
+  getExternalVehicleByRegistration,
 } from "../../app/api/vehicleApi";
 
 const RECENTLY_VIEWED_KEY =
@@ -27,8 +28,26 @@ export default function PlateSearchBar({
   const [loading, setLoading] =
     useState(false);
 
-  const [error, setError] =
-    useState("");
+  const [showNotFoundModal, setShowNotFoundModal] =
+    useState(false);
+
+  useEffect(() => {
+    if (!showNotFoundModal) {
+      return undefined;
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setShowNotFoundModal(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showNotFoundModal]);
 
   const saveToRecentlyViewed = (
     vehicle
@@ -77,11 +96,11 @@ export default function PlateSearchBar({
     }
 
     setLoading(true);
-    setError("");
+    setShowNotFoundModal(false);
 
     try {
       const response =
-        await getVehicleByRegistration(
+        await getExternalVehicleByRegistration(
           cleaned
         );
 
@@ -89,10 +108,7 @@ export default function PlateSearchBar({
         response.data?.vehicle;
 
       if (!vehicle) {
-        setError(
-          "We couldn't find that vehicle. Please check the plate and try again."
-        );
-
+        setShowNotFoundModal(true);
         return;
       }
 
@@ -108,12 +124,8 @@ export default function PlateSearchBar({
           },
         }
       );
-    } catch (requestError) {
-      setError(
-        requestError.response?.data
-          ?.message ||
-          "We couldn't find that vehicle. Please check the plate and try again."
-      );
+    } catch {
+      setShowNotFoundModal(true);
     } finally {
       setLoading(false);
     }
@@ -183,11 +195,94 @@ export default function PlateSearchBar({
         </div>
       </form>
 
-      {error && (
-        <div className="mt-2 px-1 text-[12px] text-red-400">
-          {error}
-        </div>
+      {showNotFoundModal && (
+        <VehicleNotFoundModal
+          onClose={() =>
+            setShowNotFoundModal(false)
+          }
+        />
       )}
+    </div>
+  );
+}
+
+function VehicleNotFoundModal({ onClose }) {
+  return (
+    <div
+      className="
+        fixed inset-0 z-[100]
+        flex items-center justify-center
+        bg-black/80
+        px-6
+        backdrop-blur-[2px]
+      "
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="vehicle-not-found-title"
+      aria-describedby="vehicle-not-found-description"
+    >
+      <div
+        className="
+          w-full max-w-[370px]
+          rounded-[28px]
+          border border-white/[0.04]
+          bg-[#1d1d23]
+          px-6 pb-6 pt-10
+          text-center
+          shadow-[0_24px_80px_rgba(0,0,0,0.55)]
+        "
+      >
+        <div
+          className="
+            mx-auto
+            flex h-[86px] w-[86px]
+            items-center justify-center
+            rounded-full
+            bg-gradient-to-br
+            from-[#9a6cff]
+            to-[#633cff]
+            shadow-[0_12px_0_-5px_#352485]
+          "
+        >
+          <AlertCircle
+            size={49}
+            strokeWidth={2.5}
+            className="text-white"
+          />
+        </div>
+
+        <h2
+          id="vehicle-not-found-title"
+          className="mt-8 text-[25px] font-extrabold text-white"
+        >
+          Oh no!
+        </h2>
+
+        <p
+          id="vehicle-not-found-description"
+          className="mx-auto mt-5 max-w-[290px] text-[17px] leading-[1.45] text-[#b8b8c0]"
+        >
+          That reg plate doesn&apos;t look right. Please check it and try again.
+        </p>
+
+        <button
+          type="button"
+          autoFocus
+          onClick={onClose}
+          className="
+            mt-8 w-full
+            rounded-full
+            bg-[#7961ff]
+            px-5 py-4
+            text-[17px] font-bold text-white
+            transition-colors
+            hover:bg-[#846eff]
+            active:bg-[#6c53ed]
+          "
+        >
+          Close
+        </button>
+      </div>
     </div>
   );
 }
