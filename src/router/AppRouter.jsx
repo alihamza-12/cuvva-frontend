@@ -23,7 +23,7 @@ import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 import CustomerHome from "../pages/customer/CustomerHome";
 import CustomerLayout from "../components/layout/CustomerLayout";
 import PolicyQuotePage from "../pages/customer/PolicyQuotePage";
-import VehicleLookupResultPage from "../pages/customer/VehicleLookupResultPage";
+import VehicleLookupResultPage from "../components/customer/VehicleLookupResultPage";
 import PolicyDocumentsPage from "../pages/customer/PolicyDocumentsPage";
 import InsuranceSummaryPage from "../components/customer/InsuranceSummaryPage";
 import PolicyWordingPage from "../components/customer/PolicyWordingPage";
