@@ -15,7 +15,7 @@ import {
 const RECENTLY_VIEWED_KEY =
   "customer_recently_viewed_vehicles";
 
-const MAX_RECENT = 10;
+const MAX_RECENT = 50;
 
 export default function PlateSearchBar({
   onVehicleFound,

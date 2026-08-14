@@ -3,9 +3,48 @@ import { httpClient } from "./httpClient";
 const REGCHECK_URL = "https://www.regcheck.org.uk/api/reg.asmx/Check";
 const REGCHECK_USERNAME =
   import.meta.env?.VITE_REGCHECK_USERNAME || "jackcanada123";
+const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
+const MAX_CACHED_VEHICLES = 50;
 
 const cleanRegistration = (registration) =>
   (registration || "").trim().toUpperCase().replace(/\s+/g, "");
+
+const readCachedVehicles = () => {
+  try {
+    const stored = JSON.parse(
+      localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]",
+    );
+
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+};
+
+const getCachedVehicle = (registration) =>
+  readCachedVehicles().find(
+    (vehicle) =>
+      cleanRegistration(vehicle?.registration) === registration &&
+      (vehicle?.make || vehicle?.model),
+  );
+
+const saveVehicleToCache = (vehicle) => {
+  try {
+    const cachedVehicles = readCachedVehicles();
+    const next = [
+      vehicle,
+      ...cachedVehicles.filter(
+        (cachedVehicle) =>
+          cleanRegistration(cachedVehicle?.registration) !==
+          vehicle.registration,
+      ),
+    ].slice(0, MAX_CACHED_VEHICLES);
+
+    localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
+  } catch {
+    // A storage failure must not stop a successful vehicle lookup.
+  }
+};
 
 const currentTextValue = (value) => {
   if (typeof value === "string") {
@@ -84,6 +123,9 @@ const normalizeRegCheckVehicle = (rawVehicle, registration) => {
     abiCode: rawVehicle.ABICode || "",
     imageUrl: rawVehicle.ImageUrl || "",
     lookupSource: "regcheck",
+    // Keep the complete provider response so future visits can reuse it
+    // without making another RegCheck request.
+    regCheckData: rawVehicle,
   };
 };
 
@@ -97,6 +139,21 @@ export const getExternalVehicleByRegistration = async (registration) => {
 
   if (!cleaned) {
     throw createLookupError("Please enter a registration number.", 400);
+  }
+
+  const cachedVehicle = getCachedVehicle(cleaned);
+
+  if (cachedVehicle) {
+    // Move the selected vehicle to the front of Recently viewed.
+    saveVehicleToCache(cachedVehicle);
+
+    return {
+      data: {
+        vehicle: cachedVehicle,
+      },
+      status: 200,
+      fromCache: true,
+    };
   }
 
   if (!REGCHECK_USERNAME) {
@@ -166,12 +223,14 @@ export const getExternalVehicleByRegistration = async (registration) => {
   }
 
   const vehicle = normalizeRegCheckVehicle(rawVehicle, cleaned);
+  saveVehicleToCache(vehicle);
 
   return {
     data: {
       vehicle,
     },
     status: response.status,
+    fromCache: false,
   };
 };
 

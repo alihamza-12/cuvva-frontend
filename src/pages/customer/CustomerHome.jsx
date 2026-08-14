@@ -1,4 +1,4 @@
-import React, {
+import {
   useCallback,
   useEffect,
   useState,
@@ -16,7 +16,19 @@ import { httpClient } from "../../app/api/httpClient";
 const RECENTLY_VIEWED_KEY =
   "customer_recently_viewed_vehicles";
 
-const MAX_RECENT = 10;
+const MAX_RECENT = 50;
+
+const getStoredRecentlyViewed = () => {
+  try {
+    const stored = JSON.parse(
+      localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]"
+    );
+
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+};
 
 export default function CustomerHome() {
   const navigate = useNavigate();
@@ -25,7 +37,7 @@ export default function CustomerHome() {
     useState(false);
 
   const [recentlyViewed, setRecentlyViewed] =
-    useState([]);
+    useState(getStoredRecentlyViewed);
 
   const [buyAgainVehicles, setBuyAgainVehicles] =
     useState([]);
@@ -37,22 +49,6 @@ export default function CustomerHome() {
     setShowDropdown(false);
     navigate("/customer/support");
   };
-
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(
-        localStorage.getItem(
-          RECENTLY_VIEWED_KEY
-        ) || "[]"
-      );
-
-      setRecentlyViewed(
-        Array.isArray(stored) ? stored : []
-      );
-    } catch {
-      setRecentlyViewed([]);
-    }
-  }, []);
 
   const handleVehicleFound = useCallback(
     (vehicle) => {
@@ -169,7 +165,7 @@ export default function CustomerHome() {
   }, []);
 
   return (
-    <div className="text-white pb-32">
+    <div className="pb-32 text-white">
       {/*
        * The action button remains near the top.
        * The page heading is displayed underneath it.

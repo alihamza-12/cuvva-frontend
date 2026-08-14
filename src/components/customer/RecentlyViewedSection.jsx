@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import CarBrandIcon from "./CarBrandIcon";
@@ -9,8 +8,8 @@ export default function RecentlyViewedSection({ vehicles = [], onDismiss }) {
   if (!vehicles.length) return null;
 
   const handleSelect = (vehicle) => {
-    navigate(`/customer/policies/new?vehicleId=${vehicle._id}`, {
-      state: { prefillVehicle: vehicle },
+    navigate("/customer/vehicles/lookup-result", {
+      state: { vehicle },
     });
   };
 
@@ -31,7 +30,11 @@ export default function RecentlyViewedSection({ vehicles = [], onDismiss }) {
               onClick={() => handleSelect(vehicle)}
               className="w-full min-h-[76px] flex items-center gap-3 bg-[#1b1c21] hover:bg-[#202126] active:scale-[0.99] transition-all rounded-[22px] px-4 py-3.5 text-left"
             >
-              <CarBrandIcon make={vehicle.make} size={38} />
+              <CarBrandIcon
+                make={vehicle.make}
+                imageUrl={vehicle.imageUrl}
+                size={38}
+              />
               <div className="min-w-0">
                 <div className="text-[13px] font-semibold text-white truncate">
                   {vehicle.ownerLabel || `${vehicle.make} ${vehicle.model}`}
