@@ -1,8 +1,16 @@
 import { httpClient } from "./httpClient";
 
 const REGCHECK_URL = "https://www.regcheck.org.uk/api/reg.asmx/Check";
-const REGCHECK_USERNAME =
-  import.meta.env?.VITE_REGCHECK_USERNAME || "jackcanada123";
+const REGCHECK_CREDITS_URL =
+  "https://www.regcheck.org.uk/ajax/getcredits.aspx";
+
+const REGCHECK_USERNAMES = [
+  import.meta.env?.VITE_REGCHECK_USERNAME || "jackcanada123",
+  "jackcanada12",
+  "jackcanada1",
+  "jackcanada01",
+].filter(Boolean);
+
 const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
 const MAX_CACHED_VEHICLES = 50;
 
@@ -71,6 +79,85 @@ const createLookupError = (message, status) => {
   };
 
   return error;
+};
+
+const getCreditBalance = async (username) => {
+  try {
+    const params = new URLSearchParams({ username });
+    const response = await fetch(
+      `${REGCHECK_CREDITS_URL}?${params.toString()}`,
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const balance = Number((await response.text()).trim());
+    return Number.isFinite(balance) ? balance : null;
+  } catch {
+    // If the balance endpoint is temporarily unavailable, allow the normal
+    // vehicle request to decide whether this account can be used.
+    return null;
+  }
+};
+
+const requestRegCheckVehicle = async (registration) => {
+  let exhaustedAccountFound = false;
+
+  for (const username of REGCHECK_USERNAMES) {
+    const params = new URLSearchParams({
+      RegistrationNumber: registration,
+      username,
+    });
+
+    let response;
+
+    try {
+      response = await fetch(`${REGCHECK_URL}?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/xml, text/xml, */*",
+        },
+      });
+    } catch {
+      throw createLookupError(
+        "Vehicle lookup is unavailable right now. Please try again.",
+      );
+    }
+
+    if (response.ok) {
+      return response;
+    }
+
+    // Authentication, authorization, and throttling failures can be tied to
+    // one account, so try the next configured username.
+    if ([401, 403, 429].includes(response.status)) {
+      continue;
+    }
+
+    // RegCheck can return status 500 both for an invalid registration and an
+    // exhausted account. Check the balance only after a failed lookup so free
+    // provider test plates can still work when the paid balance is zero.
+    if (response.status >= 500) {
+      const remainingBalance = await getCreditBalance(username);
+
+      if (remainingBalance !== null && remainingBalance <= 0) {
+        exhaustedAccountFound = true;
+        continue;
+      }
+    }
+
+    // The account still has credit, so this is most likely a bad/unknown plate;
+    // do not waste requests by sending it through every other account.
+    return response;
+  }
+
+  throw createLookupError(
+    exhaustedAccountFound
+      ? "All configured vehicle lookup accounts are out of credits."
+      : "Vehicle lookup is unavailable right now. Please try again.",
+    503,
+  );
 };
 
 const normalizeRegCheckVehicle = (rawVehicle, registration) => {
@@ -156,32 +243,14 @@ export const getExternalVehicleByRegistration = async (registration) => {
     };
   }
 
-  if (!REGCHECK_USERNAME) {
+  if (!REGCHECK_USERNAMES.length) {
     throw createLookupError(
       "Vehicle lookup is not configured. Please contact support.",
       500,
     );
   }
 
-  const params = new URLSearchParams({
-    RegistrationNumber: cleaned,
-    username: REGCHECK_USERNAME,
-  });
-
-  let response;
-
-  try {
-    response = await fetch(`${REGCHECK_URL}?${params.toString()}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/xml, text/xml, */*",
-      },
-    });
-  } catch {
-    throw createLookupError(
-      "Vehicle lookup is unavailable right now. Please try again.",
-    );
-  }
+  const response = await requestRegCheckVehicle(cleaned);
 
   if (!response.ok) {
     throw createLookupError(
