@@ -278,6 +278,7 @@ export default function VehicleCameraCapturePage() {
         style={{
           background: "#000",
           padding: "24px 24px 32px 24px",
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 32px)",
           textAlign: "center",
         }}
       >

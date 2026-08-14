@@ -80,7 +80,7 @@ export default function StatementsConfirmationModal({
   return (
     <div className="fixed inset-0 z-[60] bg-[#0b0b0e] flex flex-col">
 
-      <h1 className="shrink-0 text-[26px] font-extrabold text-white leading-tight px-6 pt-4 pb-4">
+      <h1 className="shrink-0 text-[26px] font-extrabold text-white leading-tight px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4">
         Are all of these statements true and correct?
       </h1>
 
