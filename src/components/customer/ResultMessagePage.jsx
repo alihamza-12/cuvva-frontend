@@ -179,7 +179,7 @@ export function ResultMessageView({
   );
 }
 
-function BarrierIcon() {
+export function BarrierIcon() {
   return (
     <svg width="130" height="115" viewBox="0 0 200 170" fill="none">
       

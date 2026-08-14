@@ -23,6 +23,7 @@ import { SubAdminLayout } from "../components/layout/SubAdminLayout";
 import CustomerHome from "../pages/customer/CustomerHome";
 import CustomerLayout from "../components/layout/CustomerLayout";
 import PolicyQuotePage from "../pages/customer/PolicyQuotePage";
+import VehicleLookupResultPage from "../pages/customer/VehicleLookupResultPage";
 import PolicyDocumentsPage from "../pages/customer/PolicyDocumentsPage";
 import InsuranceSummaryPage from "../components/customer/InsuranceSummaryPage";
 import PolicyWordingPage from "../components/customer/PolicyWordingPage";
@@ -205,6 +206,10 @@ export default function AppRouter() {
         </Route>
         
         <Route path="/customer/policies/new" element={<Screen><PolicyQuotePage /></Screen>} />
+        <Route
+          path="/customer/vehicles/lookup-result"
+          element={<VehicleLookupResultPage />}
+        />
         <Route
           path="/customer/policies/documents"
           element={<Screen><PolicyDocumentsPage /></Screen>}

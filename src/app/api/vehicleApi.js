@@ -68,6 +68,20 @@ const normalizeRegCheckVehicle = (rawVehicle, registration) => {
     engineCapacityCC,
     bodyStyle: currentTextValue(rawVehicle.BodyStyle),
     variant: rawVehicle.Variant || "",
+    transmission: currentTextValue(rawVehicle.Transmission),
+    numberOfDoors: optionalNumber(
+      currentTextValue(rawVehicle.NumberOfDoors),
+    ),
+    numberOfSeats: optionalNumber(
+      currentTextValue(rawVehicle.NumberOfSeats),
+    ),
+    vehicleInsuranceGroup: optionalNumber(
+      rawVehicle.VehicleInsuranceGroup,
+    ),
+    vehicleInsuranceGroupOutOf: optionalNumber(
+      rawVehicle.VehicleInsuranceGroupOutOf,
+    ),
+    abiCode: rawVehicle.ABICode || "",
     imageUrl: rawVehicle.ImageUrl || "",
     lookupSource: "regcheck",
   };
@@ -83,6 +97,13 @@ export const getExternalVehicleByRegistration = async (registration) => {
 
   if (!cleaned) {
     throw createLookupError("Please enter a registration number.", 400);
+  }
+
+  if (!REGCHECK_USERNAME) {
+    throw createLookupError(
+      "Vehicle lookup is not configured. Please contact support.",
+      500,
+    );
   }
 
   const params = new URLSearchParams({

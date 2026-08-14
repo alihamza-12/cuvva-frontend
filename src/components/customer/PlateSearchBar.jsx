@@ -117,10 +117,10 @@ export default function PlateSearchBar({
       onVehicleFound?.(vehicle);
 
       navigate(
-        `/customer/policies/new?vehicleId=${vehicle._id}`,
+        "/customer/vehicles/lookup-result",
         {
           state: {
-            prefillVehicle: vehicle,
+            vehicle,
           },
         }
       );
