@@ -13,3 +13,7 @@ export const getPolicyDocument = async (id) => {
     responseType: "blob",
   });
 };
+
+export const getPolicyDocumentData = async (id) => {
+  return httpClient.get(`/api/policies/${id}/document-data`);
+};
