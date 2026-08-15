@@ -27,6 +27,7 @@ import VehicleLookupResultPage from "../components/customer/VehicleLookupResultP
 import PolicyDocumentsPage from "../pages/customer/PolicyDocumentsPage";
 import InsuranceSummaryPage from "../components/customer/InsuranceSummaryPage";
 import PolicyWordingPage from "../components/customer/PolicyWordingPage";
+import PolicyCertificatePage from "../components/customer/PolicyCertificatePage";
 import VehiclePhotoCapturePage from "../components/customer/VehiclePhotoCapturePage";
 import VehicleCameraCapturePage from "../components/customer/VehicleCameraCapturePage";
 import CarClubsPage from "../components/customer/CarClubsPage";
@@ -213,6 +214,14 @@ export default function AppRouter() {
         <Route
           path="/customer/policies/documents"
           element={<Screen><PolicyDocumentsPage /></Screen>}
+        />
+        <Route
+          path="/customer/policies/:policyId/documents"
+          element={<Screen><PolicyDocumentsPage /></Screen>}
+        />
+        <Route
+          path="/customer/policies/:policyId/documents/certificate"
+          element={<PolicyCertificatePage />}
         />
         <Route
           path="/customer/policies/documents/ipid"

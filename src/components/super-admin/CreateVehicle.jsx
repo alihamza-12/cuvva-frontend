@@ -11,6 +11,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
     model: "",
     colour: "",
     year: "",
+    vehicleIdentificationNumber: "",
 
     fuelType: "PETROL",
     engineCapacityCC: "",
@@ -37,6 +38,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
       "model",
       "colour",
       "year",
+      "vehicleIdentificationNumber",
       "fuelType",
       "engineCapacityCC",
       "powerBHP",
@@ -86,6 +88,8 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
         model: form.model.trim(),
         colour: (form.colour || "").trim(),
         year: parseInt(form.year, 10),
+        vehicleIdentificationNumber:
+          form.vehicleIdentificationNumber.trim().toUpperCase(),
         fuelType: form.fuelType,
 
         engineCapacityCC: toNumberOrUndefined(form.engineCapacityCC),
@@ -115,6 +119,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
         model: "",
         colour: "",
         year: "",
+        vehicleIdentificationNumber: "",
         fuelType: "PETROL",
       });
 
@@ -168,6 +173,25 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
               }
               placeholder="KV16WYZ"
               className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
+              Vehicle Identification Number (VIN)
+            </label>
+            <input
+              type="text"
+              required
+              value={form.vehicleIdentificationNumber}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  vehicleIdentificationNumber: e.target.value.toUpperCase(),
+                })
+              }
+              placeholder="e.g. WAUZZZ8V0JA000001"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white uppercase outline-none focus:border-[#644aff]"
             />
           </div>
 

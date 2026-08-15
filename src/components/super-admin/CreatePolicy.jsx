@@ -25,6 +25,7 @@ export default function CreatePolicy({
     customerId: "",
     vehicleId: "",
     premiumAmount: "",
+    excess: "500",
     startDate: "",
     endDate: "",
     startTime: "",
@@ -119,6 +120,7 @@ export default function CreatePolicy({
       vehicleId: form.vehicleId,
 
       premiumAmount: form.premiumAmount,
+      excess: form.excess,
       startDate: form.startDate,
       endDate: form.endDate,
       startTime: normalizedStartTime,
@@ -137,6 +139,7 @@ export default function CreatePolicy({
         customerId: "",
         vehicleId: "",
         premiumAmount: "",
+        excess: "500",
         startDate: "",
         endDate: "",
         startTime: "",
@@ -248,6 +251,15 @@ export default function CreatePolicy({
                 label="Premium Amount (£)"
                 value={form.premiumAmount}
                 onChange={(v) => setForm({ ...form, premiumAmount: v })}
+                required
+                accentClass="focus:border-[#644aff]"
+              />
+            </div>
+            <div className="space-y-1">
+              <CurrencyInput
+                label="Excess (£)"
+                value={form.excess}
+                onChange={(v) => setForm({ ...form, excess: v })}
                 required
                 accentClass="focus:border-[#644aff]"
               />

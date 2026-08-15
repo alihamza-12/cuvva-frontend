@@ -23,6 +23,7 @@ export default function CreateVehiclePage() {
     model: "",
     colour: "",
     year: "2024",
+    vehicleIdentificationNumber: "",
     fuelType: "PETROL",
 
     engineCapacityCC: "",
@@ -51,6 +52,7 @@ export default function CreateVehiclePage() {
     const regOk = form.registration.trim().length >= 4;
     const makeOk = !!form.make.trim();
     const modelOk = !!form.model.trim();
+    const vinOk = !!form.vehicleIdentificationNumber.trim();
     const yearNum = Number(form.year);
     const yearOk = Number.isFinite(yearNum) && yearNum > 1900;
 
@@ -58,7 +60,7 @@ export default function CreateVehiclePage() {
       form.fuelType,
     );
 
-    return regOk && makeOk && modelOk && yearOk && fuelOk;
+    return regOk && makeOk && modelOk && vinOk && yearOk && fuelOk;
   }, [form]);
 
   const handleChange = (key) => (e) => {
@@ -101,6 +103,8 @@ export default function CreateVehiclePage() {
         model: form.model,
         colour: form.colour?.trim() || undefined,
         year: Number(form.year),
+        vehicleIdentificationNumber:
+          form.vehicleIdentificationNumber.trim().toUpperCase(),
         fuelType: form.fuelType,
 
         engineCapacityCC: toNumberOrUndef(form.engineCapacityCC),
@@ -180,6 +184,14 @@ export default function CreateVehiclePage() {
                 onChange={handleChange("registration")}
                 className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. BD55SMR"
+              />
+            </Field>
+            <Field label="Vehicle Identification Number (VIN) (required)">
+              <input
+                value={form.vehicleIdentificationNumber}
+                onChange={handleChange("vehicleIdentificationNumber")}
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs uppercase text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                placeholder="e.g. WAUZZZ8V0JA000001"
               />
             </Field>
             <Field label="Fuel Type (required)">
@@ -380,6 +392,7 @@ export default function CreateVehiclePage() {
                   model: "",
                   colour: "",
                   year: "2024",
+                  vehicleIdentificationNumber: "",
                   fuelType: "PETROL",
 
                   engineCapacityCC: "",

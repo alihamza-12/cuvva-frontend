@@ -1,36 +1,39 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { X, HelpCircle, FileText, ChevronRight } from "lucide-react";
-
-const DOCUMENTS = [
-  {
-    id: "ipid",
-    label: "Insurance summary (IPID)",
-    type: "in-app",
-    route: "/customer/policies/documents/ipid",
-  },
-  {
-    id: "wording",
-    label: "Policy wording (full terms)",
-    type: "in-app",
-    route: "/customer/policies/documents/wording",
-  },
-];
 
 export default function PolicyDocumentsPage() {
   const navigate = useNavigate();
+  const { policyId } = useParams();
 
-  const handleOpen = (doc) => {
-    if (doc.type === "in-app") {
-      navigate(doc.route);
-    } else {
-      window.open(doc.href, "_blank", "noopener,noreferrer");
-    }
-  };
+  const documents = policyId
+    ? [
+        {
+          id: "certificate",
+          label: "Policy details and certificate",
+          route: `/customer/policies/${policyId}/documents/certificate`,
+        },
+        {
+          id: "wording",
+          label: "Policy wording (full terms)",
+          route: "/customer/policies/documents/wording",
+        },
+      ]
+    : [
+        {
+          id: "ipid",
+          label: "Insurance summary (IPID)",
+          route: "/customer/policies/documents/ipid",
+        },
+        {
+          id: "wording",
+          label: "Policy wording (full terms)",
+          route: "/customer/policies/documents/wording",
+        },
+      ];
 
   return (
     <div className="text-white">
-
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <button
           type="button"
@@ -54,11 +57,11 @@ export default function PolicyDocumentsPage() {
       </div>
 
       <div className="mx-4 mt-4 rounded-2xl bg-[#17181c] overflow-hidden">
-        {DOCUMENTS.map((doc, idx) => (
+        {documents.map((doc, idx) => (
           <React.Fragment key={doc.id}>
             <button
               type="button"
-              onClick={() => handleOpen(doc)}
+              onClick={() => navigate(doc.route)}
               className="w-full flex items-center gap-3 px-4 py-4 text-left hover:bg-white/[0.03] transition-colors"
             >
               <FileText
@@ -69,7 +72,7 @@ export default function PolicyDocumentsPage() {
               <span className="flex-1 text-[15px] text-white">{doc.label}</span>
               <ChevronRight size={18} className="text-[#5c5e68] shrink-0" />
             </button>
-            {idx < DOCUMENTS.length - 1 && (
+            {idx < documents.length - 1 && (
               <div className="h-px mx-4 bg-white/5" />
             )}
           </React.Fragment>

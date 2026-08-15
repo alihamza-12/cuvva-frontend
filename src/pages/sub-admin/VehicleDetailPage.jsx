@@ -19,6 +19,7 @@ const buildFormFromVehicle = (vehicle) => ({
   model: vehicle?.model || "",
   colour: vehicle?.colour || "",
   year: vehicle?.year != null ? String(vehicle.year) : "",
+  vehicleIdentificationNumber: vehicle?.vehicleIdentificationNumber || "",
 
   fuelType: vehicle?.fuelType || "PETROL",
   engineCapacityCC:
@@ -56,6 +57,9 @@ const buildPayloadFromForm = (form) => {
     model: strOrUndef(form.model),
     colour: strOrUndef(form.colour),
     year: numOrUndef(form.year),
+    vehicleIdentificationNumber: strOrUndef(
+      form.vehicleIdentificationNumber?.toUpperCase(),
+    ),
 
     fuelType: strOrUndef(form.fuelType),
     engineCapacityCC: numOrUndef(form.engineCapacityCC),
@@ -300,6 +304,12 @@ export default function VehicleDetailPage() {
                         required
                       />
                       <TextInput
+                        label="VIN"
+                        value={editForm.vehicleIdentificationNumber}
+                        onChange={setField("vehicleIdentificationNumber")}
+                        required
+                      />
+                      <TextInput
                         label="Make"
                         value={editForm.make}
                         onChange={setField("make")}
@@ -453,6 +463,10 @@ export default function VehicleDetailPage() {
                 </form>
               ) : (
                 <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
+                  <ReadRow
+                    label="VIN"
+                    value={vehicle.vehicleIdentificationNumber}
+                  />
                   <ReadRow label="Colour" value={vehicle.colour} />
                   <ReadRow label="Year" value={vehicle.year} />
                   <ReadRow label="Fuel Type" value={vehicle.fuelType} />

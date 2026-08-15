@@ -75,7 +75,7 @@ export default function PolicyDetailPage() {
   };
 
   const handlePolicyDocs = () => {
-    navigate("/customer/policies/documents");
+    navigate(`/customer/policies/${policy._id}/documents`);
   };
 
   const handleBuyAgain = () => {

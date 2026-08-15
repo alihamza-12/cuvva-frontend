@@ -23,6 +23,7 @@ export default function PolicyDetailPage() {
 
   const [editForm, setEditForm] = useState({
     premiumAmount: "",
+    excess: "500",
     startDate: "",
     endDate: "",
     startTime: "",
@@ -69,6 +70,7 @@ export default function PolicyDetailPage() {
     if (!policy) return;
     setEditForm({
       premiumAmount: Number(policy.premiumAmount),
+      excess: policy.excess ?? 500,
       startDate: policy.startDate
         ? new Date(policy.startDate).toISOString().split("T")[0]
         : "",
@@ -122,6 +124,7 @@ export default function PolicyDetailPage() {
     try {
       const payload = {
         premiumAmount: editForm.premiumAmount,
+        excess: editForm.excess,
         startDate: editForm.startDate,
         endDate: editForm.endDate,
         startTime: editForm.startTime,
@@ -299,6 +302,15 @@ export default function PolicyDetailPage() {
 
                     <div className="space-y-1">
                       <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                        Excess
+                      </div>
+                      <div className="text-xs font-semibold text-white">
+                        £{Number(policy.excess ?? 500).toFixed(2)}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                         Underwriter
                       </div>
                       <div className="text-xs font-semibold text-white">
@@ -346,6 +358,18 @@ export default function PolicyDetailPage() {
                       value={editForm.premiumAmount}
                       onChange={(v) =>
                         setEditForm({ ...editForm, premiumAmount: v })
+                      }
+                      required
+                      accentClass="focus:border-[#644aff]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <CurrencyInput
+                      label="Excess (£)"
+                      value={editForm.excess}
+                      onChange={(v) =>
+                        setEditForm({ ...editForm, excess: v })
                       }
                       required
                       accentClass="focus:border-[#644aff]"

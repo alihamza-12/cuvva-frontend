@@ -4,6 +4,7 @@ import { ArrowLeft, Car, ShieldAlert } from "lucide-react";
 
 import Sidebar from "../../../components/super-admin/Sidebar";
 import { getVehicleByRegistration } from "../../../app/api/vehicleApi";
+import { updateVehicle } from "../../../app/api/vehicleUpdateApi";
 
 export default function VehicleDetailPage() {
   const { registration } = useParams();
@@ -12,6 +13,9 @@ export default function VehicleDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [vehicle, setVehicle] = useState(null);
+  const [vin, setVin] = useState("");
+  const [savingVin, setSavingVin] = useState(false);
+  const [vinMessage, setVinMessage] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -26,7 +30,9 @@ export default function VehicleDetailPage() {
           .replace(/\s+/g, "");
         const res = await getVehicleByRegistration(cleaned);
         if (!mounted) return;
-        setVehicle(res.data?.vehicle || null);
+        const loadedVehicle = res.data?.vehicle || null;
+        setVehicle(loadedVehicle);
+        setVin(loadedVehicle?.vehicleIdentificationNumber || "");
       } catch (err) {
         if (!mounted) return;
         setError(
@@ -44,6 +50,34 @@ export default function VehicleDetailPage() {
       mounted = false;
     };
   }, [registration]);
+
+  const handleSaveVin = async () => {
+    const normalizedVin = vin.trim().toUpperCase();
+    if (!normalizedVin || !vehicle?._id) {
+      setVinMessage("VIN is required.");
+      return;
+    }
+
+    setSavingVin(true);
+    setVinMessage("");
+    try {
+      const response = await updateVehicle(vehicle._id, {
+        vehicleIdentificationNumber: normalizedVin,
+      });
+      setVehicle(response.data?.vehicle || {
+        ...vehicle,
+        vehicleIdentificationNumber: normalizedVin,
+      });
+      setVin(normalizedVin);
+      setVinMessage("VIN saved successfully.");
+    } catch (saveError) {
+      setVinMessage(
+        saveError.response?.data?.message || "Failed to save the VIN.",
+      );
+    } finally {
+      setSavingVin(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#060814] text-white flex">
@@ -166,6 +200,31 @@ export default function VehicleDetailPage() {
                   <div className="text-xs font-semibold text-white">
                     {vehicle?.registration}
                   </div>
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                    VIN
+                  </label>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <input
+                      value={vin}
+                      onChange={(event) => setVin(event.target.value.toUpperCase())}
+                      required
+                      className="min-h-[44px] flex-1 rounded-xl border border-[#1e2238] bg-[#060814] px-3 font-mono text-xs uppercase text-white outline-none focus:border-[#644aff]"
+                      placeholder="Vehicle identification number"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveVin}
+                      disabled={savingVin || !vin.trim()}
+                      className="min-h-[44px] rounded-xl bg-[#644aff] px-5 text-[10px] font-bold uppercase tracking-wider text-white disabled:opacity-50"
+                    >
+                      {savingVin ? "Saving..." : "Save VIN"}
+                    </button>
+                  </div>
+                  {vinMessage && (
+                    <div className="text-[11px] text-[#8a8fbc]">{vinMessage}</div>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">

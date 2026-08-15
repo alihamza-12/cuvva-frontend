@@ -30,6 +30,7 @@ export default function CreatePolicyPage() {
     customerId: "",
     vehicleId: "",
     premiumAmount: "",
+    excess: "500",
     startDate: "",
     endDate: "",
     startTime: "14:30",
@@ -109,6 +110,7 @@ export default function CreatePolicyPage() {
     if (!form.customerId) return false;
     if (!form.vehicleId) return false;
     if (!form.premiumAmount || Number(form.premiumAmount) <= 0) return false;
+    if (form.excess === "" || Number(form.excess) < 0) return false;
     if (!form.startDate || !form.endDate) return false;
     if (!form.startTime || !form.endTime) return false;
     return true;
@@ -151,6 +153,7 @@ export default function CreatePolicyPage() {
         customerId: form.customerId,
         vehicleId: form.vehicleId,
         premiumAmount: form.premiumAmount,
+        excess: form.excess,
         startDate: form.startDate,
         endDate: form.endDate,
         startTime: normalizedStartTime,
@@ -287,6 +290,17 @@ export default function CreatePolicyPage() {
               />
             </Field>
 
+            <Field label="Excess (£) (required)">
+              <CurrencyInput
+                value={form.excess}
+                onChange={(v) =>
+                  setForm((prev) => ({ ...prev, excess: v }))
+                }
+                required
+                accentClass="focus:border-[#00f0ff]"
+              />
+            </Field>
+
             <Field label="Underwriter (required)">
               <select
                 value={form.underwriter}
@@ -385,6 +399,7 @@ export default function CreatePolicyPage() {
                   customerId: "",
                   vehicleId: "",
                   premiumAmount: "",
+                  excess: "500",
                   startDate: "",
                   endDate: "",
                   startTime: "14:30",
