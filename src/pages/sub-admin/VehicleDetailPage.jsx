@@ -96,7 +96,7 @@ const TextInput = ({
       value={value}
       onChange={onChange}
       required={required}
-      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#00f0ff]"
+      className="w-full min-h-[44px] bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#00f0ff]"
     />
   </div>
 );
@@ -107,7 +107,7 @@ const SelectInput = ({ label, value, onChange, options }) => (
     <select
       value={value}
       onChange={onChange}
-      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#00f0ff]"
+      className="w-full min-h-[44px] bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#00f0ff]"
     >
       {options.map((opt) => (
         <option key={opt} value={opt}>
@@ -121,7 +121,7 @@ const SelectInput = ({ label, value, onChange, options }) => (
 const ReadRow = ({ label, value }) => (
   <div className="space-y-1">
     <FieldLabel>{label}</FieldLabel>
-    <div className="text-xs font-semibold text-white">{value ?? "N/A"}</div>
+    <div className="text-xs font-semibold text-white break-words">{value ?? "N/A"}</div>
   </div>
 );
 
@@ -217,12 +217,12 @@ export default function VehicleDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#060814] text-white flex">
-<div className="flex-1 w-full p-6 space-y-6 md:p-10">
+<div className="flex-1 w-full p-4 space-y-6 pb-28 md:p-10 md:pb-10">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+            className="inline-flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
           >
             <ArrowLeft size={14} /> Back
           </button>
@@ -245,11 +245,11 @@ export default function VehicleDetailPage() {
 
         {!loading && !error && vehicle && (
           <div className="space-y-5">
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex flex-wrap items-center justify-end gap-2">
               {!isEditMode ? (
                 <button
                   type="button"
-                  className="px-3 py-2 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 hover:bg-[#00f0ff]/20 text-xs uppercase tracking-wider font-bold"
+                  className="min-h-[44px] px-3 py-2 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 hover:bg-[#00f0ff]/20 text-xs uppercase tracking-wider font-bold"
                   onClick={() => setIsEditMode(true)}
                 >
                   Edit Vehicle
@@ -257,7 +257,7 @@ export default function VehicleDetailPage() {
               ) : (
                 <button
                   type="button"
-                  className="px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+                  className="min-h-[44px] px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
                   onClick={handleCancel}
                 >
                   Cancel
@@ -272,7 +272,7 @@ export default function VehicleDetailPage() {
                     <Car size={18} />
                   </div>
                   <div>
-                    <div className="text-[11px] text-[#8a8fbc] font-mono uppercase tracking-wider">
+                    <div className="text-[11px] text-[#8a8fbc] font-mono uppercase tracking-wider break-all">
                       {vehicle.registration}
                     </div>
                     <div className="mt-1 text-sm font-bold text-white">

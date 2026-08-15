@@ -233,7 +233,105 @@ export default function AccountManagement({
               </button>
             </div>
           ) : (
-            <table className="w-full text-left border-collapse">
+            <>
+              {/* Phone cards */}
+              <div className="mt-4 space-y-3 md:hidden">
+                {filteredList.map((userRecord) => (
+                  <article
+                    key={userRecord._id}
+                    onClick={() => {
+                      const base =
+                        activeDirectoryTab === "subAdmins"
+                          ? `/admin/sub-admins/${userRecord._id}`
+                          : `/admin/customers/${userRecord._id}`;
+                      navigate(base);
+                    }}
+                    className="rounded-2xl border border-[#1e2238] bg-[#0d0f1d] p-4 cursor-pointer"
+                  >
+                    <div className="flex min-w-0 items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="truncate text-base font-semibold text-white">
+                          {userRecord.fullName}
+                        </h3>
+                        <p className="text-sm text-[#8a8fbc] break-all mt-0.5">
+                          {userRecord.email}
+                        </p>
+                        {userRecord.createdBy ? (
+                          <p className="text-[11px] text-[#6b7280] mt-1.5 leading-snug">
+                            <span className="text-[#644aff] font-semibold">
+                              {userRecord.createdBy.fullName}
+                            </span>{" "}
+                            <span className="uppercase text-[10px]">
+                              ({userRecord.createdBy.role})
+                            </span>
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-[#6b7280] italic mt-1.5">
+                            System Bootstrap
+                          </p>
+                        )}
+                      </div>
+                      <span
+                        className={`shrink-0 inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase mt-1 ${
+                          userRecord.status === "Active"
+                            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                            : "bg-red-500/10 text-red-400 border border-red-500/20"
+                        }`}
+                      >
+                        {userRecord.status}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 grid gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const base =
+                            activeDirectoryTab === "subAdmins"
+                              ? `/admin/sub-admins/${userRecord._id}`
+                              : `/admin/customers/${userRecord._id}`;
+                          navigate(base);
+                        }}
+                        className="w-full min-h-[44px] rounded-xl bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold text-[11px] uppercase tracking-wider hover:border-[#644aff] hover:text-white transition-all"
+                      >
+                        View Details
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={
+                          editLoading && editTarget?._id === userRecord._id
+                        }
+                        onClick={(e) => openEditFor(e, userRecord)}
+                        className="w-full min-h-[44px] rounded-xl bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold text-[11px] uppercase tracking-wider hover:border-[#644aff] hover:text-white transition-all disabled:opacity-40"
+                        aria-label="Edit account"
+                      >
+                        <Pencil size={13} className="inline-block mr-1" /> Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={actionLoadingId === userRecord._id}
+                        onClick={(e) =>
+                          toggleStatus(e, userRecord._id, userRecord.status)
+                        }
+                        className="w-full min-h-[44px] rounded-xl bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold text-[11px] uppercase tracking-wider hover:bg-[#644aff] hover:text-white hover:border-[#644aff] transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                      >
+                        {actionLoadingId === userRecord._id ? (
+                          <RefreshCw size={14} className="animate-spin" />
+                        ) : (
+                          "Manage Status"
+                        )}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              {/* Existing desktop table */}
+              <div className="hidden overflow-x-auto text-xs md:block">
+                <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="text-[#8a8fbc] border-b border-[#1e2238] font-bold uppercase tracking-wider text-[10px]">
                   <th className="pb-4 pl-2">Identity Details</th>
@@ -329,17 +427,19 @@ export default function AccountManagement({
                 ))}
               </tbody>
             </table>
+          </div>
+        </>
           )}
         </div>
       </div>
 
       {editOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 md:items-center md:p-4"
           onClick={closeEdit}
         >
           <div
-            className="w-full max-w-lg bg-[#0d0f1d] border border-[#1e2238] rounded-2xl shadow-2xl"
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#0d0f1d] border-t border-[#1e2238] shadow-2xl rounded-t-3xl pb-[env(safe-area-inset-bottom)] md:rounded-2xl md:border"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5 border-b border-[#1e2238] flex items-center justify-between">
@@ -374,7 +474,7 @@ export default function AccountManagement({
                   <input
                     value={editFullName}
                     onChange={(e) => setEditFullName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
                     placeholder="Full name"
                   />
                 </div>
@@ -386,7 +486,7 @@ export default function AccountManagement({
                   <input
                     value={editEmail}
                     onChange={(e) => setEditEmail(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
                     placeholder="Email"
                   />
                 </div>
@@ -399,7 +499,7 @@ export default function AccountManagement({
                     type="date"
                     value={editExpiresAt}
                     onChange={(e) => setEditExpiresAt(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
                   />
                   <p className="text-[11px] text-[#6b7280]">
                     Leave empty to clear expiration.
@@ -414,7 +514,7 @@ export default function AccountManagement({
                     type="password"
                     value={editPassword}
                     onChange={(e) => setEditPassword(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
                     placeholder="At least 6 characters"
                     autoComplete="new-password"
                   />
@@ -428,7 +528,7 @@ export default function AccountManagement({
                     type="password"
                     value={editPasswordConfirm}
                     onChange={(e) => setEditPasswordConfirm(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
                     placeholder="Re-type password"
                     autoComplete="new-password"
                   />
@@ -438,14 +538,14 @@ export default function AccountManagement({
                   <button
                     type="button"
                     onClick={closeEdit}
-                    className="px-4 py-2 bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold rounded-lg text-[10px] uppercase hover:border-[#644aff] hover:text-white transition-all"
+                    className="min-h-[44px] px-4 py-2 bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold rounded-lg text-[10px] uppercase hover:border-[#644aff] hover:text-white transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={editLoading}
-                    className="px-4 py-2 bg-[#644aff] hover:bg-[#563ee0] text-white font-bold rounded-lg text-[10px] uppercase transition-all disabled:opacity-40"
+                    className="min-h-[44px] px-4 py-2 bg-[#644aff] hover:bg-[#563ee0] text-white font-bold rounded-lg text-[10px] uppercase transition-all disabled:opacity-40"
                   >
                     {editLoading ? "Updating..." : "Update"}
                   </button>

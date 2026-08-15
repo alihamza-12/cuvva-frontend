@@ -165,12 +165,12 @@ export default function PolicyDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#060814] text-white flex">
-      <div className="flex-1 max-w-4xl p-6 mx-auto space-y-6 md:p-10">
+      <div className="flex-1 max-w-4xl p-4 mx-auto space-y-6 pb-28 md:p-10 md:pb-10">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+            className="inline-flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
           >
             <ArrowLeft size={14} /> Back
           </button>
@@ -201,7 +201,7 @@ export default function PolicyDetailPage() {
                       <FileText size={18} />
                     </div>
                     <div>
-                      <div className="text-[11px] text-[#8a8fbc] font-mono uppercase tracking-wider">
+                      <div className="text-[11px] text-[#8a8fbc] font-mono uppercase tracking-wider break-all">
                         {policy.policyNumber ? policy.policyNumber : policy._id}
                       </div>
                       <div className="mt-1 text-sm font-bold text-white">
@@ -218,7 +218,7 @@ export default function PolicyDetailPage() {
                   {!isEditMode ? (
                     <button
                       type="button"
-                      className="px-3 py-2 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 hover:bg-[#00f0ff]/20 text-xs uppercase tracking-wider font-bold"
+                      className="min-h-[44px] px-3 py-2 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 hover:bg-[#00f0ff]/20 text-xs uppercase tracking-wider font-bold"
                       onClick={() => navigate("?edit=1")}
                     >
                       Edit Policy
@@ -226,7 +226,7 @@ export default function PolicyDetailPage() {
                   ) : (
                     <button
                       type="button"
-                      className="px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+                      className="min-h-[44px] px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
                       onClick={() => navigate("?")}
                     >
                       Cancel
@@ -364,7 +364,7 @@ export default function PolicyDetailPage() {
                           onChange={(e) =>
                             setEditForm({ ...editForm, status: e.target.value })
                           }
-                          className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
+                          className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
                         >
                           <option value="Upcoming">Upcoming</option>
                           <option value="Active">Active</option>
@@ -429,7 +429,7 @@ export default function PolicyDetailPage() {
                               policyType: e.target.value,
                             })
                           }
-                          className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
+                          className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
                         >
                           <option value="Temporary Car">Temporary Car</option>
                           <option value="Temporary Van">Temporary Van</option>
@@ -452,7 +452,7 @@ export default function PolicyDetailPage() {
                               coverageType: e.target.value,
                             })
                           }
-                          className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
+                          className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
                         >
                           <option value="Comprehensive">Comprehensive</option>
                           <option value="Third Party Only">
@@ -473,7 +473,7 @@ export default function PolicyDetailPage() {
                               underwriter: e.target.value,
                             })
                           }
-                          className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
+                          className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#00f0ff]"
                         >
                           <option value="Wakam">Wakam</option>
                           <option value="ERS Syndicate">ERS Syndicate</option>
@@ -494,7 +494,7 @@ export default function PolicyDetailPage() {
                               internalNotes: e.target.value,
                             })
                           }
-                          className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2.5 text-white outline-none resize-none focus:border-[#00f0ff]"
+                          className="w-full min-h-[88px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-white outline-none resize-none focus:border-[#00f0ff]"
                           placeholder="Administrative internal notes (optional)"
                         />
                       </div>

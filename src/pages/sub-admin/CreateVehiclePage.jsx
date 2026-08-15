@@ -140,7 +140,7 @@ export default function CreateVehiclePage() {
 
   return (
     <div className="w-full animate-fadeIn">
-      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-2xl">
+      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-2xl">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 pb-4 border-b border-[#1e2238]">
           <div>
             <h3 className="text-xl font-bold tracking-wide text-white">
@@ -155,7 +155,7 @@ export default function CreateVehiclePage() {
             onClick={() =>
               navigate("/dashboard?tab=my-vehicles", { replace: true })
             }
-            className="px-4 py-2 bg-[#060814] hover:bg-[#1a1d33] border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-lg text-[10px] uppercase transition-all"
+            className="min-h-[44px] px-4 py-2 bg-[#060814] hover:bg-[#1a1d33] border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-lg text-[10px] uppercase transition-all"
           >
             Back to My Vehicles
           </button>
@@ -178,7 +178,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.registration}
                 onChange={handleChange("registration")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. BD55SMR"
               />
             </Field>
@@ -186,7 +186,7 @@ export default function CreateVehiclePage() {
               <select
                 value={form.fuelType}
                 onChange={handleChange("fuelType")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               >
                 <option value="PETROL">PETROL</option>
                 <option value="DIESEL">DIESEL</option>
@@ -199,7 +199,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.make}
                 onChange={handleChange("make")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. Ford"
               />
             </Field>
@@ -207,7 +207,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.model}
                 onChange={handleChange("model")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. Focus"
               />
             </Field>
@@ -216,7 +216,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.colour}
                 onChange={handleChange("colour")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. Blue"
               />
             </Field>
@@ -228,7 +228,7 @@ export default function CreateVehiclePage() {
                 type="number"
                 min={1900}
                 max={2100}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               />
             </Field>
           </div>
@@ -243,7 +243,7 @@ export default function CreateVehiclePage() {
                 value={form.engineCapacityCC}
                 onChange={handleChange("engineCapacityCC")}
                 type="number"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. 1598"
               />
             </Field>
@@ -252,7 +252,7 @@ export default function CreateVehiclePage() {
                 value={form.powerBHP}
                 onChange={handleChange("powerBHP")}
                 type="number"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. 120"
               />
             </Field>
@@ -261,7 +261,7 @@ export default function CreateVehiclePage() {
                 value={form.topSpeed}
                 onChange={handleChange("topSpeed")}
                 type="number"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. 120"
               />
             </Field>
@@ -270,7 +270,7 @@ export default function CreateVehiclePage() {
                 value={form.cylinders}
                 onChange={handleChange("cylinders")}
                 type="number"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. 4"
               />
             </Field>
@@ -279,7 +279,7 @@ export default function CreateVehiclePage() {
                 value={form.fuelConsumptionMPG}
                 onChange={handleChange("fuelConsumptionMPG")}
                 type="number"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. 45"
               />
             </Field>
@@ -294,7 +294,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.motStatus}
                 onChange={handleChange("motStatus")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="Valid / Expired"
               />
             </Field>
@@ -303,7 +303,7 @@ export default function CreateVehiclePage() {
                 value={form.motExpiryDate}
                 onChange={handleChange("motExpiryDate")}
                 type="date"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               />
             </Field>
 
@@ -311,7 +311,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.taxStatus}
                 onChange={handleChange("taxStatus")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="Paid / Due"
               />
             </Field>
@@ -320,7 +320,7 @@ export default function CreateVehiclePage() {
                 value={form.taxDueDate}
                 onChange={handleChange("taxDueDate")}
                 type="date"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               />
             </Field>
 
@@ -328,7 +328,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.registrationKeeper}
                 onChange={handleChange("registrationKeeper")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="Owner name"
               />
             </Field>
@@ -338,7 +338,7 @@ export default function CreateVehiclePage() {
                 value={form.v5cIssueDate}
                 onChange={handleChange("v5cIssueDate")}
                 type="date"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               />
             </Field>
 
@@ -347,7 +347,7 @@ export default function CreateVehiclePage() {
                 value={form.co2Emissions}
                 onChange={handleChange("co2Emissions")}
                 type="number"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. 120"
               />
             </Field>
@@ -355,7 +355,7 @@ export default function CreateVehiclePage() {
               <input
                 value={form.euroStatus}
                 onChange={handleChange("euroStatus")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. Euro 6"
               />
             </Field>
@@ -364,13 +364,13 @@ export default function CreateVehiclePage() {
               <input
                 value={form.wheelplan}
                 onChange={handleChange("wheelplan")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. 2WD"
               />
             </Field>
           </div>
 
-          <div className="flex items-center justify-end gap-3 mt-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mt-8">
             <button
               type="button"
               onClick={() =>
@@ -402,7 +402,7 @@ export default function CreateVehiclePage() {
                 })
               }
               disabled={form.submitting}
-              className="px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
+              className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               Clear
             </button>
@@ -410,7 +410,7 @@ export default function CreateVehiclePage() {
             <button
               type="submit"
               disabled={!isValid || form.submitting}
-              className="px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
+              className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               {form.submitting ? "Creating..." : "Create Vehicle"}
             </button>

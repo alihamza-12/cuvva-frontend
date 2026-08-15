@@ -60,12 +60,12 @@ export default function VehicleDetailPage() {
         onLogout={() => {}}
       />
 
-<div className="flex-1 w-full p-6 space-y-6 md:p-10">
+<div className="flex-1 w-full p-4 space-y-6 pb-28 md:p-10 md:pb-24 lg:pb-10">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+            className="inline-flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
           >
             <ArrowLeft size={14} /> Back
           </button>
@@ -155,7 +155,7 @@ export default function VehicleDetailPage() {
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Vehicle ID
                   </div>
-                  <div className="font-mono text-xs text-white">
+                  <div className="font-mono text-xs text-white break-all">
                     {vehicle?._id}
                   </div>
                 </div>

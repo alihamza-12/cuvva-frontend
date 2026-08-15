@@ -78,13 +78,58 @@ export default function OwnVehiclesManagement({ axiosInstance, onRefresh }) {
           <div className="mt-4 flex items-center gap-2 p-4 text-xs font-semibold text-red-400 border rounded-2xl border-red-500/20 bg-red-500/10">
             <AlertTriangle size={14} /> {error}
           </div>
+        ) : filteredVehicles.length === 0 ? (
+          <div className="text-center py-16 text-[#6b7280]">
+            <p className="text-sm font-medium">No own vehicles found.</p>
+          </div>
         ) : (
-          <div className="overflow-x-auto mt-4">
-            {filteredVehicles.length === 0 ? (
-              <div className="text-center py-16 text-[#6b7280]">
-                <p className="text-sm font-medium">No own vehicles found.</p>
-              </div>
-            ) : (
+          <>
+            {/* Phone cards */}
+            <div className="mt-4 space-y-3 md:hidden">
+              {filteredVehicles.map((v) => (
+                <article
+                  key={v._id}
+                  onClick={() =>
+                    navigate(
+                      `/admin/vehicles/${encodeURIComponent(v.registration)}`,
+                    )
+                  }
+                  className="rounded-2xl border border-[#1e2238] bg-[#0d0f1d] p-4 cursor-pointer"
+                >
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <span className="inline-block px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-[10px] uppercase break-all">
+                        {v.registration}
+                      </span>
+                      <h3 className="truncate text-base font-semibold text-white mt-1.5">
+                        {v.make} {v.model}
+                      </h3>
+                      <p className="text-sm text-[#8a8fbc] break-words">
+                        {v.colour} • {v.year} • {v.fuelType || "Petrol"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(
+                          `/admin/vehicles/${encodeURIComponent(v.registration)}`,
+                        );
+                      }}
+                      className="w-full min-h-[44px] rounded-xl bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold text-xs uppercase tracking-wider hover:border-[#644aff] hover:text-white transition-all"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Existing desktop table */}
+            <div className="hidden overflow-x-auto mt-4 md:block">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="text-[#8a8fbc] border-b border-[#1e2238] font-bold uppercase tracking-wider text-[10px]">
@@ -138,8 +183,8 @@ export default function OwnVehiclesManagement({ axiosInstance, onRefresh }) {
                   ))}
                 </tbody>
               </table>
-            )}
-          </div>
+            </div>
+          </>
         )}
       </div>
     </div>

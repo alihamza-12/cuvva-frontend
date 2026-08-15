@@ -56,13 +56,13 @@ export default function PolicyContracts({
               >
         
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <FileText size={14} className="text-[#644aff]" />
-                    <span className="text-[#8a8fbc] font-bold font-mono text-[11px]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText size={14} className="text-[#644aff] shrink-0" />
+                    <span className="text-[#8a8fbc] font-bold font-mono text-[11px] break-all">
                       ID: {p._id}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <span className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-[#8a8fbc] font-bold rounded text-[9px] uppercase tracking-wide">
                       {p.policyType || "Short Term"}
                     </span>
@@ -83,7 +83,7 @@ export default function PolicyContracts({
                     <div className="font-semibold text-white">
                       {p.customerId?.fullName || "Deleted Driver Context"}
                     </div>
-                    <div className="text-[10px] text-[#6b7280] truncate">
+                    <div className="text-[10px] text-[#6b7280] break-all md:truncate">
                       {p.customerId?.email || "N/A"}
                     </div>
                   </div>
@@ -109,7 +109,7 @@ export default function PolicyContracts({
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between text-[11px] text-[#6b7280] pt-1.5 border-t border-white/5 gap-3">
-                  <div className="flex items-center gap-1 font-medium text-gray-300">
+                  <div className="flex flex-wrap items-center gap-1 font-medium text-gray-300">
                     <Calendar size={13} className="text-[#644aff]" />
                     <span>
                       {formatDateString(p.startDate)} ({p.startTime})

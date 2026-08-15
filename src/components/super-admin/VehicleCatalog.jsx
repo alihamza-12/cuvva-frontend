@@ -58,17 +58,17 @@ export default function VehicleCatalog({
           </h3>
         </div>
 
-        <form onSubmit={handleLookup} className="flex gap-2">
+        <form onSubmit={handleLookup} className="flex flex-col gap-2 sm:flex-row sm:gap-2">
           <input
             type="text"
             placeholder="ENTER PLATE REG"
             value={regInput}
             onChange={(e) => setRegInput(e.target.value)}
-            className="w-full bg-white/5 border border-[#1e2238] rounded-xl px-4 py-3 uppercase font-mono tracking-widest outline-none text-white focus:border-[#644aff] font-bold text-sm"
+            className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl px-4 py-3 uppercase font-mono tracking-widest outline-none text-white focus:border-[#644aff] font-bold text-sm"
           />
           <button
             type="submit"
-            className="bg-[#644aff] hover:bg-[#523ad1] text-white px-6 rounded-xl font-bold transition-colors"
+            className="bg-[#644aff] hover:bg-[#523ad1] text-white px-6 rounded-xl font-bold transition-colors min-h-[44px]"
           >
             Query
           </button>
@@ -137,22 +137,22 @@ export default function VehicleCatalog({
                     `/admin/vehicles/${encodeURIComponent(v.registration)}`,
                   )
                 }
-                className="p-4 bg-[#060814]/60 border border-[#1e2238] rounded-xl flex items-center justify-between hover:border-white/10 transition-all cursor-pointer group"
+                className="p-4 bg-[#060814]/60 border border-[#1e2238] rounded-xl flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between hover:border-white/10 transition-all cursor-pointer group min-w-0"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 text-gray-400 border bg-white/5 border-white/5 rounded-xl">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="p-3 text-gray-400 border bg-white/5 border-white/5 rounded-xl shrink-0">
                     <Car size={20} />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-xs uppercase">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                      <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-xs uppercase break-all">
                         {v.registration}
                       </span>
-                      <span className="text-sm font-semibold text-white">
+                      <span className="text-sm font-semibold text-white break-words">
                         {v.make} {v.model}
                       </span>
                     </div>
-                    <div className="text-[11px] text-[#6b7280]">
+                    <div className="text-[11px] text-[#6b7280] break-words">
                       {v.colour} • {v.year} • {v.fuelType}
                     </div>
                   </div>

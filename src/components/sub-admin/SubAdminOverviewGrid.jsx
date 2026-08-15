@@ -30,7 +30,7 @@ export function SubAdminOverviewGrid({ counts = {}, onRefresh }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-5 select-none sm:grid-cols-2 lg:grid-cols-4 animate-fadeIn">
+    <div className="grid grid-cols-2 gap-3 select-none sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 animate-fadeIn">
       {metrics.map((card, idx) => {
         const Icon = card.icon;
         const palette = [
@@ -43,10 +43,10 @@ export function SubAdminOverviewGrid({ counts = {}, onRefresh }) {
         return (
           <div
             key={card.title}
-            className="bg-[#0d0f1d] border border-[#1e2238] p-5 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:border-white/10 group"
+            className="bg-[#0d0f1d] border border-[#1e2238] p-4 sm:p-5 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:border-white/10 group min-w-0"
           >
-            <div className="flex items-start justify-between gap-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#8a8fbc]">
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc] leading-tight">
                 {card.title}
               </span>
               <div
@@ -56,11 +56,11 @@ export function SubAdminOverviewGrid({ counts = {}, onRefresh }) {
               </div>
             </div>
 
-            <div className="mt-5">
-              <h2 className="font-mono text-2xl font-black tracking-tight text-white transition-colors group-hover:text-purple-100">
+            <div className="mt-4">
+              <h2 className="font-mono text-xl sm:text-2xl font-black tracking-tight text-white transition-colors group-hover:text-purple-100 truncate">
                 {(card.value ?? 0).toLocaleString()}
               </h2>
-              <p className="text-[11px] text-[#6b7280] mt-1 font-medium tracking-wide">
+              <p className="text-[10px] sm:text-[11px] text-[#6b7280] mt-1 font-medium tracking-wide">
                 {card.label}
               </p>
             </div>

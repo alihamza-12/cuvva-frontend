@@ -174,24 +174,24 @@ export default function SuperAdminDashboard() {
       <div className="flex flex-col flex-1 max-h-screen overflow-y-auto">
 
         <header className="h-16 border-b border-[#1e2238] px-4 md:px-8 flex items-center justify-between gap-4 sticky top-0 bg-[#060814]/90 backdrop-blur-md z-40 shrink-0">
-          <div className="flex items-center gap-3">
-            <h1 className="hidden sm:block text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className="hidden sm:block text-xs font-bold uppercase tracking-widest text-[#8a8fbc] truncate">
               System Operations Area
             </h1>
-            <h1 className="sm:hidden text-xs font-bold uppercase tracking-widest text-[#8a8fbc]">
+            <h1 className="sm:hidden text-xs font-bold uppercase tracking-widest text-[#8a8fbc] truncate">
               Ops
             </h1>
             {isSyncing && (
-              <RefreshCw size={12} className="animate-spin text-[#644aff]" />
+              <RefreshCw size={12} className="animate-spin text-[#644aff] shrink-0" />
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 shrink-0">
             
             <button
               onClick={fetchGlobalMetricsData}
               disabled={isSyncing}
-              className="p-2 bg-white/5 hover:bg-white/10 text-[#8a8fbc] hover:text-white border border-[#1e2238] rounded-xl transition-all disabled:opacity-40"
+              className="p-2 bg-white/5 hover:bg-white/10 text-[#8a8fbc] hover:text-white border border-[#1e2238] rounded-xl transition-all disabled:opacity-40 shrink-0"
               title="Force Database Matrix Re-sync"
             >
               <RefreshCw
@@ -200,7 +200,7 @@ export default function SuperAdminDashboard() {
               />
             </button>
 
-            <span className="text-[10px] uppercase font-bold tracking-wider px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-[#644aff] rounded-full flex items-center gap-1.5">
+            <span className="text-[10px] uppercase font-bold tracking-wider px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-[#644aff] rounded-full flex items-center gap-1.5 whitespace-nowrap">
               <ShieldCheck size={12} /> Root Authorization Granted
             </span>
           </div>
@@ -213,7 +213,7 @@ export default function SuperAdminDashboard() {
           </div>
         )}
 
-        <main className="flex-1 w-full p-4 space-y-8 sm:p-6 lg:p-10">
+        <main className="flex-1 w-full p-4 space-y-8 pb-28 sm:p-6 sm:pb-24 lg:p-10 lg:pb-10">
           
           {activeTab === "overview" && (
             <OverviewGrid

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -7,6 +8,8 @@ import {
   LogOut,
   FileText,
   PlusCircle,
+  MoreHorizontal,
+  X,
 } from "lucide-react";
 
 export default function SubAdminSidebar({
@@ -108,9 +111,50 @@ export default function SubAdminSidebar({
   const handleNavigate = (item) => {
     setActiveTab(item.id);
     navigate(item.href, { replace: true });
+    setIsMobileMenuOpen(false);
   };
 
   const isCreateItem = (id) => id.startsWith("create-");
+
+  const phonePrimaryIdSet = new Set([
+    "overview",
+    "my-customers",
+    "my-vehicles",
+    "my-policies",
+  ]);
+
+  const phonePrimaryItems = menuItems.filter((item) =>
+    phonePrimaryIdSet.has(item.id),
+  );
+
+  const phoneMoreItems = menuItems.filter(
+    (item) => !phonePrimaryIdSet.has(item.id),
+  );
+
+  const phonePrimaryLabels = {
+    overview: "Overview",
+    "my-customers": "Customers",
+    "my-vehicles": "Vehicles",
+    "my-policies": "Policies",
+  };
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <>
@@ -246,70 +290,149 @@ export default function SubAdminSidebar({
         </div>
       </aside>
 
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 shadow-2xl bg-[#0d0f1d] border-t border-[#1e2238]">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(800px_circle_at_50%_0%,rgba(0,240,255,0.16),transparent_55%)]" />
+      {/* ---- Phone bottom navigation ---- */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 shadow-2xl bg-[#0d0f1d] border-t border-[#1e2238] pb-[env(safe-area-inset-bottom)]">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden bg-[radial-gradient(800px_circle_at_50%_0%,rgba(0,240,255,0.16),transparent_55%)]" />
 
-        <div className="relative flex items-stretch h-16">
-          <div className="flex items-center flex-1 px-1 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-2">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                const isSelected = activeTab === item.id;
-                const isCreate = isCreateItem(item.id);
+        <nav className="relative flex h-16 items-stretch" aria-label="Mobile primary navigation">
+          {phonePrimaryItems.map((item) => {
+            const Icon = item.icon;
+            const isSelected = activeTab === item.id;
 
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavigate(item)}
-                    className={`flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-2xl transition-all flex-shrink-0 border border-transparent ${
-                      isSelected
-                        ? isCreate
-                          ? "bg-amber-400/15 text-amber-100 border-amber-400/25 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_12px_30px_rgba(251,191,36,0.18)]"
-                          : "bg-[#00f0ff]/15 text-[#e9fdff] border-[#00f0ff]/25 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_12px_30px_rgba(0,240,255,0.18)]"
-                        : "text-[#6b7280] hover:bg-white/5 hover:text-white hover:border-white/10"
-                    }`}
-                    aria-label={item.name}
-                  >
-                    {isCreate ? (
-                      <PlusCircle
-                        size={16}
-                        className={isSelected ? "text-amber-400" : ""}
-                      />
-                    ) : (
-                      <Icon
-                        size={16}
-                        className={
-                          isSelected ? "text-[#00f0ff] animate-pulse" : ""
-                        }
-                      />
-                    )}
-                    <span className="text-[7px] uppercase tracking-[0.12em] font-bold whitespace-nowrap">
-                      {item.name}
-                    </span>
-                  </button>
-                );
-              })}
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNavigate(item)}
+                className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-t-2xl transition-colors border-t-2 border-transparent ${
+                  isSelected
+                    ? "bg-[#00f0ff]/15 text-[#e9fdff] border-t-[#00f0ff]"
+                    : "text-[#6b7280] hover:bg-white/5 hover:text-white"
+                }`}
+                aria-label={item.name}
+              >
+                <Icon size={18} className={isSelected ? "text-[#00f0ff]" : ""} />
+                <span className="text-[8px] uppercase tracking-[0.08em] font-bold whitespace-nowrap">
+                  {phonePrimaryLabels[item.id] || item.name}
+                </span>
+              </button>
+            );
+          })}
+
+          <button
+            key="more"
+            type="button"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-t-2xl transition-colors border-t-2 border-transparent ${
+              phoneMoreItems.some((item) => item.id === activeTab)
+                ? "bg-[#00f0ff]/15 text-[#e9fdff] border-t-[#00f0ff]"
+                : "text-[#6b7280] hover:bg-white/5 hover:text-white"
+            }`}
+            aria-haspopup="dialog"
+            aria-expanded={isMobileMenuOpen}
+            aria-label="More"
+          >
+            <MoreHorizontal
+              size={18}
+              className={
+                phoneMoreItems.some((item) => item.id === activeTab)
+                  ? "text-[#00f0ff]"
+                  : ""
+              }
+            />
+            <span className="text-[8px] uppercase tracking-[0.08em] font-bold whitespace-nowrap">
+              More
+            </span>
+          </button>
+        </nav>
+      </div>
+
+      {/* ---- Phone More menu (UI-only bottom sheet) ---- */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[70] lg:hidden">
+          <button
+            type="button"
+            aria-label="Close menu"
+            tabIndex={-1}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="absolute inset-0 h-full w-full cursor-default bg-black/70 backdrop-blur-sm"
+          />
+
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="More menu"
+            className="absolute inset-x-0 bottom-0 flex max-h-[80vh] flex-col overflow-hidden rounded-t-3xl border-t border-[#1e2238] bg-[#0d0f1d] shadow-2xl"
+          >
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[#1e2238] px-4 py-3">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#8a8fbc]">
+                All Sections
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-[#8a8fbc] hover:text-white"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              <div className="grid gap-1">
+                {phoneMoreItems.map((item) => {
+                  const Icon = item.icon;
+                  const isSelected = activeTab === item.id;
+                  const isCreate = isCreateItem(item.id);
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleNavigate(item)}
+                      className={`flex min-h-[44px] items-center gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+                        isSelected
+                          ? isCreate
+                            ? "bg-amber-400/15 text-amber-100"
+                            : "bg-[#00f0ff]/15 text-white"
+                          : "text-[#8a8fbc] hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      {isCreate ? (
+                        <PlusCircle
+                          size={18}
+                          className={
+                            isSelected ? "text-amber-400" : "text-[#f59e0b]/80"
+                          }
+                        />
+                      ) : (
+                        <Icon
+                          size={18}
+                          className={
+                            isSelected ? "text-[#00f0ff]" : "text-[#6b7280]"
+                          }
+                        />
+                      )}
+                      <span className="min-w-0 flex-1 truncate">{item.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="my-2 border-t border-[#1e2238]" />
+
+              <button
+                type="button"
+                onClick={onLogout}
+                className="flex min-h-[44px] w-full items-center gap-3 rounded-xl px-4 text-left text-sm font-semibold text-red-400 transition-colors hover:bg-red-500/10"
+              >
+                <LogOut size={18} />
+                Terminate Session
+              </button>
             </div>
           </div>
-
-          <div className="w-20 flex items-center justify-center border-l border-[#1e2238] bg-[#0d0f1d]">
-            <button
-              onClick={onLogout}
-              className="flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-2xl text-white
-                         bg-gradient-to-r from-red-500/90 via-red-500 to-red-600/90
-                         hover:from-red-400 hover:via-red-500 hover:to-red-600
-                         shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_8px_20px_rgba(239,68,68,0.18)]
-                         transition-all duration-200 border border-white/10"
-              title="Exit Portal"
-            >
-              <LogOut size={16} className="drop-shadow" />
-              <span className="text-[7px] uppercase tracking-[0.12em] font-bold whitespace-nowrap">
-                Exit
-              </span>
-            </button>
-          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

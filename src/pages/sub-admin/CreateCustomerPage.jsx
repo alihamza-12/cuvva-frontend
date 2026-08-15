@@ -139,7 +139,7 @@ export default function CreateCustomerPage() {
 
   return (
     <div className="w-full animate-fadeIn">
-      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-2xl">
+      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-2xl">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 pb-4 border-b border-[#1e2238]">
           <div>
             <h3 className="text-xl font-bold tracking-wide text-white">
@@ -178,7 +178,7 @@ export default function CreateCustomerPage() {
               <input
                 value={form.fullName}
                 onChange={handleChange("fullName")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. Jane Sarah Doe"
               />
             </Field>
@@ -188,7 +188,7 @@ export default function CreateCustomerPage() {
                 value={form.email}
                 onChange={handleChange("email")}
                 type="email"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. jane@example.com"
               />
             </Field>
@@ -198,7 +198,7 @@ export default function CreateCustomerPage() {
                 value={form.password}
                 onChange={handleChange("password")}
                 type="password"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="Create customer password"
               />
             </Field>
@@ -207,7 +207,7 @@ export default function CreateCustomerPage() {
               <input
                 value={form.phone}
                 onChange={handleChange("phone")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. +44..."
               />
             </Field>
@@ -217,7 +217,7 @@ export default function CreateCustomerPage() {
                 value={form.dateOfBirth}
                 onChange={handleChange("dateOfBirth")}
                 type="date"
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               />
             </Field>
 
@@ -225,7 +225,7 @@ export default function CreateCustomerPage() {
               <select
                 value={form.gender}
                 onChange={handleChange("gender")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               >
                 <option value="">Select gender</option>
                 <option value="Male">Male</option>
@@ -239,7 +239,7 @@ export default function CreateCustomerPage() {
               <input
                 value={form.drivingLicenceNumber}
                 onChange={handleChange("drivingLicenceNumber")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. SMITH••••J99AB"
               />
             </Field>
@@ -255,7 +255,7 @@ export default function CreateCustomerPage() {
                 <input
                   value={form.line1}
                   onChange={handleChange("line1")}
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="Street address"
                 />
               </Field>
@@ -264,7 +264,7 @@ export default function CreateCustomerPage() {
                 <input
                   value={form.line2}
                   onChange={handleChange("line2")}
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="Flat / Suite / Apartment"
                 />
               </Field>
@@ -273,7 +273,7 @@ export default function CreateCustomerPage() {
                 <input
                   value={form.city}
                   onChange={handleChange("city")}
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="Town / City"
                 />
               </Field>
@@ -282,7 +282,7 @@ export default function CreateCustomerPage() {
                 <input
                   value={form.county}
                   onChange={handleChange("county")}
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="County / Region"
                 />
               </Field>
@@ -291,7 +291,7 @@ export default function CreateCustomerPage() {
                 <input
                   value={form.postcode}
                   onChange={handleChange("postcode")}
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="e.g. AB12 3CD"
                 />
               </Field>
@@ -300,7 +300,7 @@ export default function CreateCustomerPage() {
                 <input
                   value={form.country}
                   onChange={handleChange("country")}
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="UK"
                 />
               </Field>
@@ -348,7 +348,7 @@ export default function CreateCustomerPage() {
                   onChange={handleChange("durationDays")}
                   type="number"
                   min={1}
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 />
               </Field>
             ) : (
@@ -357,13 +357,13 @@ export default function CreateCustomerPage() {
                   value={form.expiresAt}
                   onChange={handleChange("expiresAt")}
                   type="datetime-local"
-                  className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
                 />
               </Field>
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-3 mt-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mt-8">
             <button
               type="button"
               onClick={() =>
@@ -387,7 +387,7 @@ export default function CreateCustomerPage() {
                 })
               }
               disabled={submitting}
-              className="px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
+              className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               Clear
             </button>
@@ -395,7 +395,7 @@ export default function CreateCustomerPage() {
             <button
               type="submit"
               disabled={!isValid || submitting}
-              className="px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
+              className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               {submitting ? "Creating..." : "Create Customer"}
             </button>

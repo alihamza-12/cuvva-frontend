@@ -159,12 +159,12 @@ export default function PolicyDetailPage() {
         />
       </div>
 
-      <div className="flex-1 w-full p-6 space-y-6 md:p-10">
+      <div className="flex-1 w-full p-4 space-y-6 pb-28 md:p-10 md:pb-24 lg:pb-10">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+            className="inline-flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
           >
             <ArrowLeft size={14} /> Back
           </button>
@@ -195,7 +195,7 @@ export default function PolicyDetailPage() {
                       <FileText size={18} />
                     </div>
                     <div>
-                      <div className="text-[11px] text-[#8a8fbc] font-mono uppercase tracking-wider">
+                      <div className="text-[11px] text-[#8a8fbc] font-mono uppercase tracking-wider break-all">
                         {policy.policyNumber ? policy.policyNumber : policy._id}
                       </div>
                       <div className="mt-1 text-sm font-bold text-white">
@@ -361,7 +361,7 @@ export default function PolicyDetailPage() {
                       onChange={(e) =>
                         setEditForm({ ...editForm, status: e.target.value })
                       }
-                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                      className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
                     >
                       <option value="Upcoming">Upcoming</option>
                       <option value="Active">Active</option>
@@ -417,7 +417,7 @@ export default function PolicyDetailPage() {
                       onChange={(e) =>
                         setEditForm({ ...editForm, policyType: e.target.value })
                       }
-                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                      className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
                     >
                       <option value="Temporary Car">Temporary Car</option>
                       <option value="Temporary Van">Temporary Van</option>
@@ -440,7 +440,7 @@ export default function PolicyDetailPage() {
                           coverageType: e.target.value,
                         })
                       }
-                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                      className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
                     >
                       <option value="Comprehensive">Comprehensive</option>
                       <option value="Third Party Only">Third Party Only</option>
@@ -459,7 +459,7 @@ export default function PolicyDetailPage() {
                           underwriter: e.target.value,
                         })
                       }
-                      className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
+                      className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-2 text-white outline-none focus:border-[#644aff]"
                     >
                       <option value="Wakam">Wakam</option>
                       <option value="ERS Syndicate">ERS Syndicate</option>
@@ -480,7 +480,7 @@ export default function PolicyDetailPage() {
                           internalNotes: e.target.value,
                         })
                       }
-                      className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2.5 text-white outline-none resize-none focus:border-[#644aff]"
+                      className="w-full min-h-[88px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-white outline-none resize-none focus:border-[#644aff]"
                       placeholder="Administrative internal notes (optional)"
                     />
                   </div>
@@ -505,7 +505,7 @@ export default function PolicyDetailPage() {
                     <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                       Policy DB ID
                     </div>
-                    <div className="font-mono text-xs text-white">
+                    <div className="font-mono text-xs text-white break-all">
                       {policy._id}
                     </div>
                   </div>

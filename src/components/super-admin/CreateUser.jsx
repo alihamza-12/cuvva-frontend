@@ -65,7 +65,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
 
   return (
     <div className="grid w-full grid-cols-1 gap-8 text-xs animate-fadeIn">
-      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 h-fit shadow-xl">
+      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 h-fit shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <UserPlus size={16} className="text-[#644aff]" />
           <h3 className="text-sm font-bold tracking-wider text-white uppercase">
@@ -105,7 +105,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
               onChange={(e) =>
                 setFormData({ ...formData, fullName: e.target.value })
               }
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
             />
           </div>
 
@@ -121,7 +121,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
             />
           </div>
 
@@ -137,7 +137,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
             />
           </div>
 
@@ -150,7 +150,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
               onChange={(e) =>
                 setFormData({ ...formData, role: e.target.value })
               }
-              className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff] transition-colors"
+              className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff] transition-colors"
             >
               <option value="Sub Admin">Sub Admin Node</option>
               <option value="Customer">Customer</option>
@@ -170,7 +170,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
                   onChange={(e) =>
                     setFormData({ ...formData, dateOfBirth: e.target.value })
                   }
-                  className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+                  className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
                 />
               </div>
 
@@ -184,7 +184,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
                   onChange={(e) =>
                     setFormData({ ...formData, gender: e.target.value })
                   }
-                  className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff] transition-colors"
+                  className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff] transition-colors"
                 >
                   <option value="">Select gender</option>
                   <option value="Male">Male</option>
@@ -209,7 +209,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
                       drivingLicenceNumber: e.target.value,
                     })
                   }
-                  className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+                  className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
                 />
               </div>
             </>
@@ -227,7 +227,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
               onChange={(e) =>
                 setFormData({ ...formData, durationDays: e.target.value })
               }
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
             />
           </div>
 

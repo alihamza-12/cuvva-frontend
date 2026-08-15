@@ -128,7 +128,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
 
   return (
     <div className="grid w-full grid-cols-1 gap-6 text-xs animate-fadeIn">
-      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 h-fit shadow-xl w-full">
+      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 h-fit shadow-xl w-full">
         <div className="flex items-center gap-2 mb-4">
           <PlusCircle size={16} className="text-[#644aff]" />
           <h3 className="text-sm font-bold tracking-wider text-white uppercase">
@@ -167,11 +167,11 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 setForm({ ...form, registration: e.target.value })
               }
               placeholder="KV16WYZ"
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 Make
@@ -182,7 +182,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 value={form.make}
                 onChange={(e) => setForm({ ...form, make: e.target.value })}
                 placeholder="Audi"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -195,12 +195,12 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 value={form.model}
                 onChange={(e) => setForm({ ...form, model: e.target.value })}
                 placeholder="A3"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 Colour
@@ -210,7 +210,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 value={form.colour}
                 onChange={(e) => setForm({ ...form, colour: e.target.value })}
                 placeholder="Metallic Grey"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -225,7 +225,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 placeholder="2018"
                 min="1900"
                 max="2100"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
             <select
               value={form.fuelType}
               onChange={(e) => setForm({ ...form, fuelType: e.target.value })}
-              className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
+              className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
             >
               <option value="PETROL">PETROL</option>
               <option value="DIESEL">DIESEL</option>
@@ -259,7 +259,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 }
                 placeholder="e.g. 1968"
                 min="0"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -272,12 +272,12 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 onChange={(e) => setForm({ ...form, powerBHP: e.target.value })}
                 placeholder="e.g. 150"
                 min="0"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 Top Speed
@@ -288,7 +288,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 onChange={(e) => setForm({ ...form, topSpeed: e.target.value })}
                 placeholder="e.g. 180"
                 min="0"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -303,7 +303,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 }
                 placeholder="e.g. 4"
                 min="0"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
@@ -320,11 +320,11 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
               }
               placeholder="e.g. 55"
               min="0"
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 MOT Status
@@ -336,7 +336,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                   setForm({ ...form, motStatus: e.target.value })
                 }
                 placeholder="Valid"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -349,12 +349,12 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 onChange={(e) =>
                   setForm({ ...form, motExpiryDate: e.target.value })
                 }
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 Tax Status
@@ -366,7 +366,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                   setForm({ ...form, taxStatus: e.target.value })
                 }
                 placeholder="Paid"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -379,12 +379,12 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 onChange={(e) =>
                   setForm({ ...form, taxDueDate: e.target.value })
                 }
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 Registration Keeper
@@ -396,7 +396,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                   setForm({ ...form, registrationKeeper: e.target.value })
                 }
                 placeholder="e.g. John Smith"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -409,12 +409,12 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 onChange={(e) =>
                   setForm({ ...form, v5cIssueDate: e.target.value })
                 }
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 CO2 Emissions
@@ -427,7 +427,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                 }
                 placeholder="e.g. 120"
                 min="0"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
@@ -441,7 +441,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
                   setForm({ ...form, euroStatus: e.target.value })
                 }
                 placeholder="Euro 6"
-                className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
               />
             </div>
           </div>
@@ -455,7 +455,7 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
               value={form.wheelplan}
               onChange={(e) => setForm({ ...form, wheelplan: e.target.value })}
               placeholder="e.g. 4x2"
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
             />
           </div>
 

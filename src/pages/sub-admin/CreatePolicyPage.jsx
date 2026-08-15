@@ -173,7 +173,7 @@ export default function CreatePolicyPage() {
 
   return (
     <div className="w-full animate-fadeIn">
-      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-2xl">
+      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 shadow-2xl">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 pb-4 border-b border-[#1e2238]">
           <div>
             <h3 className="text-xl font-bold tracking-wide text-white">
@@ -189,7 +189,7 @@ export default function CreatePolicyPage() {
             onClick={() =>
               navigate("/dashboard?tab=my-policies", { replace: true })
             }
-            className="px-4 py-2 bg-[#060814] hover:bg-[#1a1d33] border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-lg text-[10px] uppercase transition-all"
+            className="min-h-[44px] px-4 py-2 bg-[#060814] hover:bg-[#1a1d33] border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-lg text-[10px] uppercase transition-all"
           >
             Back to My Policies
           </button>
@@ -219,7 +219,7 @@ export default function CreatePolicyPage() {
               <select
                 value={form.customerId}
                 onChange={handleChange("customerId")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               >
                 <option value="" disabled>
                   Select your customer
@@ -236,7 +236,7 @@ export default function CreatePolicyPage() {
               <select
                 value={form.vehicleId}
                 onChange={handleChange("vehicleId")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               >
                 <option value="" disabled>
                   Select vehicle
@@ -264,7 +264,7 @@ export default function CreatePolicyPage() {
               <select
                 value={form.underwriter}
                 onChange={handleChange("underwriter")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               >
                 <option value="Wakam">Wakam</option>
                 <option value="ERS Syndicate">ERS Syndicate</option>
@@ -278,7 +278,7 @@ export default function CreatePolicyPage() {
               <select
                 value={form.policyType}
                 onChange={handleChange("policyType")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               >
                 <option value="Temporary Car">Temporary Car</option>
                 <option value="Temporary Van">Temporary Van</option>
@@ -293,7 +293,7 @@ export default function CreatePolicyPage() {
               <select
                 value={form.coverageType}
                 onChange={handleChange("coverageType")}
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
               >
                 <option value="Comprehensive">Comprehensive</option>
                 <option value="Third Party Only">Third Party Only</option>
@@ -344,12 +344,12 @@ export default function CreatePolicyPage() {
                 onChange={handleChange("internalNotes")}
                 rows={3}
                 placeholder="Add notes..."
-                className="w-full px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff] resize-none"
+                className="w-full min-h-[88px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff] resize-none"
               />
             </Field>
           </div>
 
-          <div className="flex items-center justify-end gap-3 mt-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mt-8">
             <button
               type="button"
               disabled={submitting}
@@ -368,7 +368,7 @@ export default function CreatePolicyPage() {
                   internalNotes: "",
                 })
               }
-              className="px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
+              className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               Clear
             </button>
@@ -376,7 +376,7 @@ export default function CreatePolicyPage() {
             <button
               type="submit"
               disabled={!isValid || submitting}
-              className="px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
+              className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               {submitting ? "Creating..." : "Create Policy"}
             </button>

@@ -118,8 +118,56 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto text-xs">
-            <table className="w-full text-left border-collapse">
+          <>
+            {/* Phone cards */}
+            <div className="mt-4 space-y-3 md:hidden">
+              {filteredCustomers.map((c) => (
+                <article
+                  key={c._id}
+                  onClick={() => navigate(`/dashboard/customers/${c._id}`)}
+                  className="rounded-2xl border border-[#1e2238] bg-[#0d0f1d] p-4 cursor-pointer"
+                >
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-base font-semibold text-white">
+                        {c.fullName}
+                      </h3>
+                      <p className="text-sm text-[#8a8fbc] break-all mt-0.5">
+                        {c.email}
+                      </p>
+                    </div>
+                    <span
+                      className={`shrink-0 inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase mt-1 ${
+                        c.status === "Active"
+                          ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                          : "bg-red-500/10 text-red-400 border border-red-500/20"
+                      }`}
+                    >
+                      {c.status}
+                    </span>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      disabled={actionLoadingId === c._id}
+                      onClick={(e) => toggleStatus(e, c._id, c.status)}
+                      className="w-full min-h-[44px] rounded-xl bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold text-xs uppercase tracking-wider hover:border-[#00f0ff] hover:text-white transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                    >
+                      {actionLoadingId === c._id ? (
+                        <RefreshCw size={14} className="animate-spin" />
+                      ) : (
+                        "Manage Status"
+                      )}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Existing desktop table */}
+            <div className="hidden overflow-x-auto text-xs md:block">
+              <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="text-[#8a8fbc] border-b border-[#1e2238] font-bold uppercase tracking-wider text-[10px]">
                   <th className="pb-4 pl-2">Identity Details</th>
@@ -172,7 +220,8 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
       </div>
     </div>

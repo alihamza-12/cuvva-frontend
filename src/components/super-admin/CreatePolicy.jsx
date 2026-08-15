@@ -157,7 +157,7 @@ export default function CreatePolicy({
 
   return (
     <div className="grid w-full grid-cols-1 gap-8 text-xs animate-fadeIn">
-      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 h-fit shadow-xl">
+      <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-4 md:p-6 h-fit shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <PlusCircle size={16} className="text-[#644aff]" />
           <h3 className="text-sm font-bold tracking-wider text-white uppercase">
@@ -199,7 +199,7 @@ export default function CreatePolicy({
                 onChange={(e) =>
                   setForm({ ...form, customerId: e.target.value })
                 }
-                className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
               >
                 <option value="" disabled>
                   Select customer
@@ -228,7 +228,7 @@ export default function CreatePolicy({
                 onChange={(e) =>
                   setForm({ ...form, vehicleId: e.target.value })
                 }
-                className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
               >
                 <option value="" disabled>
                   Select vehicle
@@ -242,7 +242,7 @@ export default function CreatePolicy({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <CurrencyInput
                 label="Premium Amount (£)"
@@ -262,7 +262,7 @@ export default function CreatePolicy({
                 onChange={(e) =>
                   setForm({ ...form, underwriter: e.target.value })
                 }
-                className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
               >
                 <option value="Wakam">Wakam</option>
                 <option value="ERS Syndicate">ERS Syndicate</option>
@@ -271,7 +271,7 @@ export default function CreatePolicy({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                 Policy Type
@@ -282,7 +282,7 @@ export default function CreatePolicy({
                 onChange={(e) =>
                   setForm({ ...form, policyType: e.target.value })
                 }
-                className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
               >
                 <option value="Temporary Car">Temporary Car</option>
                 <option value="Temporary Van">Temporary Van</option>
@@ -302,7 +302,7 @@ export default function CreatePolicy({
                 onChange={(e) =>
                   setForm({ ...form, coverageType: e.target.value })
                 }
-                className="w-full bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
+                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
               >
                 <option value="Comprehensive">Comprehensive</option>
                 <option value="Third Party Only">Third Party Only</option>
@@ -311,7 +311,7 @@ export default function CreatePolicy({
           </div>
 
           <div className="p-3 bg-white/[0.02] border border-[#1e2238] rounded-xl space-y-3">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
               <MaskedDateInput
                 label="Start Date"
                 value={form.startDate}
@@ -328,7 +328,7 @@ export default function CreatePolicy({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
               <MaskedDateInput
                 label="End Date"
                 value={form.endDate}
@@ -357,7 +357,7 @@ export default function CreatePolicy({
                 setForm({ ...form, internalNotes: e.target.value })
               }
               placeholder="Add notes for this policy..."
-              className="w-full bg-white/5 border border-[#1e2238] rounded-xl p-2.5 text-white outline-none focus:border-[#644aff] resize-none"
+              className="w-full min-h-[88px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-white outline-none focus:border-[#644aff] resize-none"
             />
           </div>
 

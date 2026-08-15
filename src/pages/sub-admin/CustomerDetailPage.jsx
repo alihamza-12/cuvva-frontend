@@ -83,7 +83,7 @@ const TextInput = ({
       value={value}
       onChange={onChange}
       required={required}
-      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#644aff]"
+      className="w-full min-h-[44px] bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#644aff]"
     />
   </div>
 );
@@ -94,7 +94,7 @@ const SelectInput = ({ label, value, onChange, options }) => (
     <select
       value={value}
       onChange={onChange}
-      className="w-full bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#644aff]"
+      className="w-full min-h-[44px] bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#644aff]"
     >
       {options.map((opt) => (
         <option key={opt} value={opt}>
@@ -108,7 +108,7 @@ const SelectInput = ({ label, value, onChange, options }) => (
 const ReadRow = ({ label, value, colSpan2 = false }) => (
   <div className={`space-y-1 ${colSpan2 ? "md:col-span-2" : ""}`}>
     <FieldLabel>{label}</FieldLabel>
-    <div className="text-xs font-semibold text-white">{value ?? "N/A"}</div>
+    <div className="text-xs font-semibold text-white break-words">{value ?? "N/A"}</div>
   </div>
 );
 
@@ -211,11 +211,11 @@ export default function CustomerDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#060814] text-white flex">
-<div className="flex-1 w-full p-6 space-y-6 md:p-10">
+<div className="flex-1 w-full p-4 space-y-6 pb-28 md:p-10 md:pb-10">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+            className="inline-flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
           >
             <ArrowLeft size={14} /> Back
           </button>
@@ -239,11 +239,11 @@ export default function CustomerDetailPage() {
         {!loading && !error && customer && (
           <div className="space-y-5">
 
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex flex-wrap items-center justify-end gap-2">
               {!isEditMode ? (
                 <button
                   type="button"
-                  className="px-3 py-2 rounded-xl bg-[#644aff]/10 border border-[#644aff]/30 hover:bg-[#644aff]/20 text-xs uppercase tracking-wider font-bold"
+                  className="min-h-[44px] px-3 py-2 rounded-xl bg-[#644aff]/10 border border-[#644aff]/30 hover:bg-[#644aff]/20 text-xs uppercase tracking-wider font-bold"
                   onClick={handleEditClick}
                 >
                   Edit Customer
@@ -252,7 +252,7 @@ export default function CustomerDetailPage() {
                 <>
                   <button
                     type="button"
-                    className="px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
+                    className="min-h-[44px] px-3 py-2 rounded-xl bg-white/5 border border-[#1e2238] hover:bg-white/10 text-xs uppercase tracking-wider font-bold"
                     onClick={handleCancel}
                   >
                     Cancel
@@ -260,7 +260,7 @@ export default function CustomerDetailPage() {
                   <button
                     type="button"
                     disabled={updating}
-                    className="px-3 py-2 rounded-xl bg-[#644aff] hover:bg-[#5537ff] disabled:opacity-50 text-white text-xs uppercase tracking-wider font-bold"
+                    className="min-h-[44px] px-3 py-2 rounded-xl bg-[#644aff] hover:bg-[#5537ff] disabled:opacity-50 text-white text-xs uppercase tracking-wider font-bold"
                     onClick={handleSave}
                   >
                     {updating ? "Updating..." : "Save Changes"}
@@ -282,20 +282,20 @@ export default function CustomerDetailPage() {
 
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
               <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl text-[#644aff]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl text-[#644aff] shrink-0">
                     <User size={18} />
                   </div>
-                  <div>
-                    <h2 className="text-sm font-bold text-white">
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-bold text-white truncate">
                       {customer.fullName}
                     </h2>
-                    <div className="text-[11px] text-[#8a8fbc] flex items-center gap-2">
-                      <Mail size={12} /> {customer.email}
+                    <div className="text-[11px] text-[#8a8fbc] flex items-center gap-2 break-all">
+                      <Mail size={12} className="shrink-0" /> {customer.email}
                     </div>
                   </div>
                 </div>
-                <div>{statusPill(customer.status)}</div>
+                <div className="shrink-0">{statusPill(customer.status)}</div>
               </div>
 
               {isEditMode ? (
