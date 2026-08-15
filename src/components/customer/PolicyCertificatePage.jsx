@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { X } from "lucide-react";
 import { getPolicyDocumentData } from "../../app/api/policyApi";
@@ -33,7 +33,7 @@ const territorialParagraphs = [
 
 function SectionTitle({ children }) {
   return (
-    <h2 className="mb-5 text-[28px] font-normal leading-tight text-[#9998ab] sm:text-[34px]">
+    <h2 className="mb-5 text-[34px] font-normal leading-tight text-[#9998ab]">
       {children}
     </h2>
   );
@@ -72,6 +72,9 @@ export default function PolicyCertificatePage() {
   const { policyId } = useParams();
   const [documentData, setDocumentData] = useState(null);
   const [error, setError] = useState("");
+  const documentRef = useRef(null);
+  const [documentScale, setDocumentScale] = useState(1);
+  const [documentHeight, setDocumentHeight] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -95,6 +98,29 @@ export default function PolicyCertificatePage() {
       active = false;
     };
   }, [policyId]);
+
+  useEffect(() => {
+    if (!documentData) return undefined;
+
+    const updateDocumentSize = () => {
+      const availableWidth = window.innerWidth;
+      const nextScale = Math.min(1, availableWidth / 900);
+      setDocumentScale(nextScale);
+      if (documentRef.current) {
+        setDocumentHeight(documentRef.current.scrollHeight * nextScale);
+      }
+    };
+
+    updateDocumentSize();
+    const observer = new ResizeObserver(updateDocumentSize);
+    if (documentRef.current) observer.observe(documentRef.current);
+    window.addEventListener("resize", updateDocumentSize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateDocumentSize);
+    };
+  }, [documentData]);
 
   return (
     <div className="min-h-screen bg-white text-[#36363b]">
@@ -132,17 +158,28 @@ export default function PolicyCertificatePage() {
           Loading document…
         </div>
       ) : (
-        <main className="mx-auto w-full max-w-[920px] overflow-hidden bg-white px-5 py-8 sm:px-10 sm:py-12 lg:px-14">
+        <div
+          className="relative w-full overflow-hidden bg-white"
+          style={{ height: documentHeight || "auto" }}
+        >
+          <main
+            ref={documentRef}
+            className="absolute top-0 w-[900px] overflow-hidden bg-white px-14 py-12"
+            style={{
+              left: `calc(50% - ${450 * documentScale}px)`,
+              transform: `scale(${documentScale})`,
+              transformOrigin: "top left",
+            }}
+          >
           <div className="border-t border-[#d4d4d6] pt-7">
-            <div className="mb-10 flex justify-center">
-              <img
-                src="/cuvva-logo-grey.png"
-                alt="Cuvva"
-                className="h-auto w-[135px] object-contain"
-              />
+            <div className="flex justify-center mb-10">
+              <div className="flex items-center gap-2 text-[#080d2b]" aria-label="Cuvva">
+                <span className="relative block h-7 w-7 rounded-full bg-[#080d2b] after:absolute after:left-0 after:top-1/2 after:h-[2px] after:w-full after:-translate-y-1/2 after:bg-white" />
+                <span className="text-[31px] font-bold leading-none tracking-[-1.5px]">Cuvva</span>
+              </div>
             </div>
 
-            <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <section className="grid grid-cols-[0.9fr_1.1fr] items-start gap-8">
               <div>
                 <SectionTitle>Policy details</SectionTitle>
                 <p className="border-l-4 border-[#e1e1e3] pl-4 text-[14px] leading-6">
@@ -157,7 +194,7 @@ export default function PolicyCertificatePage() {
               </dl>
             </section>
 
-            <section className="mt-12 grid gap-12 md:grid-cols-2">
+            <section className="grid grid-cols-2 gap-12 mt-12">
               <div>
                 <SectionTitle>Policyholder</SectionTitle>
                 <dl className="space-y-2.5">
@@ -196,7 +233,7 @@ export default function PolicyCertificatePage() {
               </div>
             </section>
 
-            <section className="mt-12 grid gap-12 md:grid-cols-2">
+            <section className="grid grid-cols-2 gap-12 mt-12">
               <div>
                 <SectionTitle>Policy</SectionTitle>
                 <Detail label="Cover level" value={documentData.coverageType} />
@@ -260,7 +297,7 @@ export default function PolicyCertificatePage() {
             </p>
 
             <div className="border border-[#444448] p-5 sm:p-7">
-              <div className="grid gap-8 md:grid-cols-2">
+              <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <CertificateField number="" title="Policy number">
                     <span className="rounded border border-[#dddde2] bg-[#f4f4f6] px-1.5 py-0.5 font-mono">
@@ -287,13 +324,13 @@ export default function PolicyCertificatePage() {
                   </CertificateField>
                   <CertificateField number="6" title="Limitations as to use">
                     <p>This insurance covers all of the following:</p>
-                    <ul className="mt-2 list-disc space-y-1 pl-5">
+                    <ul className="pl-5 mt-2 space-y-1 list-disc">
                       <li>social, domestic, and pleasure purposes</li>
                       <li>travel between the policyholder's home and permanent place of work</li>
                       <li>class 1 business use</li>
                     </ul>
                     <p className="mt-4">This insurance does not cover any of the following:</p>
-                    <ul className="mt-2 list-disc space-y-1 pl-5">
+                    <ul className="pl-5 mt-2 space-y-1 list-disc">
                       <li>racing, pacemaking, speed testing, rallies, trials or competitions on or off the public highway</li>
                       <li>the carriage of passengers or goods for hire and reward, letting on hire, or use in connection with the motor trade</li>
                       <li>securing the release of a motor vehicle other than the vehicle described in this schedule</li>
@@ -329,7 +366,8 @@ export default function PolicyCertificatePage() {
               ))}
             </div>
           </section>
-        </main>
+          </main>
+        </div>
       )}
     </div>
   );
