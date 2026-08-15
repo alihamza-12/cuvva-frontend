@@ -77,11 +77,24 @@ export default function CreatePolicyPage() {
   }, []);
 
   const customerOptions = useMemo(() => {
-    return customers.map((c) => ({
-      value: c._id,
-      label: c.fullName ? `${c.fullName} (${c.email})` : c.email,
+    return customers.map((customer) => ({
+      value: customer._id,
+      label: customer.fullName
+        ? `${customer.fullName} (${customer.email})`
+        : customer.email,
+      policyCreationRestricted: Boolean(
+        customer.policyCreationRestricted,
+      ),
     }));
   }, [customers]);
+
+  const restrictedCustomerCount = useMemo(
+    () =>
+      customerOptions.filter(
+        (customer) => customer.policyCreationRestricted,
+      ).length,
+    [customerOptions],
+  );
 
   const vehicleOptions = useMemo(() => {
     return vehicles.map((v) => ({
@@ -213,6 +226,13 @@ export default function CreatePolicyPage() {
           </div>
         )}
 
+        {restrictedCustomerCount > 0 && (
+          <div className="px-4 py-3 mt-4 text-xs leading-relaxed text-amber-200 border rounded-xl bg-amber-500/10 border-amber-500/20">
+            {restrictedCustomerCount} customer(s) are visible but unavailable
+            for policy creation because a Super Admin has restricted them.
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="mt-6">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Customer (required)">
@@ -224,9 +244,16 @@ export default function CreatePolicyPage() {
                 <option value="" disabled>
                   Select your customer
                 </option>
-                {customerOptions.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
+                {customerOptions.map((customer) => (
+                  <option
+                    key={customer.value}
+                    value={customer.value}
+                    disabled={customer.policyCreationRestricted}
+                  >
+                    {customer.label}
+                    {customer.policyCreationRestricted
+                      ? " — Policy creation restricted"
+                      : ""}
                   </option>
                 ))}
               </select>
