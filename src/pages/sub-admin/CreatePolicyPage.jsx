@@ -31,6 +31,7 @@ export default function CreatePolicyPage() {
     vehicleId: "",
     premiumAmount: "",
     excess: "500",
+    cardLast4: "",
     startDate: "",
     endDate: "",
     startTime: "14:30",
@@ -111,6 +112,7 @@ export default function CreatePolicyPage() {
     if (!form.vehicleId) return false;
     if (!form.premiumAmount || Number(form.premiumAmount) <= 0) return false;
     if (form.excess === "" || Number(form.excess) < 0) return false;
+    if (!/^\d{4}$/.test(form.cardLast4)) return false;
     if (!form.startDate || !form.endDate) return false;
     if (!form.startTime || !form.endTime) return false;
     return true;
@@ -154,6 +156,7 @@ export default function CreatePolicyPage() {
         vehicleId: form.vehicleId,
         premiumAmount: form.premiumAmount,
         excess: form.excess,
+        cardLast4: form.cardLast4,
         startDate: form.startDate,
         endDate: form.endDate,
         startTime: normalizedStartTime,
@@ -301,6 +304,25 @@ export default function CreatePolicyPage() {
               />
             </Field>
 
+            <Field label="Last 4 digits of payment card (required)">
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                maxLength={4}
+                required
+                value={form.cardLast4}
+                onChange={(event) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    cardLast4: event.target.value.replace(/\D/g, "").slice(0, 4),
+                  }))
+                }
+                placeholder="0000"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+              />
+            </Field>
+
             <Field label="Underwriter (required)">
               <select
                 value={form.underwriter}
@@ -400,6 +422,7 @@ export default function CreatePolicyPage() {
                   vehicleId: "",
                   premiumAmount: "",
                   excess: "500",
+                  cardLast4: "",
                   startDate: "",
                   endDate: "",
                   startTime: "14:30",

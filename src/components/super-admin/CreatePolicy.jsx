@@ -26,6 +26,7 @@ export default function CreatePolicy({
     vehicleId: "",
     premiumAmount: "",
     excess: "500",
+    cardLast4: "",
     startDate: "",
     endDate: "",
     startTime: "",
@@ -96,6 +97,12 @@ export default function CreatePolicy({
     e.preventDefault();
     setFormError("");
     setFormSuccess("");
+
+    if (!/^\d{4}$/.test(form.cardLast4)) {
+      setFormError("Enter exactly the last 4 digits of the payment card");
+      return;
+    }
+
     const normalizedStartTime = normalizeTime(form.startTime);
     const normalizedEndTime = normalizeTime(form.endTime);
 
@@ -121,6 +128,7 @@ export default function CreatePolicy({
 
       premiumAmount: form.premiumAmount,
       excess: form.excess,
+      cardLast4: form.cardLast4,
       startDate: form.startDate,
       endDate: form.endDate,
       startTime: normalizedStartTime,
@@ -140,6 +148,7 @@ export default function CreatePolicy({
         vehicleId: "",
         premiumAmount: "",
         excess: "500",
+        cardLast4: "",
         startDate: "",
         endDate: "",
         startTime: "",
@@ -262,6 +271,27 @@ export default function CreatePolicy({
                 onChange={(v) => setForm({ ...form, excess: v })}
                 required
                 accentClass="focus:border-[#644aff]"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
+                Last 4 digits of payment card
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                maxLength={4}
+                required
+                value={form.cardLast4}
+                onChange={(event) =>
+                  setForm({
+                    ...form,
+                    cardLast4: event.target.value.replace(/\D/g, "").slice(0, 4),
+                  })
+                }
+                placeholder="0000"
+                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl p-3 text-xs outline-none text-white focus:border-[#644aff]"
               />
             </div>
             <div className="space-y-1">
