@@ -4,22 +4,20 @@ import {
   CheckCircle2,
   PlusCircle,
   User,
-  Car,
   ShieldCheck,
 } from "lucide-react";
 import CurrencyInput from "../common/CurrencyInput";
 import MaskedDateInput from "../common/MaskedDateInput";
 import MaskedTimeInput from "../common/MaskedTimeInput";
 import { normalizeTime } from "../../utils/normalizeTime";
+import PolicyVehicleLookup from "../common/PolicyVehicleLookup";
 
 export default function CreatePolicy({
   axiosInstance,
   onCreated,
   customers = [],
-  vehicles = [],
 }) {
   const [localCustomers, setLocalCustomers] = useState(customers);
-  const [localVehicles, setLocalVehicles] = useState(vehicles);
 
   const [form, setForm] = useState({
     customerId: "",
@@ -40,14 +38,11 @@ export default function CreatePolicy({
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [vehicleLookupKey, setVehicleLookupKey] = useState(0);
 
   const needsFetchCustomers = useMemo(
     () => localCustomers.length === 0,
     [localCustomers],
-  );
-  const needsFetchVehicles = useMemo(
-    () => localVehicles.length === 0,
-    [localVehicles],
   );
 
   useEffect(() => {
@@ -60,11 +55,6 @@ export default function CreatePolicy({
           if (!mounted) return;
           setLocalCustomers(res.data?.customers || []);
         }
-        if (needsFetchVehicles) {
-          const res = await axiosInstance.get("/api/vehicles/all");
-          if (!mounted) return;
-          setLocalVehicles(res.data?.vehicles || []);
-        }
       } catch (err) {
 
       }
@@ -75,7 +65,7 @@ export default function CreatePolicy({
     return () => {
       mounted = false;
     };
-  }, [needsFetchCustomers, needsFetchVehicles, axiosInstance]);
+  }, [needsFetchCustomers, axiosInstance]);
 
   const customerOptions = useMemo(() => {
     return localCustomers.map((c) => ({
@@ -84,19 +74,15 @@ export default function CreatePolicy({
     }));
   }, [localCustomers]);
 
-  const vehicleOptions = useMemo(() => {
-    return localVehicles.map((v) => ({
-      value: v._id,
-      label: v.registration
-        ? `${v.registration} - ${v.make} ${v.model}`
-        : `${v.make} ${v.model}`,
-    }));
-  }, [localVehicles]);
-
   const handleCreatePolicy = async (e) => {
     e.preventDefault();
     setFormError("");
     setFormSuccess("");
+
+    if (!form.customerId || !form.vehicleId) {
+      setFormError("Select a customer and search/save a vehicle first");
+      return;
+    }
 
     if (!/^\d{4}$/.test(form.cardLast4)) {
       setFormError("Enter exactly the last 4 digits of the payment card");
@@ -159,6 +145,7 @@ export default function CreatePolicy({
         internalNotes: "",
       });
 
+      setVehicleLookupKey((current) => current + 1);
       if (onCreated) onCreated();
     } catch (err) {
       setFormError(err.response?.data?.message || "Error creating policy.");
@@ -173,13 +160,13 @@ export default function CreatePolicy({
         <div className="flex items-center gap-2 mb-4">
           <PlusCircle size={16} className="text-[#644aff]" />
           <h3 className="text-sm font-bold tracking-wider text-white uppercase">
-            Create Policey
+            Create Policy
           </h3>
         </div>
 
         <p className="text-[11px] text-[#6b7280] mb-4 leading-relaxed">
-          Select Customer + Vehicle and fill policy details. Customers and
-          vehicles are loaded from the backend.
+          Select a customer, then search by registration. Existing vehicles are
+          loaded from the database; new vehicles are retrieved from RegCheck.
         </p>
 
         <form onSubmit={handleCreatePolicy} className="space-y-4">
@@ -225,34 +212,16 @@ export default function CreatePolicy({
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-              Vehicle
-            </label>
-            <div className="relative">
-              <Car
-                size={12}
-                className="absolute left-3.5 top-3.5 text-[#6b7280]"
-              />
-              <select
-                required
-                value={form.vehicleId}
-                onChange={(e) =>
-                  setForm({ ...form, vehicleId: e.target.value })
-                }
-                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
-              >
-                <option value="" disabled>
-                  Select vehicle
-                </option>
-                {vehicleOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <PolicyVehicleLookup
+            key={vehicleLookupKey}
+            accent="purple"
+            onVehicleResolved={(vehicle) =>
+              setForm((current) => ({
+                ...current,
+                vehicleId: vehicle?._id || "",
+              }))
+            }
+          />
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-2">
             <div className="space-y-1">
@@ -410,7 +379,7 @@ export default function CreatePolicy({
           >
             <span className="inline-flex items-center justify-center gap-2">
               <ShieldCheck size={14} />
-              {submitting ? "Creating policy..." : "Create Policey"}
+              {submitting ? "Creating policy..." : "Create Policy"}
             </span>
           </button>
         </form>

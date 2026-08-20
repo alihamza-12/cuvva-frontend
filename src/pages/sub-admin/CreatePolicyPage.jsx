@@ -5,6 +5,7 @@ import CurrencyInput from "../../components/common/CurrencyInput";
 import MaskedDateInput from "../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../components/common/MaskedTimeInput";
 import { normalizeTime } from "../../utils/normalizeTime";
+import PolicyVehicleLookup from "../../components/common/PolicyVehicleLookup";
 
 function Field({ label, children }) {
   return (
@@ -21,7 +22,6 @@ export default function CreatePolicyPage() {
   const navigate = useNavigate();
 
   const [customers, setCustomers] = useState([]);
-  const [vehicles, setVehicles] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -45,6 +45,7 @@ export default function CreatePolicyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [vehicleLookupKey, setVehicleLookupKey] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -55,16 +56,13 @@ export default function CreatePolicyPage() {
 
         const custRes = await httpClient.get("/api/customers");
         const custList = custRes?.data?.customers || [];
-        const vehRes = await httpClient.get("/api/vehicles/all");
-        const vehList = vehRes?.data?.vehicles || [];
 
         if (!mounted) return;
         setCustomers(custList);
-        setVehicles(vehList);
       } catch (e) {
         if (!mounted) return;
         setLoadError(
-          e?.response?.data?.message || "Failed to load customers/vehicles.",
+          e?.response?.data?.message || "Failed to load customers.",
         );
       } finally {
         if (!mounted) return;
@@ -97,15 +95,6 @@ export default function CreatePolicyPage() {
       ).length,
     [customerOptions],
   );
-
-  const vehicleOptions = useMemo(() => {
-    return vehicles.map((v) => ({
-      value: v._id,
-      label: v.registration
-        ? `${v.registration} - ${v.make} ${v.model}`
-        : `${v.make} ${v.model}`,
-    }));
-  }, [vehicles]);
 
   const isValid = useMemo(() => {
     if (!form.customerId) return false;
@@ -265,22 +254,18 @@ export default function CreatePolicyPage() {
               </select>
             </Field>
 
-            <Field label="Vehicle (required)">
-              <select
-                value={form.vehicleId}
-                onChange={handleChange("vehicleId")}
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
-              >
-                <option value="" disabled>
-                  Select vehicle
-                </option>
-                {vehicleOptions.map((v) => (
-                  <option key={v.value} value={v.value}>
-                    {v.label}
-                  </option>
-                ))}
-              </select>
-            </Field>
+            <div className="md:col-span-2">
+              <PolicyVehicleLookup
+                key={vehicleLookupKey}
+                accent="cyan"
+                onVehicleResolved={(vehicle) =>
+                  setForm((current) => ({
+                    ...current,
+                    vehicleId: vehicle?._id || "",
+                  }))
+                }
+              />
+            </div>
 
             <Field label="Premium Amount (£) (required)">
               <CurrencyInput
@@ -416,7 +401,7 @@ export default function CreatePolicyPage() {
             <button
               type="button"
               disabled={submitting}
-              onClick={() =>
+              onClick={() => {
                 setForm({
                   customerId: "",
                   vehicleId: "",
@@ -431,8 +416,9 @@ export default function CreatePolicyPage() {
                   coverageType: "Comprehensive",
                   underwriter: "Wakam",
                   internalNotes: "",
-                })
-              }
+                });
+                setVehicleLookupKey((current) => current + 1);
+              }}
               className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               Clear

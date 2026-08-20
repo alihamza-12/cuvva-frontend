@@ -10,6 +10,12 @@ import {
   User,
 } from "lucide-react";
 
+const cleanRegistration = (value) =>
+  String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+
 export default function VehicleCatalog({
   vehicles = [],
   onRefresh,
@@ -26,10 +32,22 @@ export default function VehicleCatalog({
     setLookupError("");
     setLookupResult(null);
 
-    const cleanedRegParam = regInput.trim().toUpperCase().replace(/\s+/g, "");
+    const cleanedRegParam = cleanRegistration(regInput);
 
     if (!cleanedRegParam) {
       setLookupError("Please enter a registration number.");
+      return;
+    }
+
+    // The complete Super Admin registry is already loaded on this screen.
+    // Resolve an exact canonical match immediately before requesting it again.
+    const loadedVehicle = vehicles.find(
+      (vehicle) =>
+        cleanRegistration(vehicle.registration) === cleanedRegParam,
+    );
+
+    if (loadedVehicle) {
+      setLookupResult(loadedVehicle);
       return;
     }
 
@@ -139,7 +157,7 @@ export default function VehicleCatalog({
                 }
                 className="p-4 bg-[#060814]/60 border border-[#1e2238] rounded-xl flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between hover:border-white/10 transition-all cursor-pointer group min-w-0"
               >
-                <div className="flex items-center gap-4 min-w-0">
+                <div className="flex items-center min-w-0 gap-4">
                   <div className="p-3 text-gray-400 border bg-white/5 border-white/5 rounded-xl shrink-0">
                     <Car size={20} />
                   </div>

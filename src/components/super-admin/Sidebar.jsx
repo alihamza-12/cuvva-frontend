@@ -75,7 +75,7 @@ export default function Sidebar({
     },
     {
       id: "create-policy",
-      name: "Create Policey",
+      name: "Create Policy",
       icon: Shield,
       href: "/admin/dashboard?tab=create-policy",
     },
@@ -270,7 +270,7 @@ export default function Sidebar({
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 shadow-2xl bg-[#0d0f1d] border-t border-[#1e2238] pb-[env(safe-area-inset-bottom)]">
         <div className="absolute inset-0 pointer-events-none overflow-hidden bg-[radial-gradient(800px_circle_at_50%_0%,rgba(100,74,255,0.18),transparent_55%)]" />
 
-        <nav className="relative flex h-16 items-stretch" aria-label="Mobile primary navigation">
+        <nav className="relative flex items-stretch h-16" aria-label="Mobile primary navigation">
           {phonePrimaryItems.map((item) => {
             const Icon = item.icon;
             const isSelected = activeTab === item.id;
@@ -324,7 +324,7 @@ export default function Sidebar({
             aria-label="Close menu"
             tabIndex={-1}
             onClick={() => setIsMobileMenuOpen(false)}
-            className="absolute inset-0 h-full w-full cursor-default bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 w-full h-full cursor-default bg-black/70 backdrop-blur-sm"
           />
 
           <div
@@ -370,7 +370,7 @@ export default function Sidebar({
                           isSelected ? "text-[#644aff]" : "text-[#6b7280]"
                         }
                       />
-                      <span className="min-w-0 flex-1 truncate">{item.name}</span>
+                      <span className="flex-1 min-w-0 truncate">{item.name}</span>
                     </button>
                   );
                 })}

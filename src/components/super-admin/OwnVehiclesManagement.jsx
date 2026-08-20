@@ -47,7 +47,7 @@ export default function OwnVehiclesManagement({ axiosInstance, onRefresh }) {
       <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6 shadow-2xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-[#1e2238]">
           <div>
-            <h3 className="text-xl font-bold tracking-wide text-white flex items-center gap-2">
+            <h3 className="flex items-center gap-2 text-xl font-bold tracking-wide text-white">
               <span className="p-2.5 bg-white/5 border border-white/5 rounded-xl text-[#644aff]">
                 <Car size={18} />
               </span>
@@ -65,9 +65,12 @@ export default function OwnVehiclesManagement({ axiosInstance, onRefresh }) {
             />
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => setQuery(e.target.value.toUpperCase())}
+              autoCapitalize="characters"
+              autoCorrect="off"
+              spellCheck={false}
               placeholder="Search registration, model, owner..."
-              className="w-full pl-10 pr-4 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#644aff] transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs uppercase font-mono tracking-wider text-white placeholder:font-sans placeholder:normal-case placeholder:tracking-normal placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] transition-all"
             />
           </div>
         </div>
@@ -75,7 +78,7 @@ export default function OwnVehiclesManagement({ axiosInstance, onRefresh }) {
         {loading ? (
           <div className="py-16 text-center text-[#6b7280] text-sm">Loading...</div>
         ) : error ? (
-          <div className="mt-4 flex items-center gap-2 p-4 text-xs font-semibold text-red-400 border rounded-2xl border-red-500/20 bg-red-500/10">
+          <div className="flex items-center gap-2 p-4 mt-4 text-xs font-semibold text-red-400 border rounded-2xl border-red-500/20 bg-red-500/10">
             <AlertTriangle size={14} /> {error}
           </div>
         ) : filteredVehicles.length === 0 ? (
@@ -96,7 +99,7 @@ export default function OwnVehiclesManagement({ axiosInstance, onRefresh }) {
                   }
                   className="rounded-2xl border border-[#1e2238] bg-[#0d0f1d] p-4 cursor-pointer"
                 >
-                  <div className="flex min-w-0 items-start justify-between gap-3">
+                  <div className="flex items-start justify-between min-w-0 gap-3">
                     <div className="min-w-0">
                       <span className="inline-block px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-[10px] uppercase break-all">
                         {v.registration}
@@ -129,7 +132,7 @@ export default function OwnVehiclesManagement({ axiosInstance, onRefresh }) {
             </div>
 
             {/* Existing desktop table */}
-            <div className="hidden overflow-x-auto mt-4 md:block">
+            <div className="hidden mt-4 overflow-x-auto md:block">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="text-[#8a8fbc] border-b border-[#1e2238] font-bold uppercase tracking-wider text-[10px]">

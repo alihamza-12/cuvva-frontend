@@ -59,7 +59,10 @@ const currentTextValue = (value) => {
     return value.trim();
   }
 
-  return value?.CurrentTextValue?.trim?.() || "";
+  const currentValue = value?.CurrentTextValue;
+  return currentValue === null || currentValue === undefined
+    ? ""
+    : String(currentValue).trim();
 };
 
 const optionalNumber = (value) => {
@@ -112,6 +115,11 @@ const requestRegCheckVehicle = async (registration) => {
 
     let response;
 
+    console.info("[RegCheck] API call made", {
+      registration,
+      username,
+    });
+
     try {
       response = await fetch(`${REGCHECK_URL}?${params.toString()}`, {
         method: "GET",
@@ -119,15 +127,33 @@ const requestRegCheckVehicle = async (registration) => {
           Accept: "application/xml, text/xml, */*",
         },
       });
-    } catch {
+    } catch (requestError) {
+      console.error("[RegCheck] API request could not be completed", {
+        registration,
+        username,
+        error: requestError?.message || "Network error",
+      });
       throw createLookupError(
         "Vehicle lookup is unavailable right now. Please try again.",
       );
     }
 
     if (response.ok) {
+      const remainingCredits = await getCreditBalance(username);
+      console.info("[RegCheck] API call succeeded", {
+        registration,
+        username,
+        remainingCredits:
+          remainingCredits === null ? "Unavailable" : remainingCredits,
+      });
       return response;
     }
+
+    console.warn("[RegCheck] API call failed", {
+      registration,
+      username,
+      status: response.status,
+    });
 
     // Authentication, authorization, and throttling failures can be tied to
     // one account, so try the next configured username.
@@ -140,6 +166,11 @@ const requestRegCheckVehicle = async (registration) => {
     // provider test plates can still work when the paid balance is zero.
     if (response.status >= 500) {
       const remainingBalance = await getCreditBalance(username);
+      console.info("[RegCheck] Account credit balance", {
+        username,
+        remainingCredits:
+          remainingBalance === null ? "Unavailable" : remainingBalance,
+      });
 
       if (remainingBalance !== null && remainingBalance <= 0) {
         exhaustedAccountFound = true;
@@ -195,6 +226,18 @@ const normalizeRegCheckVehicle = (rawVehicle, registration) => {
     bodyStyle: currentTextValue(rawVehicle.BodyStyle),
     variant: rawVehicle.Variant || "",
     transmission: currentTextValue(rawVehicle.Transmission),
+    vehicleIdentificationNumber: String(
+      rawVehicle.VehicleIdentificationNumber || "",
+    )
+      .trim()
+      .toUpperCase(),
+    engineCode: String(rawVehicle.EngineCode || "").trim(),
+    engineNumber: String(rawVehicle.EngineNumber || "").trim(),
+    immobiliser: currentTextValue(rawVehicle.Immobiliser),
+    indicativeValue: optionalNumber(
+      currentTextValue(rawVehicle.IndicativeValue),
+    ),
+    driverSide: currentTextValue(rawVehicle.DriverSide),
     numberOfDoors: optionalNumber(
       currentTextValue(rawVehicle.NumberOfDoors),
     ),
@@ -221,7 +264,10 @@ const normalizeRegCheckVehicle = (rawVehicle, registration) => {
  * It returns an Axios-compatible response shape so the existing UI flow does
  * not need to change.
  */
-export const getExternalVehicleByRegistration = async (registration) => {
+export const getExternalVehicleByRegistration = async (
+  registration,
+  { bypassCache = false } = {},
+) => {
   const cleaned = cleanRegistration(registration);
 
   if (!cleaned) {
@@ -230,7 +276,7 @@ export const getExternalVehicleByRegistration = async (registration) => {
 
   const cachedVehicle = getCachedVehicle(cleaned);
 
-  if (cachedVehicle) {
+  if (cachedVehicle && !bypassCache) {
     // Move the selected vehicle to the front of Recently viewed.
     saveVehicleToCache(cachedVehicle);
 
