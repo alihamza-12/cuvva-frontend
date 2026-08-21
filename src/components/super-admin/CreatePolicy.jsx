@@ -160,7 +160,7 @@ export default function CreatePolicy({
         <div className="flex items-center gap-2 mb-4">
           <PlusCircle size={16} className="text-[#644aff]" />
           <h3 className="text-sm font-bold tracking-wider text-white uppercase">
-            Create Policy
+            Create Policey
           </h3>
         </div>
 
@@ -328,6 +328,7 @@ export default function CreatePolicy({
                 value={form.startDate}
                 onChange={(v) => setForm({ ...form, startDate: v })}
                 required
+                disablePast
                 accentClass="focus:border-[#644aff]"
               />
               <MaskedTimeInput
@@ -345,6 +346,7 @@ export default function CreatePolicy({
                 value={form.endDate}
                 onChange={(v) => setForm({ ...form, endDate: v })}
                 required
+                disablePast
                 accentClass="focus:border-[#644aff]"
               />
               <MaskedTimeInput
@@ -379,7 +381,7 @@ export default function CreatePolicy({
           >
             <span className="inline-flex items-center justify-center gap-2">
               <ShieldCheck size={14} />
-              {submitting ? "Creating policy..." : "Create Policy"}
+              {submitting ? "Creating policy..." : "Create Policey"}
             </span>
           </button>
         </form>

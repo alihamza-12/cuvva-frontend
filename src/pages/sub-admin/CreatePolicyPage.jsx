@@ -222,7 +222,7 @@ export default function CreatePolicyPage() {
         )}
 
         {restrictedCustomerCount > 0 && (
-          <div className="px-4 py-3 mt-4 text-xs leading-relaxed text-amber-200 border rounded-xl bg-amber-500/10 border-amber-500/20">
+          <div className="px-4 py-3 mt-4 text-xs leading-relaxed border text-amber-200 rounded-xl bg-amber-500/10 border-amber-500/20">
             {restrictedCustomerCount} customer(s) are visible but unavailable
             for policy creation because a Super Admin has restricted them.
           </div>
@@ -353,6 +353,7 @@ export default function CreatePolicyPage() {
                 value={form.startDate}
                 onChange={(v) => setForm((prev) => ({ ...prev, startDate: v }))}
                 required
+                disablePast
                 accentClass="focus:border-[#00f0ff]"
               />
             </Field>
@@ -362,6 +363,7 @@ export default function CreatePolicyPage() {
                 value={form.endDate}
                 onChange={(v) => setForm((prev) => ({ ...prev, endDate: v }))}
                 required
+                disablePast
                 accentClass="focus:border-[#00f0ff]"
               />
             </Field>
@@ -397,7 +399,7 @@ export default function CreatePolicyPage() {
             </Field>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mt-8">
+          <div className="flex flex-col gap-3 mt-8 sm:flex-row sm:items-center sm:justify-end">
             <button
               type="button"
               disabled={submitting}
