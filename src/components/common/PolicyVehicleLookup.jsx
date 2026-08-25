@@ -73,6 +73,22 @@ const optionalNumber = (value) =>
     ? undefined
     : Number(value);
 
+const hasMeaningfulValue = (value) =>
+  value !== undefined && value !== null && value !== "";
+
+const mergeVerifiedVehicle = (storedVehicle, externalVehicle) => {
+  const merged = { ...storedVehicle };
+  for (const [key, value] of Object.entries(externalVehicle || {})) {
+    if (key === "_id" || key === "registration") continue;
+    if (hasMeaningfulValue(value)) merged[key] = value;
+  }
+  merged._id = storedVehicle._id;
+  merged.registration = storedVehicle.registration;
+  merged.lookupSource = "regcheck";
+  merged.regCheckData = externalVehicle.regCheckData;
+  return merged;
+};
+
 const toVehiclePayload = (vehicle) => ({
   registration: cleanRegistration(vehicle.registration),
   make: vehicle.make.trim(),
@@ -162,19 +178,26 @@ export default function PolicyVehicleLookup({
     setVehicle(null);
     onVehicleResolved(null);
 
+    let storedVehicle = null;
     try {
       const localResponse = await getVehicleByRegistration(cleaned);
-      resolveVehicle(
-        localResponse.data?.vehicle,
-        "Vehicle found in the database and linked to your account.",
-      );
-      setLookupState("ready");
-      return;
+      storedVehicle = localResponse.data?.vehicle || null;
+
+      if (storedVehicle?.sourceType === "automatic") {
+        resolveVehicle(storedVehicle, "");
+        setLookupState("ready");
+        return;
+      }
+
+      if (storedVehicle) {
+        setVehicle(toVehicleForm(storedVehicle, cleaned));
+      }
     } catch (localError) {
       if (localError.response?.status !== 404) {
         setLookupState("idle");
         setError(
-          localError.response?.data?.message || "Could not search the vehicle database.",
+          localError.response?.data?.message ||
+            "Could not search the vehicle database.",
         );
         return;
       }
@@ -195,15 +218,50 @@ export default function PolicyVehicleLookup({
       externalVehicle.lookupSource = "regcheck";
       setVehicle(externalVehicle);
     } catch (externalError) {
+      if (storedVehicle) {
+        resolveVehicle(
+          storedVehicle,
+          "This vehicle was added manually. Automatic verification is currently unavailable, so the saved vehicle details are being used.",
+        );
+        setLookupState("ready");
+        return;
+      }
+
       setVehicle({
         ...EMPTY_VEHICLE,
         registration: cleaned,
       });
       setLookupState("manual");
       setMessage(
-        "Vehicle could not be found through RegCheck. Enter its details manually, then save it.",
+        "Vehicle details could not be retrieved automatically. Enter them manually, then save the vehicle.",
       );
       setError(externalError.response?.data?.message || externalError.message || "");
+      return;
+    }
+
+    if (storedVehicle) {
+      const mergedVehicle = mergeVerifiedVehicle(storedVehicle, externalVehicle);
+      try {
+        const refreshedResponse = await updateVehicle(
+          storedVehicle._id,
+          toVehiclePayload(mergedVehicle),
+        );
+        resolveVehicle(
+          refreshedResponse.data?.vehicle,
+          "Vehicle details were automatically verified and refreshed.",
+        );
+        setLookupState("ready");
+      } catch (refreshError) {
+        resolveVehicle(
+          storedVehicle,
+          "This vehicle was added manually. Its saved details are being used because the automatic refresh could not be saved.",
+        );
+        setLookupState("ready");
+        setError(
+          refreshError.response?.data?.message ||
+            "Could not save automatically verified vehicle details.",
+        );
+      }
       return;
     }
 
@@ -219,7 +277,7 @@ export default function PolicyVehicleLookup({
       const savedResponse = await createVehicle(toVehiclePayload(externalVehicle));
       resolveVehicle(
         savedResponse.data?.vehicle,
-        "Vehicle found through RegCheck, saved, and linked to your account.",
+        "Vehicle details were automatically verified, saved, and linked to your account.",
       );
       setLookupState("ready");
     } catch (saveError) {

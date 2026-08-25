@@ -5,6 +5,8 @@ import { ArrowLeft, Car, ShieldAlert } from "lucide-react";
 import Sidebar from "../../../components/super-admin/Sidebar";
 import { getVehicleByRegistration } from "../../../app/api/vehicleApi";
 import { updateVehicle } from "../../../app/api/vehicleUpdateApi";
+import VehicleSourceBadge from "../../../components/common/VehicleSourceBadge";
+import VehicleDeleteControl from "../../../components/common/VehicleDeleteControl";
 
 export default function VehicleDetailPage() {
   const { registration } = useParams();
@@ -137,6 +139,16 @@ export default function VehicleDetailPage() {
                     </div>
                   </div>
                 </div>
+                <div className="flex flex-col items-end gap-3">
+                  <VehicleSourceBadge vehicle={vehicle} />
+                  <VehicleDeleteControl
+                    vehicle={vehicle}
+                    accent="purple"
+                    onDeleted={() =>
+                      navigate("/admin/dashboard?tab=vehicles", { replace: true })
+                    }
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
@@ -178,6 +190,49 @@ export default function VehicleDetailPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="text-xs font-bold tracking-wider text-white uppercase">
+                  Associated Sub Admins
+                </h3>
+                <span className="rounded-full border border-purple-500/25 bg-purple-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-200">
+                  {vehicle.associatedSubAdminCount || 0} associated
+                </span>
+              </div>
+
+              {vehicle.associatedSubAdmins?.length ? (
+                <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {vehicle.associatedSubAdmins.map((admin) => (
+                    <div
+                      key={admin._id}
+                      className="rounded-xl border border-[#1e2238] bg-[#060814] p-4"
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-semibold text-white">
+                          {admin.fullName || "Unnamed Sub Admin"}
+                        </span>
+                        {admin.isCreator && (
+                          <span className="rounded-full border border-purple-500/20 bg-purple-500/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-purple-200">
+                            Creator
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-1 break-all text-xs text-[#8a8fbc]">
+                        {admin.email || "Email unavailable"}
+                      </div>
+                      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-[#6b7280]">
+                        {admin.role}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-4 text-xs text-[#6b7280]">
+                  No Sub Admins are currently associated with this vehicle.
+                </p>
+              )}
             </div>
 
             <div className="bg-[#0d0f1d] border border-[#1e2238] rounded-2xl p-6">

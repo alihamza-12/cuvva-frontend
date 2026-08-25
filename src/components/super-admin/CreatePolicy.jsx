@@ -166,7 +166,7 @@ export default function CreatePolicy({
 
         <p className="text-[11px] text-[#6b7280] mb-4 leading-relaxed">
           Select a customer, then search by registration. Existing vehicles are
-          loaded from the database; new vehicles are retrieved from RegCheck.
+          loaded from the database; new vehicles are retrieved automatically.
         </p>
 
         <form onSubmit={handleCreatePolicy} className="space-y-4">

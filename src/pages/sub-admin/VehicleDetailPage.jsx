@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Car, ShieldAlert } from "lucide-react";
 import { getVehicleByRegistration } from "../../app/api/vehicleApi";
 import { updateVehicle } from "../../app/api/vehicleUpdateApi";
+import VehicleSourceBadge from "../../components/common/VehicleSourceBadge";
+import VehicleDeleteControl from "../../components/common/VehicleDeleteControl";
 
 const FUEL_TYPES = ["PETROL", "DIESEL", "ELECTRIC", "HYBRID"];
 
@@ -249,7 +251,14 @@ export default function VehicleDetailPage() {
 
         {!loading && !error && vehicle && (
           <div className="space-y-5">
-            <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex flex-wrap items-start justify-end gap-2">
+              <VehicleDeleteControl
+                vehicle={vehicle}
+                accent="cyan"
+                onDeleted={() =>
+                  navigate("/dashboard?tab=my-vehicles", { replace: true })
+                }
+              />
               {!isEditMode ? (
                 <button
                   type="button"
@@ -284,6 +293,7 @@ export default function VehicleDetailPage() {
                     </div>
                   </div>
                 </div>
+                <VehicleSourceBadge vehicle={vehicle} audience="sub-admin" />
               </div>
 
               {isEditMode ? (

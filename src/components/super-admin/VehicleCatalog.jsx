@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import VehicleSourceBadge from "../common/VehicleSourceBadge";
 import {
   Search,
   Car,
@@ -108,9 +109,12 @@ export default function VehicleCatalog({
             className="mt-4 p-5 bg-[#060814] border border-[#1e2238] rounded-xl space-y-3 animate-slideUp cursor-pointer hover:border-white/20 transition-all group"
           >
             <div className="flex items-center justify-between pb-2 border-b border-white/5">
-              <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded tracking-wider text-[11px] uppercase">
-                {lookupResult.registration}
-              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded tracking-wider text-[11px] uppercase">
+                  {lookupResult.registration}
+                </span>
+                <VehicleSourceBadge vehicle={lookupResult} />
+              </div>
               <span className="text-[10px] text-gray-500 group-hover:text-white transition-colors underline">
                 View Details
               </span>
@@ -169,6 +173,7 @@ export default function VehicleCatalog({
                       <span className="text-sm font-semibold text-white break-words">
                         {v.make} {v.model}
                       </span>
+                      <VehicleSourceBadge vehicle={v} />
                     </div>
                     <div className="text-[11px] text-[#6b7280] break-words">
                       {v.colour} • {v.year} • {v.fuelType}
@@ -182,6 +187,9 @@ export default function VehicleCatalog({
                   </span>
                   <span className="text-xs font-medium text-white">
                     {v.createdBy?.fullName || "System"}
+                  </span>
+                  <span className="mt-1 block text-[10px] text-[#6b7280]">
+                    {v.associatedSubAdminCount || 0} associated Sub Admin(s)
                   </span>
                 </div>
               </div>

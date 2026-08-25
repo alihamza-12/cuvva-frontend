@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Car, Search, AlertTriangle } from "lucide-react";
+import VehicleSourceBadge from "../common/VehicleSourceBadge";
 
 export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
   const navigate = useNavigate();
@@ -106,9 +107,12 @@ export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
                 >
                   <div className="flex items-start justify-between min-w-0 gap-3">
                     <div className="min-w-0">
-                      <span className="inline-block px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-[10px] uppercase break-all">
-                        {v.registration}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-block px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-[10px] uppercase break-all">
+                          {v.registration}
+                        </span>
+                        <VehicleSourceBadge vehicle={v} audience="sub-admin" />
+                      </div>
                       <h3 className="truncate text-base font-semibold text-white mt-1.5">
                         {v.make} {v.model}
                       </h3>
@@ -159,9 +163,12 @@ export function SubAdminOwnVehicles({ axiosInstance, onRefresh }) {
                     >
                       <td className="py-4 pl-2">
                         <div className="flex items-center gap-3">
-                          <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-[10px] uppercase">
-                            {v.registration}
-                          </span>
+                          <div className="flex flex-col items-start gap-1.5">
+                            <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-mono font-bold rounded text-[10px] uppercase">
+                              {v.registration}
+                            </span>
+                            <VehicleSourceBadge vehicle={v} audience="sub-admin" />
+                          </div>
                           <div>
                             <div className="text-sm font-bold text-white group-hover:text-[#00f0ff] transition-colors">
                               {v.make} {v.model}
