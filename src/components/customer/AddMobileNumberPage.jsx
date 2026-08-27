@@ -40,7 +40,7 @@ export default function AddMobileNumberPage() {
 
     if (!UK_MOBILE_REGEX.test(trimmed)) {
       setStatus("error");
-      setErrorMessage("Enter a valid mobile number, like 07588 566474");
+      setErrorMessage("Enter a valid mobile number, like 075xx xxxxxx");
       return;
     }
     if (isSaving) return;
@@ -99,7 +99,7 @@ export default function AddMobileNumberPage() {
         <div className="mt-6">
           <input
             type="tel"
-            placeholder="e.g. 07588 566474"
+            placeholder="e.g. 075xx xxxxxx"
             value={phoneInput}
             onChange={(e) => {
               // Was mangled to `setPhoneInput([e.target](http://e.target).value)`
@@ -125,13 +125,13 @@ export default function AddMobileNumberPage() {
             before the user starts typing, not just after a mistake. */}
         {!showFormatError && (
           <p className="text-[13px] text-[#8a8a92] mt-3">
-            Mobile numbers only, e.g. 07588 566474 or +44 7588 566474
+            Mobile numbers only, e.g. 075xxx xxxxxx or +44 75xx xxxxxx
           </p>
         )}
 
         {showFormatError && (
           <p className="text-[13px] text-[#e05a5a] mt-3">
-            Enter a valid UK mobile number, like 07588 566474
+            Enter a valid UK mobile number, like 075xx xxxxxx
           </p>
         )}
 
