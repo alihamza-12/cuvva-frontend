@@ -157,7 +157,9 @@ export default function VehicleDetailPage() {
           .trim()
           .toUpperCase()
           .replace(/\s+/g, "");
-        const res = await getVehicleByRegistration(cleaned);
+        const res = await getVehicleByRegistration(cleaned, {
+          associate: false,
+        });
         const fetched = res.data?.vehicle || null;
         setVehicle(fetched);
         setEditForm(buildFormFromVehicle(fetched));

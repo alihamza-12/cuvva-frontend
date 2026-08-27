@@ -350,9 +350,14 @@ export const getExternalVehicleByRegistration = async (
 };
 
 // Existing backend lookup remains unchanged for admin/sub-admin screens.
-export const getVehicleByRegistration = async (registration) => {
+export const getVehicleByRegistration = async (
+  registration,
+  { associate = true } = {},
+) => {
   const cleaned = cleanRegistration(registration);
-  return httpClient.get(`/api/vehicles/lookup/${cleaned}`);
+  return httpClient.get(`/api/vehicles/lookup/${cleaned}`, {
+    params: { associate },
+  });
 };
 
 export const createVehicle = async (payload) => {

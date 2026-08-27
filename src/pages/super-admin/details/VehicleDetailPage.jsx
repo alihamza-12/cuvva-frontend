@@ -30,7 +30,9 @@ export default function VehicleDetailPage() {
           .trim()
           .toUpperCase()
           .replace(/\s+/g, "");
-        const res = await getVehicleByRegistration(cleaned);
+        const res = await getVehicleByRegistration(cleaned, {
+          associate: false,
+        });
         if (!mounted) return;
         const loadedVehicle = res.data?.vehicle || null;
         setVehicle(loadedVehicle);
@@ -205,10 +207,7 @@ export default function VehicleDetailPage() {
               {vehicle.associatedSubAdmins?.length ? (
                 <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
                   {vehicle.associatedSubAdmins.map((admin) => (
-                    <div
-                      key={admin._id}
-                      className="rounded-xl border border-[#1e2238] bg-[#060814] p-4"
-                    >
+                    <div key={admin._id} className="rounded-xl border border-[#1e2238] bg-[#060814] p-4">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold text-white">
                           {admin.fullName || "Unnamed Sub Admin"}

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { AlertTriangle, Trash2, X } from "lucide-react";
-import { deleteVehicle } from "../../app/api/vehicleUpdateApi";
+import { AlertTriangle, Link2Off, Trash2, X } from "lucide-react";
+import { removeVehicleForCurrentAdmin } from "../../app/api/vehicleUpdateApi";
 
 export default function VehicleDeleteControl({
   vehicle,
@@ -10,26 +10,29 @@ export default function VehicleDeleteControl({
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
-  const canDelete = Boolean(vehicle?.permissions?.canDelete);
+  const permission = vehicle?.permissions || {};
+  const canDelete = Boolean(permission.canDelete);
+  const permanent = permission.deletionMode === "permanent";
+  const actionLabel = permanent ? "Delete Vehicle" : "Remove From My Vehicles";
   const disabledReason =
-    vehicle?.permissions?.deleteDisabledReason ||
-    "This vehicle cannot be deleted.";
+    permission.deleteDisabledReason || "This vehicle is not linked to your account.";
   const accentClass =
     accent === "cyan"
       ? "focus-visible:ring-[#00f0ff]"
       : "focus-visible:ring-[#644aff]";
+  const ActionIcon = permanent ? Trash2 : Link2Off;
 
   const handleDelete = async () => {
     if (!canDelete || !vehicle?._id) return;
     setDeleting(true);
     setError("");
     try {
-      await deleteVehicle(vehicle._id);
+      const response = await removeVehicleForCurrentAdmin(vehicle._id);
       setOpen(false);
-      onDeleted?.();
+      onDeleted?.(response.data);
     } catch (requestError) {
       setError(
-        requestError.response?.data?.message || "Failed to delete vehicle.",
+        requestError.response?.data?.message || "Failed to remove vehicle.",
       );
     } finally {
       setDeleting(false);
@@ -48,7 +51,7 @@ export default function VehicleDeleteControl({
           }}
           className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-4 text-[10px] font-bold uppercase tracking-wider text-red-300 transition-colors hover:bg-red-500/20 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:border-[#1e2238] disabled:bg-white/[0.03] disabled:text-[#555b78] ${accentClass}`}
         >
-          <Trash2 size={14} /> Delete Vehicle
+          <ActionIcon size={14} /> {actionLabel}
         </button>
         {!canDelete && (
           <p className="max-w-sm text-right text-[10px] leading-relaxed text-[#6b7280]">
@@ -62,7 +65,7 @@ export default function VehicleDeleteControl({
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="delete-vehicle-title"
+          aria-labelledby="remove-vehicle-title"
         >
           <div className="w-full max-w-md rounded-2xl border border-[#2a2f49] bg-[#0d0f1d] p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
@@ -71,11 +74,13 @@ export default function VehicleDeleteControl({
                   <AlertTriangle size={18} />
                 </span>
                 <div>
-                  <h2 id="delete-vehicle-title" className="text-base font-bold text-white">
-                    Delete vehicle?
+                  <h2 id="remove-vehicle-title" className="text-base font-bold text-white">
+                    {permanent ? "Delete vehicle permanently?" : "Remove this vehicle from your account?"}
                   </h2>
                   <p className="mt-1 text-xs leading-relaxed text-[#8a8fbc]">
-                    This action cannot be undone.
+                    {permanent
+                      ? "No other admin or policy uses this manually added vehicle. This action cannot be undone."
+                      : permission.retainedReason || "Only your association will be removed; the database vehicle will be retained."}
                   </p>
                 </div>
               </div>
@@ -83,7 +88,7 @@ export default function VehicleDeleteControl({
                 type="button"
                 onClick={() => setOpen(false)}
                 disabled={deleting}
-                aria-label="Close delete confirmation"
+                aria-label="Close confirmation"
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-[#8a8fbc] hover:bg-white/5 hover:text-white disabled:opacity-40"
               >
                 <X size={17} />
@@ -120,8 +125,8 @@ export default function VehicleDeleteControl({
                 disabled={deleting}
                 className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-500/15 px-5 text-xs font-bold text-red-200 hover:bg-red-500/25 disabled:opacity-40"
               >
-                <Trash2 size={14} />
-                {deleting ? "Deleting..." : "Confirm Delete"}
+                <ActionIcon size={14} />
+                {deleting ? "Processing..." : permanent ? "Confirm Delete" : "Confirm Removal"}
               </button>
             </div>
           </div>
