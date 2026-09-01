@@ -78,7 +78,7 @@ export default function PoliciesPage() {
 
   const handleOpenPolicy = (policy) => {
 
-    navigate("/customer/policies/detail", { state: { policy } });
+    navigate(`/customer/policies/${policy._id}`, { state: { policy } });
   };
 
   const formatDurationAndDate = (policy) => {

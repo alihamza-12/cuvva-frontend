@@ -283,6 +283,9 @@ export default function ProfilePage() {
         />
       </Card>
 
+      <SectionLabel>Notifications</SectionLabel>
+      <NotificationSettingsCard />
+
       {/* Settings */}
       <SectionLabel>Settings</SectionLabel>
       <Card>

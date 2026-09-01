@@ -251,6 +251,10 @@ export default function AppRouter() {
           element={<Screen><CustomerPolicyDetailPage /></Screen>}
         />
         <Route
+          path="/customer/policies/:policyId"
+          element={<Screen><CustomerPolicyDetailPage /></Screen>}
+        />
+        <Route
           path="/customer/policies/receipt"
           element={<Screen><PolicyReceiptPage /></Screen>}
         />

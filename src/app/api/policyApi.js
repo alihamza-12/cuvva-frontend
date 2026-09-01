@@ -8,6 +8,10 @@ export const getMyPolicies = async () => {
   return httpClient.get("/api/policies/my");
 };
 
+export const getMyPolicyById = async (id) => {
+  return httpClient.get(`/api/policies/customer/${id}`);
+};
+
 export const getPolicyDocument = async (id) => {
   return httpClient.get(`/api/policies/${id}/document`, {
     responseType: "blob",

@@ -1,6 +1,7 @@
 {
   "short_name": "Cuvva",
   "name": "Cuvva Insurance",
+  "id": "/",
   "icons": [
     {
       "src": "/icons/icon-192.png",
