@@ -28,6 +28,7 @@ export default function SubAdminDashboard() {
 
   const [policies, setPolicies] = useState([]);
   const [vehicles, setVehicles] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [myVehiclesError, setMyVehiclesError] = useState("");
 
   const fetchSubAdminMetricsData = useCallback(async () => {
@@ -35,7 +36,7 @@ export default function SubAdminDashboard() {
     setSystemAlert(null);
 
     try {
-      const [vehRes, polRes] = await Promise.all([
+      const [vehRes, polRes, customerRes] = await Promise.all([
         httpClient.get("/api/vehicles/all").catch((err) => ({
           error: true,
           message: err?.response?.data?.message || "Failed to load vehicles.",
@@ -46,17 +47,25 @@ export default function SubAdminDashboard() {
           message: err?.response?.data?.message || "Failed to load policies.",
           data: { policies: [] },
         })),
+        httpClient.get("/api/customers").catch((err) => ({
+          error: true,
+          message: err?.response?.data?.message || "Failed to load customers.",
+          data: { customers: [] },
+        })),
       ]);
 
       const vList = vehRes?.data?.vehicles || [];
       const pList = polRes?.data?.policies || [];
+      const customerList = customerRes?.data?.customers || [];
 
       setVehicles(vList);
       setPolicies(pList);
+      setCustomers(customerList);
 
       const localizedErrors = [];
       if (vehRes?.error) localizedErrors.push(vehRes?.message);
       if (polRes?.error) localizedErrors.push(polRes?.message);
+      if (customerRes?.error) localizedErrors.push(customerRes?.message);
 
       if (localizedErrors.length > 0) {
         setSystemAlert(`Partial Sync Notice: ${localizedErrors.join(" | ")}`);
@@ -109,12 +118,15 @@ export default function SubAdminDashboard() {
 
   const counts = useMemo(() => {
     return {
-      myCustomers: 0,
+      myCustomers: (customers || []).length,
       myVehicles: (vehicles || []).length,
       myPolicies: (policies || []).length,
       contracts: (policies || []).length,
+      totalPolicies: (policies || []).length,
+      activePolicies: (policies || []).filter((policy) => policy.status === "Active").length,
+      expiredPolicies: (policies || []).filter((policy) => policy.status === "Expired").length,
     };
-  }, [vehicles, policies]);
+  }, [customers, vehicles, policies]);
 
   if (loading) {
     return (

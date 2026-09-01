@@ -49,6 +49,10 @@ export default function CreateCustomerPage() {
     if (!form.dateOfBirth) return false;
     if (!form.gender) return false;
     if (!form.drivingLicenceNumber.trim()) return false;
+    if (!form.line1.trim()) return false;
+    if (!form.city.trim()) return false;
+    if (!form.postcode.trim()) return false;
+    if (!form.country.trim()) return false;
     if (form.useDurationDays) {
       const n = Number(form.durationDays);
       if (!Number.isFinite(n) || n <= 0) return false;
@@ -238,7 +242,12 @@ export default function CreateCustomerPage() {
             <Field label="Driving licence (required)">
               <input
                 value={form.drivingLicenceNumber}
-                onChange={handleChange("drivingLicenceNumber")}
+                onChange={(event) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    drivingLicenceNumber: event.target.value.toUpperCase(),
+                  }))
+                }
                 className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. SMITH••••J99AB"
               />
@@ -247,14 +256,15 @@ export default function CreateCustomerPage() {
 
           <div className="mt-8">
             <div className="text-[11px] uppercase font-bold tracking-wider text-[#8a8fbc] mb-3">
-              Address (optional)
+              Address (required)
             </div>
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              <Field label="Line 1">
+              <Field label="Line 1 (required)">
                 <input
                   value={form.line1}
                   onChange={handleChange("line1")}
+                  required
                   className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="Street address"
                 />
@@ -269,10 +279,11 @@ export default function CreateCustomerPage() {
                 />
               </Field>
 
-              <Field label="City">
+              <Field label="City (required)">
                 <input
                   value={form.city}
                   onChange={handleChange("city")}
+                  required
                   className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="Town / City"
                 />
@@ -287,19 +298,21 @@ export default function CreateCustomerPage() {
                 />
               </Field>
 
-              <Field label="Postcode">
+              <Field label="Postcode (required)">
                 <input
                   value={form.postcode}
                   onChange={handleChange("postcode")}
+                  required
                   className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="e.g. AB12 3CD"
                 />
               </Field>
 
-              <Field label="Country">
+              <Field label="Country (required)">
                 <input
                   value={form.country}
                   onChange={handleChange("country")}
+                  required
                   className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                   placeholder="UK"
                 />

@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, RefreshCw, Search, X } from "lucide-react";
+import {
+  getSuspensionSummary,
+  requestSuspensionDays,
+} from "../../utils/customerSuspension";
 
 export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
   const navigate = useNavigate();
@@ -44,7 +48,8 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
     return list.filter(
       (c) =>
         (c?.email || "").toLowerCase().includes(normalizedQuery) ||
-        (c?.fullName || "").toLowerCase().includes(normalizedQuery),
+        (c?.fullName || "").toLowerCase().includes(normalizedQuery) ||
+        (c?.drivingLicenceNumber || "").toLowerCase().includes(normalizedQuery),
     );
   }, [customers, normalizedQuery]);
 
@@ -53,10 +58,17 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
     setActionLoadingId(userId);
 
     const nextStatus = currentStatus === "Active" ? "Suspended" : "Active";
+    const suspensionDays =
+      nextStatus === "Suspended" ? requestSuspensionDays() : undefined;
+    if (nextStatus === "Suspended" && !suspensionDays) {
+      setActionLoadingId(null);
+      return;
+    }
 
     try {
       await axiosInstance.patch(`/api/management/status/${userId}`, {
         status: nextStatus,
+        suspensionDays,
       });
       if (onRefresh) onRefresh();
       await fetchCustomers();
@@ -91,7 +103,7 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by email or name..."
+              placeholder="Search name, email or licence..."
               className="w-full pl-10 pr-10 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] transition-all"
             />
             {searchQuery.trim().length > 0 && (
@@ -135,6 +147,16 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
                       <p className="text-sm text-[#8a8fbc] break-all mt-0.5">
                         {c.email}
                       </p>
+                      {c.drivingLicenceNumber && (
+                        <p className="mt-1 font-mono text-[11px] text-[#6b7280]">
+                          {c.drivingLicenceNumber}
+                        </p>
+                      )}
+                      {getSuspensionSummary(c) && (
+                        <p className="mt-1 text-[10px] text-red-300">
+                          {getSuspensionSummary(c)}
+                        </p>
+                      )}
                     </div>
                     <span
                       className={`shrink-0 inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase mt-1 ${
@@ -189,6 +211,16 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
                       <div className="text-[11px] text-[#6b7280] font-medium mt-0.5">
                         {c.email}
                       </div>
+                      {c.drivingLicenceNumber && (
+                        <div className="mt-1 font-mono text-[10px] text-[#6b7280]">
+                          {c.drivingLicenceNumber}
+                        </div>
+                      )}
+                      {getSuspensionSummary(c) && (
+                        <div className="mt-1 text-[10px] text-red-300">
+                          {getSuspensionSummary(c)}
+                        </div>
+                      )}
                     </td>
                     <td className="py-4">
                       <span

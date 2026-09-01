@@ -5,6 +5,17 @@ import { ArrowLeft, User, ShieldAlert, Mail } from "lucide-react";
 import Sidebar from "../../../components/super-admin/Sidebar";
 import { getCustomerById } from "../../../app/api/customerApi";
 
+const DetailRow = ({ label, value, wide = false }) => (
+  <div className={`space-y-1 ${wide ? "md:col-span-2" : ""}`}>
+    <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+      {label}
+    </div>
+    <div className="text-xs font-semibold text-white break-words">
+      {value || "N/A"}
+    </div>
+  </div>
+);
+
 export default function CustomerDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -184,6 +195,75 @@ export default function CustomerDetailPage() {
                     {customer?.email}
                   </div>
                 </div>
+                <DetailRow label="Phone" value={customer?.phone} />
+                <DetailRow
+                  label="Date of Birth"
+                  value={
+                    customer?.dateOfBirth
+                      ? new Date(customer.dateOfBirth).toLocaleDateString()
+                      : null
+                  }
+                />
+                <DetailRow label="Gender" value={customer?.gender} />
+                <DetailRow
+                  label="Driving Licence Number"
+                  value={customer?.drivingLicenceNumber}
+                />
+                <DetailRow
+                  label="Preferred Name"
+                  value={customer?.preferredName}
+                />
+                <DetailRow
+                  label="Last Four Digits"
+                  value={customer?.lastFourDigits}
+                />
+                <DetailRow
+                  label="Profile Photo URL"
+                  value={customer?.profilePhotoUrl}
+                  wide
+                />
+                <DetailRow
+                  label="Additional Emails"
+                  value={customer?.additionalEmails?.join(", ")}
+                />
+                <DetailRow
+                  label="Residential Address"
+                  wide
+                  value={[
+                    customer?.address?.line1,
+                    customer?.address?.line2,
+                    customer?.address?.city,
+                    customer?.address?.county,
+                    customer?.address?.postcode,
+                    customer?.address?.country,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                />
+                <DetailRow
+                  label="Suspended At"
+                  value={
+                    customer?.suspendedAt
+                      ? new Date(customer.suspendedAt).toLocaleString()
+                      : null
+                  }
+                />
+                <DetailRow
+                  label="Suspended Until"
+                  value={
+                    customer?.suspendedUntil
+                      ? new Date(customer.suspendedUntil).toLocaleString()
+                      : null
+                  }
+                />
+                <DetailRow
+                  label="Suspended By"
+                  value={
+                    customer?.suspendedBy?.fullName
+                      ? `${customer.suspendedBy.fullName} (${customer.suspendedBy.role})`
+                      : null
+                  }
+                />
                 <div className="space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Status
@@ -202,6 +282,22 @@ export default function CustomerDetailPage() {
                       : "Infinite"}
                   </div>
                 </div>
+                <DetailRow
+                  label="Created At"
+                  value={
+                    customer?.createdAt
+                      ? new Date(customer.createdAt).toLocaleString()
+                      : null
+                  }
+                />
+                <DetailRow
+                  label="Updated At"
+                  value={
+                    customer?.updatedAt
+                      ? new Date(customer.updatedAt).toLocaleString()
+                      : null
+                  }
+                />
                 <div className="space-y-1 md:col-span-2">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
                     Created By

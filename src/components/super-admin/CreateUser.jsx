@@ -1,6 +1,20 @@
 import React, { useState } from "react";
 import { AlertTriangle, CheckCircle2, UserPlus } from "lucide-react";
 
+const AddressInput = ({ label, value, onChange, required = false, uppercase = false }) => (
+  <label className="space-y-1">
+    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+      {label}{required ? " *" : ""}
+    </span>
+    <input
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      required={required}
+      className={`w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors ${uppercase ? "uppercase" : ""}`}
+    />
+  </label>
+);
+
 export default function CreateUser({ axiosInstance, onCreated }) {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -11,6 +25,12 @@ export default function CreateUser({ axiosInstance, onCreated }) {
     dateOfBirth: "",
     gender: "",
     drivingLicenceNumber: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    county: "",
+    postcode: "",
+    country: "UK",
   });
 
   const [error, setError] = useState("");
@@ -39,6 +59,14 @@ export default function CreateUser({ axiosInstance, onCreated }) {
         payload.dateOfBirth = formData.dateOfBirth;
         payload.gender = formData.gender;
         payload.drivingLicenceNumber = formData.drivingLicenceNumber.trim();
+        payload.address = {
+          line1: formData.addressLine1.trim(),
+          line2: formData.addressLine2.trim(),
+          city: formData.city.trim(),
+          county: formData.county.trim(),
+          postcode: formData.postcode.trim(),
+          country: formData.country.trim(),
+        };
       }
 
       const response = await axiosInstance.post("/api/auth/register", payload);
@@ -53,6 +81,12 @@ export default function CreateUser({ axiosInstance, onCreated }) {
         dateOfBirth: "",
         gender: "",
         drivingLicenceNumber: "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        county: "",
+        postcode: "",
+        country: "UK",
       });
 
       if (onCreated) onCreated();
@@ -206,11 +240,23 @@ export default function CreateUser({ axiosInstance, onCreated }) {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      drivingLicenceNumber: e.target.value,
+                      drivingLicenceNumber: e.target.value.toUpperCase(),
                     })
                   }
-                  className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+                  className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs uppercase text-white outline-none focus:border-[#644aff] transition-colors"
                 />
+              </div>
+
+              <div className="pt-2 text-[11px] font-bold uppercase tracking-wider text-[#8a8fbc]">
+                Customer Address
+              </div>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <AddressInput label="Address line 1" required value={formData.addressLine1} onChange={(value) => setFormData({ ...formData, addressLine1: value })} />
+                <AddressInput label="Address line 2" value={formData.addressLine2} onChange={(value) => setFormData({ ...formData, addressLine2: value })} />
+                <AddressInput label="City" required value={formData.city} onChange={(value) => setFormData({ ...formData, city: value })} />
+                <AddressInput label="County" value={formData.county} onChange={(value) => setFormData({ ...formData, county: value })} />
+                <AddressInput label="Postcode" required value={formData.postcode} onChange={(value) => setFormData({ ...formData, postcode: value.toUpperCase() })} uppercase />
+                <AddressInput label="Country" required value={formData.country} onChange={(value) => setFormData({ ...formData, country: value })} />
               </div>
             </>
           )}

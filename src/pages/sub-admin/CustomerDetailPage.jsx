@@ -429,6 +429,25 @@ export default function CustomerDetailPage() {
                         : null
                     }
                   />
+                  <ReadRow label="Gender" value={customer.gender} />
+                  <ReadRow
+                    label="Driving Licence Number"
+                    value={customer.drivingLicenceNumber}
+                  />
+                  <ReadRow label="Preferred Name" value={customer.preferredName} />
+                  <ReadRow
+                    label="Last Four Digits"
+                    value={customer.lastFourDigits}
+                  />
+                  <ReadRow
+                    label="Additional Emails"
+                    value={customer.additionalEmails?.join(", ")}
+                  />
+                  <ReadRow
+                    label="Profile Photo URL"
+                    value={customer.profilePhotoUrl}
+                    colSpan2
+                  />
                   <ReadRow
                     label="Address"
                     colSpan2
@@ -471,6 +490,30 @@ export default function CustomerDetailPage() {
                 <ReadRow label="Role" value={customer?.role} />
                 <ReadRow label="Email" value={customer?.email} />
                 <ReadRow label="Status" value={customer?.status || "Active"} />
+                <ReadRow
+                  label="Suspended At"
+                  value={
+                    customer?.suspendedAt
+                      ? new Date(customer.suspendedAt).toLocaleString()
+                      : null
+                  }
+                />
+                <ReadRow
+                  label="Suspended Until"
+                  value={
+                    customer?.suspendedUntil
+                      ? new Date(customer.suspendedUntil).toLocaleString()
+                      : null
+                  }
+                />
+                <ReadRow
+                  label="Suspended By"
+                  value={
+                    customer?.suspendedBy?.fullName
+                      ? `${customer.suspendedBy.fullName} (${customer.suspendedBy.role})`
+                      : null
+                  }
+                />
                 <ReadRow
                   label="Expires At"
                   colSpan2

@@ -1,6 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, RefreshCw, Search, Shield, Users, X } from "lucide-react";
+import {
+  getSuspensionSummary,
+  requestSuspensionDays,
+} from "../../utils/customerSuspension";
 
 export default function AccountManagement({
   subAdmins = [],
@@ -35,7 +39,10 @@ export default function AccountManagement({
     return activeList.filter(
       (user) =>
         user.email.toLowerCase().includes(normalizedQuery) ||
-        user.fullName.toLowerCase().includes(normalizedQuery),
+        user.fullName.toLowerCase().includes(normalizedQuery) ||
+        (user.drivingLicenceNumber || "")
+          .toLowerCase()
+          .includes(normalizedQuery),
     );
   }, [activeList, normalizedQuery]);
 
@@ -81,9 +88,18 @@ export default function AccountManagement({
     e.stopPropagation();
     setActionLoadingId(userId);
     const nextStatus = currentStatus === "Active" ? "Suspended" : "Active";
+    const suspensionDays =
+      nextStatus === "Suspended" && activeDirectoryTab === "customers"
+        ? requestSuspensionDays()
+        : undefined;
+    if (nextStatus === "Suspended" && activeDirectoryTab === "customers" && !suspensionDays) {
+      setActionLoadingId(null);
+      return;
+    }
     try {
       await axiosInstance.patch(`/api/management/status/${userId}`, {
         status: nextStatus,
+        suspensionDays,
       });
       if (onRefresh) onRefresh();
     } catch (err) {
@@ -173,7 +189,7 @@ export default function AccountManagement({
 
               <input
                 type="text"
-                placeholder="Search by email or name..."
+                placeholder="Search name, email or licence..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-10 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#644aff] transition-all"
@@ -256,6 +272,16 @@ export default function AccountManagement({
                         <p className="text-sm text-[#8a8fbc] break-all mt-0.5">
                           {userRecord.email}
                         </p>
+                        {userRecord.drivingLicenceNumber && (
+                          <p className="mt-1 font-mono text-[11px] text-[#6b7280]">
+                            {userRecord.drivingLicenceNumber}
+                          </p>
+                        )}
+                        {getSuspensionSummary(userRecord) && (
+                          <p className="mt-1 text-[10px] leading-snug text-red-300">
+                            {getSuspensionSummary(userRecord)}
+                          </p>
+                        )}
                         {userRecord.createdBy ? (
                           <p className="text-[11px] text-[#6b7280] mt-1.5 leading-snug">
                             <span className="text-[#644aff] font-semibold">
@@ -360,6 +386,16 @@ export default function AccountManagement({
                       <div className="text-[11px] text-[#6b7280] font-medium mt-0.5">
                         {userRecord.email}
                       </div>
+                      {userRecord.drivingLicenceNumber && (
+                        <div className="mt-1 font-mono text-[10px] text-[#6b7280]">
+                          {userRecord.drivingLicenceNumber}
+                        </div>
+                      )}
+                      {getSuspensionSummary(userRecord) && (
+                        <div className="mt-1 text-[10px] text-red-300">
+                          {getSuspensionSummary(userRecord)}
+                        </div>
+                      )}
                     </td>
 
                     <td className="py-4">

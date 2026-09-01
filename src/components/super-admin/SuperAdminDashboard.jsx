@@ -221,7 +221,9 @@ export default function SuperAdminDashboard() {
                 subAdmins: subAdmins.length,
                 customers: customers.length, 
                 vehicles: vehicles.length,
-                policies: policies.length,
+                activePolicies: policies.filter((policy) => policy.status === "Active").length,
+                totalPolicies: policies.length,
+                expiredPolicies: policies.filter((policy) => policy.status === "Expired").length,
               }}
             />
           )}
