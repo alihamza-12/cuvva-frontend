@@ -22,6 +22,8 @@ import {
 } from "../../utils/profileLocalStorage";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 import Spinner from "../common/Spinner";
+import NotificationSettingsCard from "./NotificationSettingsCard";
+import { logoutOneSignalCustomer } from "../../services/oneSignal";
 
 export default function ProfilePage() {
   const { data, isLoading, error, refetch } = useGetMyProfileQuery();
@@ -103,6 +105,7 @@ export default function ProfilePage() {
   };
 
   const handleLogout = async () => {
+    await logoutOneSignalCustomer();
     try {
       await logoutUser().unwrap();
       dispatch(logOut());
@@ -122,7 +125,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="text-white pb-32">
+    <div className="pb-32 text-white">
       <div className="flex items-start justify-end px-4 pt-3 min-h-12">
         <button
           type="button"
