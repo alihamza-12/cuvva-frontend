@@ -18,13 +18,38 @@ import {
 export default function PolicyDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const policy = location.state?.policy;
+  const { policyId } = useParams();
+  const initialPolicy = location.state?.policy || null;
+  const [policy, setPolicy] = useState(initialPolicy);
+  const [loading, setLoading] = useState(Boolean(policyId && !initialPolicy));
 
-  if (!policy) {
+  useEffect(() => {
+    if (!policyId || policy?._id === policyId) return undefined;
+    let mounted = true;
+
+    getMyPolicyById(policyId)
+      .then((response) => {
+        if (mounted) setPolicy(response.data?.policy || response.data || null);
+      })
+      .catch(() => {
+        if (mounted) setPolicy(null);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [policyId, policy?._id]);
+
+  if (loading || !policy) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-8 text-center text-white bg-black">
         <p className="text-[15px] text-[#9497a1]">
-          We couldn't load this policy's details. Please go back and try again.
+          {loading
+            ? "Loading policy details…"
+            : "We couldn't load this policy's details. Please go back and try again."}
         </p>
         <button
           type="button"
@@ -85,11 +110,6 @@ export default function PolicyDetailPage() {
     navigate(`/customer/policies/new?vehicleId=${vehicle._id}`, {
       state: { prefillVehicle: vehicle },
     });
-  };
-
-  const handleNotWiredUp = (label) => {
-
-    console.log(`${label} tapped — not wired up yet.`);
   };
 
   const handleReceipt = () => {

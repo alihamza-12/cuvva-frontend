@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Bell, BellOff, Share } from "lucide-react";
+import {
+  getNotificationPreferences,
+  updateNotificationPreferences,
+} from "../../app/api/customerApi";
 import {
   getPushState,
   isIosDevice,
@@ -8,29 +12,49 @@ import {
   requestPushPermission,
 } from "../../services/oneSignal";
 
+const DEFAULT_PREFERENCES = { policyUpcoming: true, policyActive: true };
+
 export default function NotificationSettingsCard() {
-  const [state, setState] = useState({ loading: true, supported: false, permission: false, permissionState: "default", optedIn: false });
+  const [state, setState] = useState({
+    loading: true,
+    supported: false,
+    permission: false,
+    permissionState: "default",
+    optedIn: false,
+  });
   const [error, setError] = useState("");
-  const [preferences, setPreferences] = useState({ policyUpcoming: true, policyActive: true });
+  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
   const iosNeedsInstall = isIosDevice() && !isStandalonePwa();
 
-  const refresh = async () => {
-    try {
-      const [next, preferenceResponse] = await Promise.all([
-        getPushState(),
-        getNotificationPreferences(),
-      ]);
-      setState({ loading: false, ...next });
-      setPreferences(preferenceResponse.data?.preferences || preferences);
-    } catch (requestError) {
+  const refresh = useCallback(async () => {
+    const [pushResult, preferenceResult] = await Promise.allSettled([
+      getPushState(),
+      getNotificationPreferences(),
+    ]);
+
+    if (pushResult.status === "fulfilled") {
+      setState({ loading: false, ...pushResult.value });
+    } else {
       setState((current) => ({ ...current, loading: false }));
-      setError(requestError?.message || "Notifications are unavailable.");
+      setError(pushResult.reason?.message || "Notifications are unavailable.");
     }
-  };
+
+    if (preferenceResult.status === "fulfilled") {
+      setPreferences(
+        preferenceResult.value.data?.preferences || DEFAULT_PREFERENCES,
+      );
+    } else if (pushResult.status === "fulfilled") {
+      setError(
+        preferenceResult.reason?.message ||
+          "Could not load your notification choices.",
+      );
+    }
+  }, []);
 
   useEffect(() => {
-    refresh();
-  }, []);
+    const timer = window.setTimeout(refresh, 0);
+    return () => window.clearTimeout(timer);
+  }, [refresh]);
 
   const enable = async () => {
     setError("");
@@ -56,14 +80,15 @@ export default function NotificationSettingsCard() {
   };
 
   const togglePreference = async (field) => {
-    const next = { ...preferences, [field]: !preferences[field] };
+    const previous = preferences;
+    const next = { ...previous, [field]: !previous[field] };
     setPreferences(next);
     setError("");
     try {
       const response = await updateNotificationPreferences({ [field]: next[field] });
       setPreferences(response.data?.preferences || next);
     } catch (requestError) {
-      setPreferences(preferences);
+      setPreferences(previous);
       setError(requestError?.message || "Could not update your notification choices.");
     }
   };
@@ -84,7 +109,9 @@ export default function NotificationSettingsCard() {
 
       {iosNeedsInstall ? (
         <div className="mt-4 rounded-xl bg-white/5 p-3 text-[13px] leading-5 text-[#c8c9d1]">
-          <div className="flex items-center gap-2 font-bold text-white"><Share size={15} /> Install on iPhone first</div>
+          <div className="flex items-center gap-2 font-bold text-white">
+            <Share size={15} /> Install on iPhone first
+          </div>
           <ol className="mt-2 list-decimal space-y-1 pl-5 text-[#9497a1]">
             <li>Open the Share menu.</li>
             <li>Tap Add to Home Screen.</li>

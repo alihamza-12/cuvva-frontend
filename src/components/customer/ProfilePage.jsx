@@ -59,12 +59,10 @@ export default function ProfilePage() {
     const d = new Date(customer.createdAt);
     if (Number.isNaN(d.getTime())) return "Member since —";
     return `Member since ${d.toLocaleDateString(undefined, { month: "long", year: "numeric" })}`;
-  }, [customer?.createdAt]);
+  }, [customer]);
 
-  const paymentMethodLabel = useMemo(() => {
-    const method = getPaymentMethod();
-    return method === "apple-pay" ? "Apple Pay" : null;
-  }, [showPaymentSheet]);
+  const paymentMethodLabel =
+    getPaymentMethod() === "apple-pay" ? "Apple Pay" : null;
 
   const avatarSrc = localPreviewUrl || customer?.profilePhotoUrl || null;
 
@@ -105,7 +103,7 @@ export default function ProfilePage() {
   };
 
   const handleLogout = async () => {
-    await logoutOneSignalCustomer();
+    logoutOneSignalCustomer();
     try {
       await logoutUser().unwrap();
       dispatch(logOut());
@@ -125,7 +123,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="pb-32 text-white">
+    <div className="text-white pb-32">
       <div className="flex items-start justify-end px-4 pt-3 min-h-12">
         <button
           type="button"
