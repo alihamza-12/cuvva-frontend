@@ -20,12 +20,18 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
+
             cd /var/www/frontend-app
             git pull origin main
-            
+
             cat > .env << 'EOF'
             VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
+            VITE_ONESIGNAL_APP_ID=${{ secrets.VITE_ONESIGNAL_APP_ID }}
             EOF
-            
+
+            chmod 600 .env
+
+            rm -rf dist
             npm install
             npm run build
