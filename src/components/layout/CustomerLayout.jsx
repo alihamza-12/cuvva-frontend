@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CustomerBottomNav from "../customer/CustomerBottomNav";
+import PolicyNotificationBar from "../customer/PolicyNotificationBar";
 import NotificationPermissionModal from "../customer/NotificationPermissionModal";
 import { selectCurrentUser } from "../../features/authSlice";
 import {
@@ -24,8 +25,8 @@ export default function CustomerLayout() {
         console.warn("Push notification initialization unavailable:", error?.message);
       });
 
-    // Policy alerts now live in the device notification panel (driven by
-    // the service worker) instead of an in-app banner overlay.
+    // Panel alerts (system notification tray) run alongside the rich
+    // in-app PolicyNotificationBar.
     startPolicyNotifications();
 
     return () => {
@@ -37,6 +38,7 @@ export default function CustomerLayout() {
   return (
     <div>
       <NotificationPermissionModal customerId={user?.id} />
+      <PolicyNotificationBar />
       <Outlet />
       <CustomerBottomNav />
     </div>

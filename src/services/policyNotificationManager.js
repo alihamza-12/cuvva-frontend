@@ -4,18 +4,18 @@ import { policyDateTimeToInstant } from "../utils/policyDateTime";
 import { requestPushPermission } from "./oneSignal";
 
 /*
- * Shows policy alerts in the DEVICE NOTIFICATION PANEL (system tray) using
- * the standard Web Notifications API through a dedicated service worker.
+ * Shows policy alerts in the DEVICE NOTIFICATION PANEL (system tray).
  *
- * Unlike the old in-app banner, these are genuine OS-level notifications:
- * they appear in the pull-down notification panel even while the app is
- * open, and the "policy ends in …" text is recomputed from live policy
- * data on every poll so the notification in the panel counts down
- * dynamically (same-tag notifications replace each other silently).
+ * Delivery channel fallback chain (so a notification always gets through):
+ *   1. our own service worker at "/push/" scope (handles taps),
+ *   2. any already-registered service worker (e.g. the OneSignal one) —
+ *      showNotification works on it too,
+ *   3. the plain Notification constructor (desktop browsers).
  *
- * Works with or without OneSignal: OneSignal (when configured) still
- * delivers server-side pushes, while this manager guarantees on-device
- * panel notifications driven entirely by the customer's real policies.
+ * The "policy ends in …" copy is recomputed from live policy data on every
+ * poll; same-tag notifications replace each other silently so the entry in
+ * the panel counts down dynamically.  The rich in-app bar with the running
+ * progress line is rendered by PolicyNotificationBar.
  */
 
 const WORKER_URL = "/push/policy-worker.js";
@@ -37,25 +37,45 @@ export const setLocalPushMuted = (muted) => {
 
 let timer = null;
 let running = false;
-let registrationPromise = null;
+let channelPromise = null;
 
 export const isLocalPushSupported = () =>
   typeof window !== "undefined" &&
   "Notification" in window &&
   "serviceWorker" in navigator;
 
-export const ensurePolicyWorker = () => {
-  if (!isLocalPushSupported()) return Promise.resolve(null);
-  if (!registrationPromise) {
-    registrationPromise = navigator.serviceWorker
-      .register(WORKER_URL, { scope: WORKER_SCOPE })
-      .catch((error) => {
-        console.warn("[push] policy worker registration failed:", error?.message);
-        registrationPromise = null;
-        return null;
-      });
+const detectChannel = async () => {
+  if (!isLocalPushSupported()) return { kind: "none" };
+
+  try {
+    const registration = await navigator.serviceWorker.register(WORKER_URL, {
+      scope: WORKER_SCOPE,
+    });
+    return { kind: "sw", registration };
+  } catch (error) {
+    console.warn("[push] own worker unavailable, trying existing registration:", error?.message);
   }
-  return registrationPromise;
+
+  try {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration) return { kind: "sw", registration };
+  } catch {
+    // fall through to the constructor channel
+  }
+
+  return { kind: "constructor" };
+};
+
+export const ensurePolicyWorker = () => {
+  if (!isLocalPushSupported()) return Promise.resolve({ kind: "none" });
+  if (!channelPromise) {
+    channelPromise = detectChannel().catch((error) => {
+      console.warn("[push] notification channel detection failed:", error?.message);
+      channelPromise = null;
+      return { kind: "none" };
+    });
+  }
+  return channelPromise;
 };
 
 export const requestLocalPermission = async () => {
@@ -122,19 +142,43 @@ const wasShown = (type, policyId) =>
 const markShown = (type, policyId) =>
   window.localStorage.setItem(shownOnceKey(type, policyId), "1");
 
-const show = async (registration, options) => {
+const NOTIFICATION_ICON = "/icons/icon-192.png";
+
+const showOnChannel = (channel, options) => {
+  if (channel.kind === "sw") {
+    return channel.registration.showNotification(options.title, options);
+  }
+  if (channel.kind === "constructor") {
+    const notification = new Notification(options.title, {
+      body: options.body,
+      tag: options.tag,
+      icon: options.icon,
+      silent: options.silent,
+      requireInteraction: options.requireInteraction,
+    });
+    notification.onclick = () => {
+      window.focus();
+      if (options.data?.path) {
+        window.location.assign(`/${options.data.path}`);
+      }
+    };
+    return Promise.resolve();
+  }
+  return Promise.resolve();
+};
+
+const show = async (channel, options) => {
   try {
-    await registration.showNotification(options.title, options);
+    await showOnChannel(channel, options);
   } catch (error) {
     console.warn("[push] showNotification failed:", error?.message);
   }
 };
 
-const NOTIFICATION_ICON = "/icons/icon-192.png";
-
-const clearCuvvaNotifications = async (registration) => {
+const clearCuvvaNotifications = async (channel) => {
+  if (channel.kind !== "sw") return;
   try {
-    const open = await registration.getNotifications();
+    const open = await channel.registration.getNotifications();
     open.forEach((notification) => {
       if (String(notification.tag || "").startsWith("cuvva-")) {
         notification.close();
@@ -148,11 +192,11 @@ const clearCuvvaNotifications = async (registration) => {
 const tick = async () => {
   if (!isLocalPushSupported()) return;
 
-  const registration = await ensurePolicyWorker();
-  if (!registration) return;
+  const channel = await ensurePolicyWorker();
+  if (channel.kind === "none") return;
 
   if (Notification.permission !== "granted" || isLocalPushMuted()) {
-    await clearCuvvaNotifications(registration);
+    await clearCuvvaNotifications(channel);
     return;
   }
 
@@ -197,7 +241,8 @@ const tick = async () => {
     if (!wasShown("active", policy._id)) {
       markShown("active", policy._id);
       if (preferences.policyActive !== false) {
-        await show(registration, {
+        console.info("[push] showing active notification in panel", { policyId: policy._id });
+        await show(channel, {
           tag,
           title: "Your policy is now active",
           body: `${registrationText} is covered until ${endText} — ends in ${humanize(end - now)}.`,
@@ -210,7 +255,7 @@ const tick = async () => {
       }
     } else {
       // Live countdown: same tag replaces the notification in the panel.
-      await show(registration, {
+      await show(channel, {
         tag,
         title: "Active cover",
         body: `${registrationText} is covered — policy ends in ${humanize(end - now)} (${endText}).`,
@@ -233,7 +278,8 @@ const tick = async () => {
     if (!wasShown("upcoming", policy._id)) {
       markShown("upcoming", policy._id);
       if (preferences.policyUpcoming !== false) {
-        await show(registration, {
+        console.info("[push] showing upcoming notification in panel", { policyId: policy._id });
+        await show(channel, {
           tag,
           title: `Policy starts in ${humanize(start - now)}`,
           body: `Your cover for ${registrationText} begins ${startText} (UK time).`,
@@ -245,7 +291,7 @@ const tick = async () => {
         });
       }
     } else {
-      await show(registration, {
+      await show(channel, {
         tag,
         title: "Upcoming cover",
         body: `${registrationText} starts in ${humanize(start - now)} (${startText}).`,
@@ -258,19 +304,21 @@ const tick = async () => {
   }
 
   // Clear panel notifications whose policy is no longer active/upcoming.
-  try {
-    const open = await registration.getNotifications();
-    open.forEach((notification) => {
-      const tag = String(notification.tag || "");
-      if (
-        (tag.startsWith("cuvva-active-") || tag.startsWith("cuvva-upcoming-")) &&
-        !keepTags.has(tag)
-      ) {
-        notification.close();
-      }
-    });
-  } catch {
-    // Non-fatal: stale notifications simply expire with their TTL.
+  if (channel.kind === "sw") {
+    try {
+      const open = await channel.registration.getNotifications();
+      open.forEach((notification) => {
+        const tag = String(notification.tag || "");
+        if (
+          (tag.startsWith("cuvva-active-") || tag.startsWith("cuvva-upcoming-")) &&
+          !keepTags.has(tag)
+        ) {
+          notification.close();
+        }
+      });
+    } catch {
+      // Non-fatal: stale notifications simply expire with their TTL.
+    }
   }
 };
 
