@@ -106,4 +106,6 @@ export const isStandalonePwa = () =>
   window.navigator.standalone === true;
 
 export const isIosDevice = () =>
-  /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  /iphone|ipad|ipod/i.test(window.navigator.userAgent) ||
+  (window.navigator.platform === "MacIntel" &&
+    window.navigator.maxTouchPoints > 1);

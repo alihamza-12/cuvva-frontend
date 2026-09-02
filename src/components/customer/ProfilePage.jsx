@@ -22,7 +22,6 @@ import {
 } from "../../utils/profileLocalStorage";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 import Spinner from "../common/Spinner";
-import NotificationSettingsCard from "./NotificationSettingsCard";
 import { logoutOneSignalCustomer } from "../../services/oneSignal";
 
 export default function ProfilePage() {
@@ -283,9 +282,6 @@ export default function ProfilePage() {
           isLast
         />
       </Card>
-
-      <SectionLabel>Notifications</SectionLabel>
-      <NotificationSettingsCard />
 
       {/* Settings */}
       <SectionLabel>Settings</SectionLabel>

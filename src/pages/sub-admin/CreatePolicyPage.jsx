@@ -353,7 +353,6 @@ export default function CreatePolicyPage() {
                 value={form.startDate}
                 onChange={(v) => setForm((prev) => ({ ...prev, startDate: v }))}
                 required
-                disablePast
                 accentClass="focus:border-[#00f0ff]"
               />
             </Field>
@@ -363,7 +362,6 @@ export default function CreatePolicyPage() {
                 value={form.endDate}
                 onChange={(v) => setForm((prev) => ({ ...prev, endDate: v }))}
                 required
-                disablePast
                 accentClass="focus:border-[#00f0ff]"
               />
             </Field>

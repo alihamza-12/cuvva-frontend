@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CustomerBottomNav from "../customer/CustomerBottomNav";
 import PolicyStatusBanner from "../customer/PolicyStatusBanner";
+import NotificationPermissionModal from "../customer/NotificationPermissionModal";
 import { selectCurrentUser } from "../../features/authSlice";
 import {
   loginOneSignalCustomer,
@@ -27,6 +28,7 @@ export default function CustomerLayout() {
 
   return (
     <div>
+      <NotificationPermissionModal customerId={user?.id} />
       <PolicyStatusBanner />
       <Outlet />
       <CustomerBottomNav />

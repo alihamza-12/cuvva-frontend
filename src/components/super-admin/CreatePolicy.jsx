@@ -328,7 +328,6 @@ export default function CreatePolicy({
                 value={form.startDate}
                 onChange={(v) => setForm({ ...form, startDate: v })}
                 required
-                disablePast
                 accentClass="focus:border-[#644aff]"
               />
               <MaskedTimeInput
@@ -346,7 +345,6 @@ export default function CreatePolicy({
                 value={form.endDate}
                 onChange={(v) => setForm({ ...form, endDate: v })}
                 required
-                disablePast
                 accentClass="focus:border-[#644aff]"
               />
               <MaskedTimeInput
