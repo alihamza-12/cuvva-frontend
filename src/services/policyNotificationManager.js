@@ -1,6 +1,6 @@
 import { getMyPolicies } from "../app/api/policyApi";
 import { getNotificationPreferences } from "../app/api/customerApi";
-import { policyDateTimeToInstant } from "../utils/policyDateTime";
+import { computePolicyStatus, getPolicyWindow } from "../utils/policyStatus";
 import { requestPushPermission } from "./oneSignal";
 
 /*
@@ -20,7 +20,7 @@ import { requestPushPermission } from "./oneSignal";
 
 const WORKER_URL = "/push/policy-worker.js";
 const WORKER_SCOPE = "/push/";
-const POLL_MS = 30000;
+const POLL_MS = 15000;
 const UPCOMING_WINDOW_MS = 5 * 60 * 1000;
 
 const DEFAULT_PREFERENCES = { policyUpcoming: true, policyActive: true };
@@ -213,19 +213,28 @@ const tick = async () => {
       : DEFAULT_PREFERENCES;
 
   const now = new Date();
+  // Derived (window-based) status, never the possibly-stale stored status.
   const candidates = policies
     .filter((policy) => policy.status !== "Cancelled")
-    .map((policy) => ({
-      policy,
-      start: policyDateTimeToInstant(policy.startDate, policy.startTime),
-      end: policyDateTimeToInstant(policy.endDate, policy.endTime),
-    }))
-    .filter((entry) => entry.start && entry.end && now < entry.end)
+    .map((policy) => {
+      const range = getPolicyWindow(policy);
+      if (!range) return null;
+      return {
+        policy,
+        start: range.start,
+        end: range.end,
+        status: computePolicyStatus(policy, now),
+      };
+    })
+    .filter((entry) => entry && entry.status !== "Expired")
     .sort((a, b) => a.start - b.start);
 
-  const active = candidates.find((entry) => now >= entry.start && now < entry.end);
+  const active = candidates.find((entry) => entry.status === "Active");
   const upcoming = candidates.find(
-    (entry) => entry.start > now && entry.start - now <= UPCOMING_WINDOW_MS,
+    (entry) =>
+      entry.status === "Upcoming" &&
+      entry.start - now > 0 &&
+      entry.start - now <= UPCOMING_WINDOW_MS,
   );
 
   const keepTags = new Set();

@@ -2,12 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { FileText, Headphones, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getMyPolicies } from "../../app/api/policyApi";
-import { policyDateTimeToInstant } from "../../utils/policyDateTime";
+import { computePolicyStatus, getPolicyWindow } from "../../utils/policyStatus";
 
 /*
  * Rich policy notification bar (the card UI from the Cuvva mock-up).
  *
- * IMPORTANT: it is shown ONLY while a policy is Active (start <= now < end).
+ * IMPORTANT: visibility is decided from the policy's own Europe/London cover
+ * window (start <= now <= end), NOT from the stored `status` string. That
+ * stored value only refreshes on the server's background tick, so trusting it
+ * made the bar vanish while the policy was in fact still live.
  * Upcoming policies do not render this bar — they are announced through the
  * device notification panel instead (see policyNotificationManager).
  *
@@ -44,28 +47,44 @@ export default function PolicyNotificationBar() {
       }
     };
     load();
-    const refresh = window.setInterval(load, 30000);
+    const refresh = window.setInterval(load, 15000);
     const clock = window.setInterval(() => setNow(new Date()), 1000);
+    // Re-check the instant the tab regains focus (phones suspend timers).
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        setNow(new Date());
+        load();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       mounted = false;
       window.clearInterval(refresh);
       window.clearInterval(clock);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 
   const active = useMemo(() => {
-    const candidates = policies
-      .filter((policy) => policy.status === "Active")
-      .map((policy) => ({
-        policy,
-        start: policyDateTimeToInstant(policy.startDate, policy.startTime),
-        end: policyDateTimeToInstant(policy.endDate, policy.endTime),
-      }))
-      .filter((entry) => entry.start && entry.end)
+    const candidates = (Array.isArray(policies) ? policies : [])
+      .filter((policy) => policy?.status !== "Cancelled")
+      .map((policy) => {
+        const range = getPolicyWindow(policy);
+        return range
+          ? {
+              policy,
+              start: range.start,
+              end: range.end,
+              status: computePolicyStatus(policy, now),
+            }
+          : null;
+      })
+      .filter(Boolean)
       .sort((a, b) => a.start - b.start);
 
-    // Only render between the policy's own start and end instants.
-    return candidates.find((entry) => now >= entry.start && now < entry.end) || null;
+    // Derived status is authoritative: a policy inside its window is Active
+    // even if the backend row still says Upcoming or Expired.
+    return candidates.find((entry) => entry.status === "Active") || null;
   }, [policies, now]);
 
   if (!active) return null;

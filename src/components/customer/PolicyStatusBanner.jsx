@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FileText, Headphones, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getMyPolicies } from "../../app/api/policyApi";
-import { policyDateTimeToInstant } from "../../utils/policyDateTime";
+import { computePolicyStatus, getPolicyWindow } from "../../utils/policyStatus";
 
 const formatRemaining = (milliseconds) => {
   const seconds = Math.max(0, Math.ceil(milliseconds / 1000));
@@ -31,7 +31,7 @@ export default function PolicyStatusBanner() {
       }
     };
     load();
-    const refresh = window.setInterval(load, 60000);
+    const refresh = window.setInterval(load, 15000);
     const clock = window.setInterval(() => setNow(new Date()), 1000);
     return () => {
       mounted = false;
@@ -41,17 +41,22 @@ export default function PolicyStatusBanner() {
   }, []);
 
   const banner = useMemo(() => {
-    const candidates = policies
-      .filter((policy) => policy.status !== "Cancelled")
+    const candidates = (Array.isArray(policies) ? policies : [])
+      .filter((policy) => policy?.status !== "Cancelled")
       .map((policy) => {
-        const start = policyDateTimeToInstant(policy.startDate, policy.startTime);
-        const end = policyDateTimeToInstant(policy.endDate, policy.endTime);
-        return { policy, start, end };
+        const range = getPolicyWindow(policy);
+        if (!range) return null;
+        return {
+          policy,
+          start: range.start,
+          end: range.end,
+          status: computePolicyStatus(policy, now),
+        };
       })
-      .filter(({ start, end }) => start && end && now < end)
+      .filter((entry) => entry && entry.status !== "Expired")
       .sort((a, b) => a.start - b.start);
 
-    const active = candidates.find(({ start, end }) => now >= start && now < end);
+    const active = candidates.find((entry) => entry.status === "Active");
     if (active) return { ...active, mode: "active" };
 
     const upcoming = candidates.find(({ start }) => {

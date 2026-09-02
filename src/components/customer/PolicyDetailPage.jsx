@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getMyPolicyById } from "../../app/api/policyApi";
+import { computePolicyStatus } from "../../utils/policyStatus";
 import {
   X,
   FileText,
@@ -22,6 +23,13 @@ export default function PolicyDetailPage() {
   const initialPolicy = location.state?.policy || null;
   const [policy, setPolicy] = useState(initialPolicy);
   const [loading, setLoading] = useState(Boolean(policyId && !initialPolicy));
+  // Ticks every second so the pill flips exactly on the UK start/end instant.
+  const [nowTick, setNowTick] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNowTick(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (!policyId || policy?._id === policyId) return undefined;
@@ -72,7 +80,7 @@ export default function PolicyDetailPage() {
       ? `${ownerFirstName}'s ${vehicle.make} ${vehicle.model || ""}`.trim()
       : `${vehicle?.make || ""} ${vehicle?.model || ""}`.trim() || "Vehicle";
 
-  const dynamicStatus = policy?.status || "Upcoming";
+  const dynamicStatus = computePolicyStatus(policy, nowTick) || "Upcoming";
 
   const showBadge = dynamicStatus === "Active" || dynamicStatus === "Upcoming";
 

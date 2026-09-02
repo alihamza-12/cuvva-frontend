@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { getMyPolicies } from "../../app/api/policyApi";
 import policyImg from "/policyimg.png";
+import { computePolicyStatus } from "../../utils/policyStatus";
 
 const combineDateAndTime = (dateValue, timeValue) => {
   if (!dateValue) return null;
@@ -37,6 +38,13 @@ export default function PoliciesPage() {
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Ticks every second so badges flip live, without a manual refresh.
+  const [tick, setTick] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = window.setInterval(() => setTick(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -115,7 +123,7 @@ export default function PoliciesPage() {
   const policySectionLabel =
     sortedPolicies.length > 0 &&
     sortedPolicies.every((policy) =>
-      ["Expired", "Cancelled"].includes(policy?.status),
+      ["Expired", "Cancelled"].includes(computePolicyStatus(policy, tick)),
     )
       ? "Past"
       : "Your policies";
@@ -225,9 +233,10 @@ export default function PoliciesPage() {
                   vehicle?.make && vehicle?.model
                     ? `${vehicle.make} ${vehicle.model}`
                     : registration || "Vehicle";
-                // Use the API's stored status field directly so the badge reflects
-
-                const status = policy?.status || "Upcoming";
+                // Derive from the UK cover window so a live policy is never
+                // labelled Expired between background ticks.
+                const status =
+                  computePolicyStatus(policy, tick) || "Upcoming";
 
                 const showBadge = status === "Active" || status === "Upcoming";
 
