@@ -9,8 +9,13 @@ import {
   isIosDevice,
   isStandalonePwa,
   optOutOfPush,
-  requestPushPermission,
 } from "../../services/oneSignal";
+import {
+  enablePushWithFallback,
+  isLocalPushMuted,
+  isLocalPushSupported,
+  setLocalPushMuted,
+} from "../../services/policyNotificationManager";
 
 const DEFAULT_PREFERENCES = { policyUpcoming: true, policyActive: true };
 
@@ -23,6 +28,7 @@ export default function NotificationSettingsCard() {
     optedIn: false,
   });
   const [error, setError] = useState("");
+  const [muted, setMuted] = useState(false);
   const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
   const iosNeedsInstall = isIosDevice() && !isStandalonePwa();
 
@@ -32,11 +38,18 @@ export default function NotificationSettingsCard() {
       getNotificationPreferences(),
     ]);
 
+    setMuted(isLocalPushMuted());
+
     if (pushResult.status === "fulfilled") {
       setState({ loading: false, ...pushResult.value });
     } else {
-      setState((current) => ({ ...current, loading: false }));
-      setError(pushResult.reason?.message || "Notifications are unavailable.");
+      // OneSignal may be unconfigured; on-device panel notifications can
+      // still work through the standard Web Notifications API.
+      setState((current) => ({
+        ...current,
+        loading: false,
+        supported: current.supported || isLocalPushSupported(),
+      }));
     }
 
     if (preferenceResult.status === "fulfilled") {
@@ -59,9 +72,17 @@ export default function NotificationSettingsCard() {
   const enable = async () => {
     setError("");
     try {
-      const next = await requestPushPermission();
-      setState((current) => ({ ...current, ...next, loading: false }));
-      if (!next.permission) {
+      // OneSignal first (server pushes), standard Web Notifications as a
+      // fallback so on-device panel alerts always work.
+      const result = await enablePushWithFallback();
+      setState((current) => ({
+        ...current,
+        permission: result.granted,
+        permissionState: result.granted ? "granted" : current.permissionState,
+        supported: current.supported || isLocalPushSupported(),
+        loading: false,
+      }));
+      if (!result.granted) {
         setError("Permission was not granted. Enable notifications in your device settings.");
       }
     } catch (requestError) {
@@ -72,7 +93,13 @@ export default function NotificationSettingsCard() {
   const disable = async () => {
     setError("");
     try {
-      await optOutOfPush();
+      try {
+        await optOutOfPush();
+      } catch {
+        // OneSignal may be unconfigured; muting on-device alerts still applies.
+      }
+      setLocalPushMuted(true);
+      setMuted(true);
       await refresh();
     } catch (requestError) {
       setError(requestError?.message || "Could not disable notifications.");
@@ -121,13 +148,13 @@ export default function NotificationSettingsCard() {
         </div>
       ) : state.loading ? (
         <p className="mt-4 text-[13px] text-[#9497a1]">Checking notification status…</p>
-      ) : !state.supported ? (
+      ) : !state.supported && !isLocalPushSupported() ? (
         <p className="mt-4 text-[13px] text-[#e6a8a8]">Push notifications are not supported on this device.</p>
       ) : state.permissionState === "denied" ? (
         <div className="mt-4 rounded-xl bg-red-400/10 p-3 text-[13px] leading-5 text-[#e6a8a8]">
           Notifications are blocked. Open this site’s browser or device notification settings, allow notifications, then return here.
         </div>
-      ) : state.permission && state.optedIn ? (
+      ) : !muted && ((state.permission && state.optedIn) || state.permissionState === "granted") ? (
         <button type="button" onClick={disable} className="mt-4 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 text-[14px] font-bold text-white">
           <BellOff size={17} /> Disable notifications
         </button>

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Bell, Share, X } from "lucide-react";
+import { getPushState, isIosDevice, isStandalonePwa } from "../../services/oneSignal";
 import {
-  getPushState,
-  isIosDevice,
-  isStandalonePwa,
-  requestPushPermission,
-} from "../../services/oneSignal";
+  enablePushWithFallback,
+  ensurePolicyWorker,
+  isLocalPushSupported,
+} from "../../services/policyNotificationManager";
 
 const storageKey = (customerId) =>
   `cuvva:notification-permission-prompt:${customerId}`;
@@ -32,25 +32,34 @@ export default function NotificationPermissionModal({ customerId }) {
         return;
       }
 
+      // OneSignal may be unavailable (missing env config, SDK blocked, …).
+      // The modal must still appear, so a failure there is not fatal:
+      // we fall back to the standard Web Notifications API.
+      let oneSignalState;
       try {
-        const state = await getPushState();
-        if (!mounted) return;
+        oneSignalState = await getPushState();
+      } catch {
+        oneSignalState = null;
+      }
+      if (!mounted) return;
 
-        if (state.permission && state.optedIn) {
-          window.localStorage.setItem(storageKey(customerId), "completed");
-          return;
-        }
+      const permissionState =
+        oneSignalState?.permissionState ||
+        window.Notification?.permission ||
+        "default";
+      const alreadyEnabled =
+        (oneSignalState && oneSignalState.permission && oneSignalState.optedIn) ||
+        permissionState === "granted";
 
-        if (state.permissionState === "denied") {
-          window.localStorage.setItem(storageKey(customerId), "completed");
-          return;
-        }
+      if (alreadyEnabled || permissionState === "denied") {
+        if (permissionState === "granted") ensurePolicyWorker();
+        window.localStorage.setItem(storageKey(customerId), "completed");
+        return;
+      }
 
-        if (state.supported) setVisible(true);
-      } catch (requestError) {
-        if (mounted) {
-          setError(requestError?.message || "Notifications are currently unavailable.");
-        }
+      // Show whenever ANY notification mechanism exists on this device.
+      if (oneSignalState?.supported || isLocalPushSupported()) {
+        setVisible(true);
       }
     }, 600);
 
@@ -73,8 +82,8 @@ export default function NotificationPermissionModal({ customerId }) {
     setRequesting(true);
     setError("");
     try {
-      const result = await requestPushPermission();
-      if (result.permission && result.optedIn) {
+      const result = await enablePushWithFallback();
+      if (result.granted) {
         window.localStorage.setItem(storageKey(customerId), "completed");
         setVisible(false);
       } else {
@@ -124,7 +133,7 @@ export default function NotificationPermissionModal({ customerId }) {
           </div>
         ) : (
           <p className="mt-3 text-[15px] leading-6 text-[#a7a8b0]">
-            Allow notifications to get a reminder before your policy starts and an alert when your cover becomes active.
+            Allow notifications to get a reminder before your policy starts and an alert when your cover becomes active. Alerts appear in your phone&apos;s notification panel.
           </p>
         )}
 
