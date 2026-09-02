@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
   PlusCircle,
-  User,
   ShieldCheck,
 } from "lucide-react";
 import CurrencyInput from "../common/CurrencyInput";
+import CustomerSearchSelect from "../common/CustomerSearchSelect";
 import MaskedDateInput from "../common/MaskedDateInput";
 import MaskedTimeInput from "../common/MaskedTimeInput";
 import { normalizeTime } from "../../utils/normalizeTime";
@@ -55,8 +55,8 @@ export default function CreatePolicy({
           if (!mounted) return;
           setLocalCustomers(res.data?.customers || []);
         }
-      } catch (err) {
-
+      } catch {
+        // Keep whatever customer list was provided via props.
       }
     };
 
@@ -187,29 +187,14 @@ export default function CreatePolicy({
             <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
               Customer
             </label>
-            <div className="relative">
-              <User
-                size={12}
-                className="absolute left-3.5 top-3.5 text-[#6b7280]"
-              />
-              <select
-                required
-                value={form.customerId}
-                onChange={(e) =>
-                  setForm({ ...form, customerId: e.target.value })
-                }
-                className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
-              >
-                <option value="" disabled>
-                  Select customer
-                </option>
-                {customerOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CustomerSearchSelect
+              options={customerOptions}
+              value={form.customerId}
+              onChange={(customerId) => setForm({ ...form, customerId })}
+              placeholder="Search customer by name or email"
+              required
+              className="w-full min-h-[44px] bg-[#0d0f1d] border border-[#1e2238] rounded-xl py-2.5 pl-9 pr-3 text-white outline-none focus:border-[#644aff]"
+            />
           </div>
 
           <PolicyVehicleLookup

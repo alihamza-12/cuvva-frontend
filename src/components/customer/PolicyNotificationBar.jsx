@@ -7,10 +7,12 @@ import { policyDateTimeToInstant } from "../../utils/policyDateTime";
 /*
  * Rich policy notification bar (the card UI from the Cuvva mock-up).
  *
- * Fully dynamic: it reads the customer's live policies, and while a policy
- * is Upcoming it shows the "Upcoming" tag with a "starts in" countdown whose
- * line fills towards the start time; while Active the green line runs with
- * time (elapsed / total) and the "ends in" value ticks down every second.
+ * IMPORTANT: it is shown ONLY while a policy is Active (start <= now < end).
+ * Upcoming policies do not render this bar — they are announced through the
+ * device notification panel instead (see policyNotificationManager).
+ *
+ * Fully dynamic while visible: the "ends in" value ticks every second and
+ * the green line runs with time (elapsed / total policy duration).
  */
 
 const splitRemaining = (milliseconds) => {
@@ -51,38 +53,27 @@ export default function PolicyNotificationBar() {
     };
   }, []);
 
-  const view = useMemo(() => {
+  const active = useMemo(() => {
     const candidates = policies
-      .filter((policy) => policy.status === "Active" || policy.status === "Upcoming")
+      .filter((policy) => policy.status === "Active")
       .map((policy) => ({
         policy,
         start: policyDateTimeToInstant(policy.startDate, policy.startTime),
         end: policyDateTimeToInstant(policy.endDate, policy.endTime),
-        created: policy.createdAt ? new Date(policy.createdAt) : null,
       }))
-      .filter((entry) => entry.start && entry.end && now < entry.end)
+      .filter((entry) => entry.start && entry.end)
       .sort((a, b) => a.start - b.start);
 
-    const active = candidates.find((entry) => now >= entry.start);
-    if (active) return { ...active, mode: "active" };
-
-    const upcoming = candidates.find((entry) => entry.start > now);
-    return upcoming ? { ...upcoming, mode: "upcoming" } : null;
+    // Only render between the policy's own start and end instants.
+    return candidates.find((entry) => now >= entry.start && now < entry.end) || null;
   }, [policies, now]);
 
-  if (!view) return null;
+  if (!active) return null;
 
-  const { policy, start, end, created, mode } = view;
+  const { policy, start, end } = active;
   const registration = policy.vehicleId?.registration || "Your vehicle";
-  const remaining = mode === "active" ? end - now : start - now;
-  const { value, unit } = splitRemaining(remaining);
-
-  const progress =
-    mode === "active"
-      ? clampPercent(((now - start) / Math.max(1, end - start)) * 100)
-      : created && start > created
-        ? clampPercent(((now - created) / (start - created)) * 100)
-        : 4;
+  const { value, unit } = splitRemaining(end - now);
+  const progress = clampPercent(((now - start) / Math.max(1, end - start)) * 100);
 
   const openPolicy = () => navigate(`/customer/policies/${policy._id}`);
   const openSupport = () => navigate("/customer/support");
@@ -102,27 +93,14 @@ export default function PolicyNotificationBar() {
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h2 className="text-[24px] font-black leading-tight">
-              {mode === "active" ? "Active cover" : "Upcoming cover"}
-            </h2>
-            <span
-              className={
-                mode === "active"
-                  ? "rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-emerald-600"
-                  : "rounded-full bg-[#efecff] px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-[#7458ff]"
-              }
-            >
-              {mode === "active" ? "Active" : "Upcoming"}
+            <h2 className="text-[24px] font-black leading-tight">Active cover</h2>
+            <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-emerald-600">
+              Active
             </span>
           </div>
           <p className="mt-1 flex items-center gap-1.5 truncate text-[15px] text-[#6f6294]">
-            <ShieldCheck
-              size={16}
-              className={mode === "active" ? "text-emerald-500" : "text-[#7458ff]"}
-            />
-            {mode === "active"
-              ? `${registration} is covered.`
-              : `${registration} starts shortly.`}
+            <ShieldCheck size={16} className="text-emerald-500" />
+            {registration} is covered.
           </p>
         </div>
         <button
@@ -135,9 +113,7 @@ export default function PolicyNotificationBar() {
       </div>
 
       <div className="mt-6 flex items-end justify-between gap-3">
-        <span className="text-[16px] text-[#6f6294]">
-          {mode === "active" ? "Policy ends in:" : "Policy starts in:"}
-        </span>
+        <span className="text-[16px] text-[#6f6294]">Policy ends in:</span>
         <strong className="text-right text-[24px] leading-none text-[#221247]">
           {value} <span className="text-[17px] font-extrabold">{unit}</span>
         </strong>
@@ -145,11 +121,7 @@ export default function PolicyNotificationBar() {
 
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#ece9fb]">
         <div
-          className={
-            mode === "active"
-              ? "h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 transition-[width] duration-1000 ease-linear"
-              : "h-full rounded-full bg-gradient-to-r from-[#8f7bff] to-[#7458ff] transition-[width] duration-1000 ease-linear"
-          }
+          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 transition-[width] duration-1000 ease-linear"
           style={{ width: `${progress}%` }}
         />
       </div>

@@ -303,6 +303,34 @@ const tick = async () => {
     }
   }
 
+  // Announce upcoming cover once, as soon as an upcoming policy exists
+  // (the rich in-app bar is reserved for Active policies only).
+  const upcomingAny = candidates.find((entry) => entry.start > now);
+  if (upcomingAny) {
+    const { policy, start } = upcomingAny;
+    const announceTag = `cuvva-upcoming-ann-${policy._id}`;
+    keepTags.add(announceTag);
+    if (!wasShown("upcoming-announce", policy._id)) {
+      markShown("upcoming-announce", policy._id);
+      if (preferences.policyUpcoming !== false) {
+        const registrationText = policy.vehicleId?.registration || "Your vehicle";
+        const startText = formatLondon(start);
+        console.info("[push] showing upcoming announcement in panel", {
+          policyId: policy._id,
+        });
+        await show(channel, {
+          tag: announceTag,
+          title: "Upcoming cover",
+          body: `Your cover for ${registrationText} begins ${startText} (UK time) — starts in ${humanize(start - now)}.`,
+          icon: NOTIFICATION_ICON,
+          badge: NOTIFICATION_ICON,
+          silent: false,
+          data: { path: `customer/policies/${policy._id}` },
+        });
+      }
+    }
+  }
+
   // Clear panel notifications whose policy is no longer active/upcoming.
   if (channel.kind === "sw") {
     try {

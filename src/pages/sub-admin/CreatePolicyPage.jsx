@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { httpClient } from "../../app/api/httpClient";
 import CurrencyInput from "../../components/common/CurrencyInput";
+import CustomerSearchSelect from "../../components/common/CustomerSearchSelect";
 import MaskedDateInput from "../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../components/common/MaskedTimeInput";
 import { normalizeTime } from "../../utils/normalizeTime";
@@ -60,14 +61,13 @@ export default function CreatePolicyPage() {
         if (!mounted) return;
         setCustomers(custList);
       } catch (e) {
-        if (!mounted) return;
-        setLoadError(
-          e?.response?.data?.message || "Failed to load customers.",
-        );
-      } finally {
-        if (!mounted) return;
-        setLoading(false);
+        if (mounted) {
+          setLoadError(
+            e?.response?.data?.message || "Failed to load customers.",
+          );
+        }
       }
+      if (mounted) setLoading(false);
     };
 
     load();
@@ -231,27 +231,20 @@ export default function CreatePolicyPage() {
         <form onSubmit={handleSubmit} className="mt-6">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Customer (required)">
-              <select
+              <CustomerSearchSelect
+                options={customerOptions.map((customer) => ({
+                  value: customer.value,
+                  label: customer.label,
+                  disabled: customer.policyCreationRestricted,
+                }))}
                 value={form.customerId}
-                onChange={handleChange("customerId")}
+                onChange={(customerId) =>
+                  setForm((prev) => ({ ...prev, customerId }))
+                }
+                placeholder="Search customer by name or email"
+                showIcon={false}
                 className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
-              >
-                <option value="" disabled>
-                  Select your customer
-                </option>
-                {customerOptions.map((customer) => (
-                  <option
-                    key={customer.value}
-                    value={customer.value}
-                    disabled={customer.policyCreationRestricted}
-                  >
-                    {customer.label}
-                    {customer.policyCreationRestricted
-                      ? " — Policy creation restricted"
-                      : ""}
-                  </option>
-                ))}
-              </select>
+              />
             </Field>
 
             <div className="md:col-span-2">
