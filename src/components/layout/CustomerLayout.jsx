@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CustomerBottomNav from "../customer/CustomerBottomNav";
-import PolicyNotificationBar from "../customer/PolicyNotificationBar";
 import NotificationPermissionModal from "../customer/NotificationPermissionModal";
 import { selectCurrentUser } from "../../features/authSlice";
 import {
@@ -25,8 +24,8 @@ export default function CustomerLayout() {
         console.warn("Push notification initialization unavailable:", error?.message);
       });
 
-    // Panel alerts (system notification tray) run alongside the rich
-    // in-app PolicyNotificationBar.
+    // Policy alerts are delivered to the DEVICE NOTIFICATION PANEL only.
+    // The in-app rich card was removed deliberately.
     startPolicyNotifications();
 
     return () => {
@@ -38,7 +37,6 @@ export default function CustomerLayout() {
   return (
     <div>
       <NotificationPermissionModal customerId={user?.id} />
-      <PolicyNotificationBar />
       <Outlet />
       <CustomerBottomNav />
     </div>

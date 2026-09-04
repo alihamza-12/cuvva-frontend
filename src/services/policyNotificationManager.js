@@ -1,6 +1,6 @@
 import { getMyPolicies } from "../app/api/policyApi";
 import { getNotificationPreferences } from "../app/api/customerApi";
-import { computePolicyStatus, getPolicyWindow } from "../utils/policyStatus";
+import { getPolicyWindow } from "../utils/policyStatus";
 import { requestPushPermission } from "./oneSignal";
 
 /*
@@ -12,16 +12,37 @@ import { requestPushPermission } from "./oneSignal";
  *      showNotification works on it too,
  *   3. the plain Notification constructor (desktop browsers).
  *
- * The "policy ends in …" copy is recomputed from live policy data on every
- * poll; same-tag notifications replace each other silently so the entry in
- * the panel counts down dynamically.  The rich in-app bar with the running
- * progress line is rendered by PolicyNotificationBar.
+ * SIX LIFECYCLE STAGES — each fires EXACTLY ONCE per policy:
+ *
+ *   1. UPCOMING        policy created / still ahead   -> "Policy is upcoming"
+ *   2. STARTING_SOON   5 minutes before start         -> "Starts in 5 minutes"
+ *   3. ACTIVE          cover begins                   -> "Policy is now active"
+ *   4. HALFWAY         50% of the window elapsed      -> "Halfway through"
+ *   5. ENDING_SOON     98% of the window elapsed      -> "Expiring soon"
+ *   6. EXPIRED         cover finished                 -> "Policy expired"
+ *
+ * Each stage is latched in localStorage, so a stage can never fire twice — no
+ * repeating countdown, no duplicate stack in the panel.
  */
 
 const WORKER_URL = "/push/policy-worker.js";
 const WORKER_SCOPE = "/push/";
 const POLL_MS = 15000;
 const UPCOMING_WINDOW_MS = 5 * 60 * 1000;
+
+// Lifecycle thresholds (fractions of the total cover window).
+const HALFWAY_FRACTION = 0.5;
+const ENDING_SOON_FRACTION = 0.98;
+
+// Stage keys — one latch per policy per stage.
+const STAGE = {
+  UPCOMING: "upcoming",
+  STARTING_SOON: "starting-soon",
+  ACTIVE: "active",
+  HALFWAY: "halfway",
+  ENDING_SOON: "ending-soon",
+  EXPIRED: "expired",
+};
 
 const DEFAULT_PREFERENCES = { policyUpcoming: true, policyActive: true };
 const MUTE_KEY = "cuvva:local-push:muted";
@@ -213,150 +234,118 @@ const tick = async () => {
       : DEFAULT_PREFERENCES;
 
   const now = new Date();
-  // Derived (window-based) status, never the possibly-stale stored status.
-  const candidates = policies
-    .filter((policy) => policy.status !== "Cancelled")
-    .map((policy) => {
-      const range = getPolicyWindow(policy);
-      if (!range) return null;
-      return {
-        policy,
-        start: range.start,
-        end: range.end,
-        status: computePolicyStatus(policy, now),
-      };
-    })
-    .filter((entry) => entry && entry.status !== "Expired")
-    .sort((a, b) => a.start - b.start);
+  const nowMs = now.getTime();
 
-  const active = candidates.find((entry) => entry.status === "Active");
-  const upcoming = candidates.find(
-    (entry) =>
-      entry.status === "Upcoming" &&
-      entry.start - now > 0 &&
-      entry.start - now <= UPCOMING_WINDOW_MS,
-  );
+  /*
+   * Evaluate EVERY non-cancelled policy independently and fire whichever
+   * lifecycle stages it has newly crossed. Stages are latched, so each one
+   * fires exactly once and never repeats.
+   */
+  for (const policy of policies) {
+    if (!policy || policy.status === "Cancelled") continue;
 
-  const keepTags = new Set();
+    const range = getPolicyWindow(policy);
+    if (!range) continue;
 
-  if (active) {
-    const { policy, end } = active;
-    const tag = `cuvva-active-${policy._id}`;
-    keepTags.add(tag);
+    const policyId = policy._id;
+    const startMs = range.startMs;
+    const endMs = range.endMs;
+    const totalMs = endMs - startMs;
+    if (!(totalMs > 0)) continue;
+
     const registrationText = policy.vehicleId?.registration || "Your vehicle";
-    const endText = formatLondon(end);
-    const path = `customer/policies/${policy._id}`;
+    const startText = formatLondon(range.start);
+    const endText = formatLondon(new Date(endMs));
+    const path = `customer/policies/${policyId}`;
+    const data = { path, policyId: String(policyId) };
 
-    if (!wasShown("active", policy._id)) {
-      markShown("active", policy._id);
-      if (preferences.policyActive !== false) {
-        console.info("[push] showing active notification in panel", { policyId: policy._id });
-        await show(channel, {
-          tag,
-          title: "Your policy is now active",
-          body: `${registrationText} is covered until ${endText} — ends in ${humanize(end - now)}.`,
-          icon: NOTIFICATION_ICON,
-          badge: NOTIFICATION_ICON,
-          silent: false,
-          requireInteraction: true,
-          data: { path },
-        });
-      }
-    } else {
-      // Live countdown: same tag replaces the notification in the panel.
+    const elapsedFraction = (nowMs - startMs) / totalMs;
+
+    const fire = async (stage, options) => {
+      if (wasShown(stage, policyId)) return;
+      markShown(stage, policyId);
       await show(channel, {
-        tag,
-        title: "Active cover",
-        body: `${registrationText} is covered — policy ends in ${humanize(end - now)} (${endText}).`,
+        tag: `cuvva-${stage}-${policyId}`,
         icon: NOTIFICATION_ICON,
         badge: NOTIFICATION_ICON,
-        silent: true,
-        data: { path },
+        data,
+        ...options,
       });
+    };
+
+    // ---- 6. EXPIRED -----------------------------------------------------
+    if (nowMs > endMs) {
+      await fire(STAGE.EXPIRED, {
+        title: "Policy expired",
+        body: `Your cover for ${registrationText} ended at ${endText}. You are no longer insured to drive.`,
+        requireInteraction: false,
+      });
+      continue; // nothing later applies
     }
-  }
 
-  if (upcoming) {
-    const { policy, start } = upcoming;
-    const tag = `cuvva-upcoming-${policy._id}`;
-    keepTags.add(tag);
-    const registrationText = policy.vehicleId?.registration || "Your vehicle";
-    const startText = formatLondon(start);
-    const path = `customer/policies/${policy._id}`;
+    // ---- 1 & 2. BEFORE COVER STARTS -------------------------------------
+    if (nowMs < startMs) {
+      if (preferences.policyUpcoming === false) continue;
 
-    if (!wasShown("upcoming", policy._id)) {
-      markShown("upcoming", policy._id);
-      if (preferences.policyUpcoming !== false) {
-        console.info("[push] showing upcoming notification in panel", { policyId: policy._id });
-        await show(channel, {
-          tag,
-          title: `Policy starts in ${humanize(start - now)}`,
-          body: `Your cover for ${registrationText} begins ${startText} (UK time).`,
-          icon: NOTIFICATION_ICON,
-          badge: NOTIFICATION_ICON,
-          silent: false,
+      const untilStart = startMs - nowMs;
+
+      // 1. Upcoming — announced once, as soon as we first see the policy.
+      await fire(STAGE.UPCOMING, {
+        title: "Policy is upcoming",
+        body: `Your cover for ${registrationText} starts ${startText} (UK time).`,
+        requireInteraction: false,
+      });
+
+      // 2. Starting soon — within 5 minutes of the start instant.
+      if (untilStart > 0 && untilStart <= UPCOMING_WINDOW_MS) {
+        await fire(STAGE.STARTING_SOON, {
+          title: "Policy starts in 5 minutes",
+          body: `${registrationText} — cover begins at ${startText}. Get ready.`,
           requireInteraction: true,
-          data: { path },
-        });
-      }
-    } else {
-      await show(channel, {
-        tag,
-        title: "Upcoming cover",
-        body: `${registrationText} starts in ${humanize(start - now)} (${startText}).`,
-        icon: NOTIFICATION_ICON,
-        badge: NOTIFICATION_ICON,
-        silent: true,
-        data: { path },
-      });
-    }
-  }
-
-  // Announce upcoming cover once, as soon as an upcoming policy exists
-  // (the rich in-app bar is reserved for Active policies only).
-  const upcomingAny = candidates.find((entry) => entry.start > now);
-  if (upcomingAny) {
-    const { policy, start } = upcomingAny;
-    const announceTag = `cuvva-upcoming-ann-${policy._id}`;
-    keepTags.add(announceTag);
-    if (!wasShown("upcoming-announce", policy._id)) {
-      markShown("upcoming-announce", policy._id);
-      if (preferences.policyUpcoming !== false) {
-        const registrationText = policy.vehicleId?.registration || "Your vehicle";
-        const startText = formatLondon(start);
-        console.info("[push] showing upcoming announcement in panel", {
-          policyId: policy._id,
-        });
-        await show(channel, {
-          tag: announceTag,
-          title: "Upcoming cover",
-          body: `Your cover for ${registrationText} begins ${startText} (UK time) — starts in ${humanize(start - now)}.`,
-          icon: NOTIFICATION_ICON,
-          badge: NOTIFICATION_ICON,
           silent: false,
-          data: { path: `customer/policies/${policy._id}` },
         });
       }
+      continue;
+    }
+
+    // ---- 3, 4, 5. COVER IS RUNNING --------------------------------------
+    if (preferences.policyActive === false) continue;
+
+    // 3. Active — fired the moment cover begins.
+    await fire(STAGE.ACTIVE, {
+      title: "Your policy is now active",
+      body: `${registrationText} is covered until ${endText}.`,
+      requireInteraction: true,
+      silent: false,
+    });
+
+    // 4. Halfway — 50% of the cover window has elapsed.
+    if (elapsedFraction >= HALFWAY_FRACTION) {
+      await fire(STAGE.HALFWAY, {
+        title: "Policy is halfway through",
+        body: `${registrationText} — half your cover has been used. ${humanize(
+          endMs - nowMs,
+        )} remaining (until ${endText}).`,
+        requireInteraction: false,
+      });
+    }
+
+    // 5. Ending soon — 98% of the cover window has elapsed.
+    if (elapsedFraction >= ENDING_SOON_FRACTION) {
+      await fire(STAGE.ENDING_SOON, {
+        title: "Policy is expiring soon",
+        body: `${registrationText} — only ${humanize(
+          endMs - nowMs,
+        )} of cover left. It ends at ${endText}.`,
+        requireInteraction: true,
+        silent: false,
+      });
     }
   }
 
-  // Clear panel notifications whose policy is no longer active/upcoming.
-  if (channel.kind === "sw") {
-    try {
-      const open = await channel.registration.getNotifications();
-      open.forEach((notification) => {
-        const tag = String(notification.tag || "");
-        if (
-          (tag.startsWith("cuvva-active-") || tag.startsWith("cuvva-upcoming-")) &&
-          !keepTags.has(tag)
-        ) {
-          notification.close();
-        }
-      });
-    } catch {
-      // Non-fatal: stale notifications simply expire with their TTL.
-    }
-  }
+  // NOTE: notifications are intentionally NOT auto-closed here. Each stage is
+  // a one-off announcement the customer should be able to read in their own
+  // time, exactly like any other app's alerts.
 };
 
 const onVisibilityChange = () => {
