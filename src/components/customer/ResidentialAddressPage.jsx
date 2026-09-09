@@ -70,7 +70,14 @@ export default function ResidentialAddressPage() {
           <FloatingPillInput
             label="Postcode"
             value={form.postcode}
-            onChange={handleChange("postcode")}
+            onChange={(event) =>
+              setForm((previous) => ({
+                ...previous,
+                // Postcodes are stored uppercase (User.address.postcode has
+                // `uppercase: true`), so normalise the value, not just the CSS.
+                postcode: (event?.target?.value ?? event ?? "").toUpperCase(),
+              }))
+            }
           />
         </div>
 

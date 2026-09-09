@@ -50,8 +50,13 @@ export default function PolicyDetailPage() {
         setPolicy(res.data?.policy || null);
       } catch (err) {
         if (!mounted) return;
+        // A 404 here usually means the retention sweep removed the policy
+        // 20 days after its cover ended, so say that plainly instead of
+        // showing a generic failure.
         setError(
-          err.response?.data?.message || "Failed to load policy detail.",
+          err.response?.status === 404
+            ? "This policy is no longer available. It may have been removed automatically 20 days after its cover ended."
+            : err.response?.data?.message || "Failed to load policy detail.",
         );
       } finally {
         if (!mounted) return;

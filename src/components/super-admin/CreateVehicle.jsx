@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { AlertTriangle, CheckCircle2, PlusCircle, Car } from "lucide-react";
+import UppercaseInput from "../common/UppercaseInput";
 
 const FUEL_TYPES = ["PETROL", "DIESEL", "ELECTRIC", "HYBRID"];
 
@@ -164,15 +165,16 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
             <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
               Registration
             </label>
-            <input
+            <UppercaseInput
               type="text"
               required
+              strip
               value={form.registration}
               onChange={(e) =>
                 setForm({ ...form, registration: e.target.value })
               }
               placeholder="KV16WYZ"
-              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff]"
+              className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white uppercase outline-none focus:border-[#644aff]"
             />
           </div>
 
@@ -180,14 +182,14 @@ export default function CreateVehicle({ axiosInstance, onCreated }) {
             <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
               Vehicle Identification Number (VIN)
             </label>
-            <input
+            <UppercaseInput
               type="text"
               required
               value={form.vehicleIdentificationNumber}
               onChange={(e) =>
                 setForm({
                   ...form,
-                  vehicleIdentificationNumber: e.target.value.toUpperCase(),
+                  vehicleIdentificationNumber: e.target.value,
                 })
               }
               placeholder="e.g. WAUZZZ8V0JA000001"

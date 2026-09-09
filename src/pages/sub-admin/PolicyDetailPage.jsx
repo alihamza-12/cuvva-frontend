@@ -56,7 +56,11 @@ export default function PolicyDetailPage() {
         if (!mounted) return;
         if (!found) {
           setPolicy(null);
-          setError("Policy not found in your scope.");
+          // Either out of scope, or removed by the retention sweep 20 days
+          // after cover ended.
+          setError(
+            "This policy is no longer available. It may have been removed automatically 20 days after its cover ended, or it is outside your scope.",
+          );
           return;
         }
 
@@ -64,7 +68,9 @@ export default function PolicyDetailPage() {
       } catch (err) {
         if (!mounted) return;
         setError(
-          err.response?.data?.message || "Failed to load policy detail.",
+          err.response?.status === 404
+            ? "This policy is no longer available. It may have been removed automatically 20 days after its cover ended."
+            : err.response?.data?.message || "Failed to load policy detail.",
         );
       } finally {
         if (!mounted) return;

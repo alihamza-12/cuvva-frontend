@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { httpClient } from "../../app/api/httpClient";
 import { registerCustomerBySubAdmin } from "../../app/api/customerCreateApi";
+import UppercaseInput from "../../components/common/UppercaseInput";
 
 function Field({ label, children }) {
   return (
@@ -299,7 +300,7 @@ export default function CreateCustomerPage() {
               </Field>
 
               <Field label="Postcode (required)">
-                <input
+                <UppercaseInput
                   value={form.postcode}
                   onChange={handleChange("postcode")}
                   required

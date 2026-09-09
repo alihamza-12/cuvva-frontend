@@ -249,7 +249,8 @@ export default function CreatePolicyPage() {
 
             <div className="md:col-span-2">
               <PolicyVehicleLookup
-                key={vehicleLookupKey}
+                key={`${vehicleLookupKey}-${form.customerId}`}
+                customerId={form.customerId}
                 accent="cyan"
                 onVehicleResolved={(vehicle) =>
                   setForm((current) => ({

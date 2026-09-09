@@ -6,6 +6,8 @@ import {
   getVehicleByRegistration,
 } from "../../app/api/vehicleApi";
 import { updateVehicle } from "../../app/api/vehicleUpdateApi";
+import UppercaseInput from "./UppercaseInput";
+import VehicleRegistrationSelect from "./VehicleRegistrationSelect";
 
 const EMPTY_VEHICLE = {
   _id: "",
@@ -34,6 +36,23 @@ const EMPTY_VEHICLE = {
   imageUrl: "",
   lookupSource: "manual",
   regCheckData: undefined,
+};
+
+/*
+ * How long a locally-stored vehicle is trusted before we re-verify it against
+ * RegCheck. Raising this spends fewer credits; lowering it refreshes sooner.
+ */
+const STALE_VEHICLE_DAYS = 30;
+
+const isVehicleStale = (vehicle) => {
+  // Manually-entered records were never verified, but re-checking them on every
+  // search is what burned credits. Only re-check when the record is genuinely
+  // old (or has no timestamp at all to judge by).
+  const timestamp = vehicle?.updatedAt || vehicle?.createdAt;
+  if (!timestamp) return false;
+  const ageMs = Date.now() - new Date(timestamp).getTime();
+  if (Number.isNaN(ageMs)) return false;
+  return ageMs > STALE_VEHICLE_DAYS * 24 * 60 * 60 * 1000;
 };
 
 const cleanRegistration = (value) =>
@@ -124,6 +143,7 @@ const toVehiclePayload = (vehicle) => ({
 export default function PolicyVehicleLookup({
   onVehicleResolved,
   accent = "purple",
+  customerId = "",
 }) {
   const accentBorder =
     accent === "cyan" ? "focus:border-[#00f0ff]" : "focus:border-[#644aff]";
@@ -165,8 +185,14 @@ export default function PolicyVehicleLookup({
     onVehicleResolved(savedVehicle);
   };
 
-  const handleSearch = async () => {
-    const cleaned = cleanRegistration(registration);
+  const handleSearch = async (registrationOverride) => {
+    // The dropdown can hand us the plate directly, because `registration`
+    // state may not have flushed yet when the cascade falls through.
+    const cleaned = cleanRegistration(
+      typeof registrationOverride === "string"
+        ? registrationOverride
+        : registration,
+    );
     if (!cleaned) {
       setError("Enter a registration number.");
       return;
@@ -183,7 +209,16 @@ export default function PolicyVehicleLookup({
       const localResponse = await getVehicleByRegistration(cleaned);
       storedVehicle = localResponse.data?.vehicle || null;
 
-      if (storedVehicle?.sourceType === "automatic") {
+      /*
+       * COST CONTROL: every RegCheck call spends a paid credit. If we already
+       * hold this vehicle locally we use it and skip the external lookup
+       * entirely. Previously only `sourceType === "automatic"` short-circuited,
+       * so manually-added vehicles burned a credit on every single search.
+       *
+       * A stored record is only re-verified when it is older than
+       * STALE_VEHICLE_DAYS, which keeps data fresh without paying per search.
+       */
+      if (storedVehicle && !isVehicleStale(storedVehicle)) {
         resolveVehicle(storedVehicle, "");
         setLookupState("ready");
         return;
@@ -334,14 +369,20 @@ export default function PolicyVehicleLookup({
         </div>
         <div className="flex flex-col gap-2 mt-2 sm:flex-row">
           <div className="relative flex-1">
-            <Car
-              size={14}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6b7280]"
-            />
-            <input
+            {/*
+              Registration is now a dropdown of the customer's previous
+              vehicles. Picking one resolves it immediately (it already has a
+              MongoDB _id), so no Search press and no re-save is needed.
+              Typing falls through to the DB search, then RegCheck last.
+            */}
+            <VehicleRegistrationSelect
+              customerId={customerId}
               value={registration}
-              onChange={(event) => {
-                const nextRegistration = cleanRegistration(event.target.value);
+              accentBorder={accentBorder}
+              accentSelected={
+                accent === "cyan" ? "bg-[#00f0ff]/20" : "bg-[#644aff]/20"
+              }
+              onRegistrationChange={(nextRegistration) => {
                 setRegistration(nextRegistration);
 
                 if (
@@ -356,13 +397,17 @@ export default function PolicyVehicleLookup({
                   onVehicleResolved(null);
                 }
               }}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  handleSearch();
-                }
+              onSelectVehicle={(picked) => {
+                setRegistration(cleanRegistration(picked.registration));
+                setError("");
+                setDirty(false);
+                resolveVehicle(picked, "");
+                setLookupState("ready");
               }}
-              placeholder="Enter registration"
+              onRequestExternalLookup={(nextRegistration) => {
+                setRegistration(nextRegistration);
+                handleSearch(nextRegistration);
+              }}
               className={`min-h-[44px] w-full rounded-xl border border-[#1e2238] bg-[#060814] py-2.5 pl-10 pr-3 text-xs uppercase text-white outline-none ${accentBorder}`}
             />
           </div>
@@ -457,13 +502,24 @@ function VehicleInput({
       <span className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
         {label}{required ? " *" : ""}
       </span>
-      <input
-        value={value ?? ""}
-        onChange={onChange}
-        required={required}
-        inputMode={inputMode}
-        className={`min-h-[44px] w-full rounded-xl border border-[#1e2238] bg-[#060814] px-3 py-2 text-xs text-white outline-none ${uppercase ? "uppercase" : ""} ${accentBorder}`}
-      />
+      {uppercase ? (
+        /* `uppercase` must change the stored VALUE, not only how it is painted. */
+        <UppercaseInput
+          value={value ?? ""}
+          onChange={onChange}
+          required={required}
+          inputMode={inputMode}
+          className={`min-h-[44px] w-full rounded-xl border border-[#1e2238] bg-[#060814] px-3 py-2 text-xs uppercase text-white outline-none ${accentBorder}`}
+        />
+      ) : (
+        <input
+          value={value ?? ""}
+          onChange={onChange}
+          required={required}
+          inputMode={inputMode}
+          className={`min-h-[44px] w-full rounded-xl border border-[#1e2238] bg-[#060814] px-3 py-2 text-xs text-white outline-none ${accentBorder}`}
+        />
+      )}
     </label>
   );
 }

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { createVehicle } from "../../app/api/vehicleApi";
+import UppercaseInput from "../../components/common/UppercaseInput";
 
 function Field({ label, children }) {
   return (
@@ -179,15 +180,16 @@ export default function CreateVehiclePage() {
         <form onSubmit={handleSubmit} className="mt-6">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Registration (required)">
-              <input
+              <UppercaseInput
+                strip
                 value={form.registration}
                 onChange={handleChange("registration")}
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs uppercase text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. BD55SMR"
               />
             </Field>
             <Field label="Vehicle Identification Number (VIN) (required)">
-              <input
+              <UppercaseInput
                 value={form.vehicleIdentificationNumber}
                 onChange={handleChange("vehicleIdentificationNumber")}
                 className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs uppercase text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"

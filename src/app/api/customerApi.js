@@ -9,3 +9,11 @@ export const getNotificationPreferences = async () =>
 
 export const updateNotificationPreferences = async (preferences) =>
   httpClient.patch("/api/customers/me/notification-preferences", preferences);
+
+/*
+ * Every vehicle this customer has previously been insured on.
+ * Merges live policies with the retention archive on the server, so older cars
+ * stay visible after their policies have been cleaned up.
+ */
+export const getCustomerVehicles = async (customerId, config = {}) =>
+  httpClient.get(`/api/customers/${customerId}/vehicles`, config);

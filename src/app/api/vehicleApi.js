@@ -363,3 +363,14 @@ export const getVehicleByRegistration = async (
 export const createVehicle = async (payload) => {
   return httpClient.post("/api/vehicles", payload);
 };
+
+/*
+ * Registration prefix search against our own database (step 2 of the Create
+ * Policy cascade). Deliberately does NOT touch RegCheck — that is only reached
+ * when both the customer's history and this search come back empty.
+ */
+export const searchVehicles = async (query, config = {}) =>
+  httpClient.get("/api/vehicles/search", {
+    ...config,
+    params: { q: query, limit: 10, ...(config.params || {}) },
+  });

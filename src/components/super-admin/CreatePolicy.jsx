@@ -198,7 +198,8 @@ export default function CreatePolicy({
           </div>
 
           <PolicyVehicleLookup
-            key={vehicleLookupKey}
+            key={`${vehicleLookupKey}-${form.customerId}`}
+            customerId={form.customerId}
             accent="purple"
             onVehicleResolved={(vehicle) =>
               setForm((current) => ({
