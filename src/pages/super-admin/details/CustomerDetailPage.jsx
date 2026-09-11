@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, User, ShieldAlert, Mail } from "lucide-react";
+import { ArrowLeft, User, ShieldAlert, Mail, Trash2 } from "lucide-react";
 
 import Sidebar from "../../../components/super-admin/Sidebar";
 import { getCustomerById } from "../../../app/api/customerApi";
+import { httpClient } from "../../../app/api/httpClient";
+import ConfirmDeleteModal from "../../../components/common/ConfirmDeleteModal";
 
 const DetailRow = ({ label, value, wide = false }) => (
   <div className={`space-y-1 ${wide ? "md:col-span-2" : ""}`}>
@@ -23,6 +25,11 @@ export default function CustomerDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [customer, setCustomer] = useState(null);
+
+  // Delete flow — nothing happens until Confirm Delete is pressed.
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -91,6 +98,20 @@ export default function CustomerDetailPage() {
           <h1 className="text-sm font-bold tracking-wider uppercase text-[#8a8fbc]">
             Customer Detail
           </h1>
+
+          {!loading && !error && customer && (
+            <button
+              type="button"
+              onClick={() => {
+                setDeleteError("");
+                setDeleteOpen(true);
+              }}
+              className="ml-auto inline-flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-600 hover:border-red-500 hover:text-white text-red-400 text-xs uppercase tracking-wider font-bold"
+              aria-label="Delete customer"
+            >
+              <Trash2 size={14} /> Delete
+            </button>
+          )}
         </div>
 
         {loading && (
@@ -318,6 +339,44 @@ export default function CustomerDetailPage() {
           </div>
         )}
       </div>
+
+      <ConfirmDeleteModal
+        open={deleteOpen}
+        title="Delete customer"
+        message="The customer and all of their policies will be permanently removed."
+        itemLabel={customer?.fullName || ""}
+        details={
+          customer
+            ? [
+                customer.email,
+                "All policies for this customer will also be deleted.",
+              ].filter(Boolean)
+            : []
+        }
+        loading={deleteLoading}
+        error={deleteError}
+        onCancel={() => {
+          setDeleteOpen(false);
+          setDeleteError("");
+        }}
+        onConfirm={async () => {
+          if (!customer?._id) return;
+          setDeleteLoading(true);
+          setDeleteError("");
+          try {
+            await httpClient.delete(`/api/management/customers/${customer._id}`);
+            setDeleteOpen(false);
+            navigate("/admin/dashboard?tab=accounts", { replace: true });
+          } catch (deleteErr) {
+            setDeleteError(
+              deleteErr?.response?.data?.message ||
+                "Failed to delete this customer.",
+            );
+          } finally {
+            setDeleteLoading(false);
+          }
+        }}
+      />
     </div>
   );
 }

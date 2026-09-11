@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText, Car, User, ShieldAlert } from "lucide-react";
+import { ArrowLeft, FileText, Car, User, ShieldAlert, Trash2 } from "lucide-react";
 
 import Sidebar from "../../../components/super-admin/Sidebar";
-import { getPolicyById } from "../../../app/api/policyApi";
+import { deletePolicy, getPolicyById } from "../../../app/api/policyApi";
 import { updatePolicyById } from "../../../app/api/policyUpdateApi";
 import CurrencyInput from "../../../components/common/CurrencyInput";
 import MaskedDateInput from "../../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../../components/common/MaskedTimeInput";
+import ConfirmDeleteModal from "../../../components/common/ConfirmDeleteModal";
 
 export default function PolicyDetailPage() {
   const { id } = useParams();
@@ -15,6 +16,11 @@ export default function PolicyDetailPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Delete flow — nothing happens until Confirm Delete is pressed.
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const [policy, setPolicy] = useState(null);
 
   const [updating, setUpdating] = useState(false);
@@ -233,6 +239,19 @@ export default function PolicyDetailPage() {
                       Cancel
                     </button>
                   )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteError("");
+                      setDeleteOpen(true);
+                    }}
+                    className="px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-600 hover:border-red-500 hover:text-white text-red-400 text-xs uppercase tracking-wider font-bold inline-flex items-center gap-1.5"
+                    aria-label="Delete policy"
+                  >
+                    <Trash2 size={13} />
+                    Delete
+                  </button>
                 </div>
               </div>
 
@@ -577,6 +596,46 @@ export default function PolicyDetailPage() {
           <div className="text-xs text-[#8a8fbc]">No record found.</div>
         )}
       </div>
+
+      <ConfirmDeleteModal
+        open={deleteOpen}
+        title="Delete policy"
+        message="The policy will be permanently removed from the database."
+        itemLabel={policy?.policyNumber || policy?._id || ""}
+        details={
+          policy
+            ? [
+                `Driver: ${policy.customerId?.fullName || "N/A"}`,
+                `Vehicle: ${policy.vehicleId?.registration || "N/A"}`,
+              ]
+            : []
+        }
+        loading={deleteLoading}
+        error={deleteError}
+        onCancel={() => {
+          setDeleteOpen(false);
+          setDeleteError("");
+        }}
+        onConfirm={async () => {
+          if (!policy?._id) return;
+          setDeleteLoading(true);
+          setDeleteError("");
+          try {
+            await deletePolicy(policy._id);
+            setDeleteOpen(false);
+            // The record is gone, so return to the list rather than sit on a
+            // detail page for something that no longer exists.
+            navigate("/admin/dashboard?tab=policies", { replace: true });
+          } catch (deleteErr) {
+            setDeleteError(
+              deleteErr?.response?.data?.message ||
+                "Failed to delete this policy.",
+            );
+          } finally {
+            setDeleteLoading(false);
+          }
+        }}
+      />
     </div>
   );
 }

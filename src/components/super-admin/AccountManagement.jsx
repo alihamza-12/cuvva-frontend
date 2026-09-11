@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, RefreshCw, Search, Shield, Users, X } from "lucide-react";
+import { Pencil, RefreshCw, Search, Shield, Trash2, Users, X } from "lucide-react";
+import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
 import {
   getSuspensionSummary,
   requestSuspensionDays,
@@ -22,6 +23,28 @@ export default function AccountManagement({
   const [editOpen, setEditOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
+
+  // Delete flow — nothing happens until Confirm Delete is pressed.
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteLoading(true);
+    setDeleteError("");
+    try {
+      await axiosInstance.delete(`/api/management/customers/${deleteTarget._id}`);
+      setDeleteTarget(null);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      setDeleteError(
+        error?.response?.data?.message || "Failed to delete this customer.",
+      );
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const [editFullName, setEditFullName] = useState("");
   const [editEmail, setEditEmail] = useState("");
@@ -457,6 +480,23 @@ export default function AccountManagement({
                             "Manage Status"
                           )}
                         </button>
+
+                        {/* Customers only — sub admin accounts are not deleted here. */}
+                        {activeDirectoryTab !== "subAdmins" && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteError("");
+                              setDeleteTarget(userRecord);
+                            }}
+                            className="px-3 py-2 bg-red-500/10 hover:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-400 hover:text-white font-bold rounded-lg text-[10px] uppercase transition-all"
+                            aria-label="Delete customer"
+                          >
+                            <Trash2 size={13} className="inline-block mr-1" />
+                            Delete
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -591,6 +631,28 @@ export default function AccountManagement({
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        open={Boolean(deleteTarget)}
+        title="Delete customer"
+        message="The customer and all of their policies will be permanently removed."
+        itemLabel={deleteTarget?.fullName || ""}
+        details={
+          deleteTarget
+            ? [
+                deleteTarget.email,
+                "All policies for this customer will also be deleted.",
+              ].filter(Boolean)
+            : []
+        }
+        loading={deleteLoading}
+        error={deleteError}
+        onCancel={() => {
+          setDeleteTarget(null);
+          setDeleteError("");
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

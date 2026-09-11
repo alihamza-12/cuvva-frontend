@@ -1,10 +1,37 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Calendar, FileText } from "lucide-react";
+import { Calendar, FileText, Trash2 } from "lucide-react";
+import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
 
-export default function OwnPoliciesManagement({ policies = [], onRefresh }) {
+export default function OwnPoliciesManagement({
+  policies = [],
+  onRefresh,
+  axiosInstance,
+}) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+
+  // Nothing is deleted until the modal's Confirm Delete is pressed.
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteLoading(true);
+    setDeleteError("");
+    try {
+      await axiosInstance.delete(`/api/policies/${deleteTarget._id}`);
+      setDeleteTarget(null);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      setDeleteError(
+        error?.response?.data?.message || "Failed to delete this policy.",
+      );
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const filteredPolicies = useMemo(() => {
     const q = (query || "").trim().toLowerCase();
@@ -134,6 +161,19 @@ export default function OwnPoliciesManagement({ policies = [], onRefresh }) {
                     <span className="px-2.5 py-0.5 bg-green-500/10 border border-green-500/20 text-green-400 font-extrabold rounded text-xs inline-flex items-center">
                       £{Number(p.premiumAmount).toFixed(2)}
                     </span>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setDeleteError("");
+                        setDeleteTarget(p);
+                      }}
+                      className="px-2.5 py-1 bg-red-500/10 hover:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-400 hover:text-white font-bold rounded text-[9px] uppercase tracking-wide transition-all inline-flex items-center gap-1"
+                      aria-label="Delete policy"
+                    >
+                      <Trash2 size={11} />
+                      Delete
+                    </button>
                   </div>
                 </div>
 
@@ -187,6 +227,28 @@ export default function OwnPoliciesManagement({ policies = [], onRefresh }) {
           )}
         </div>
       </div>
+
+      <ConfirmDeleteModal
+        open={Boolean(deleteTarget)}
+        title="Delete policy"
+        message="The policy will be permanently removed from the database."
+        itemLabel={deleteTarget?.policyNumber || deleteTarget?._id || ""}
+        details={
+          deleteTarget
+            ? [
+                `Driver: ${deleteTarget.customerId?.fullName || "N/A"}`,
+                `Vehicle: ${deleteTarget.vehicleId?.registration || "N/A"}`,
+              ]
+            : []
+        }
+        loading={deleteLoading}
+        error={deleteError}
+        onCancel={() => {
+          setDeleteTarget(null);
+          setDeleteError("");
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

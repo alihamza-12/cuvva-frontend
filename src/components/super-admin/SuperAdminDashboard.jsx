@@ -264,6 +264,7 @@ export default function SuperAdminDashboard() {
                 (p) => p?.createdBy?.role === "Super Admin",
               )}
               onRefresh={fetchGlobalMetricsData}
+              axiosInstance={api}
             />
           )}
 
