@@ -1,12 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, RefreshCw, Search, X } from "lucide-react";
+import { Pencil, RefreshCw, Search, Trash2, X } from "lucide-react";
+import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
 import {
   getSuspensionSummary,
   requestSuspensionDays,
 } from "../../utils/customerSuspension";
 
 export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
+  // Nothing is deleted until the modal's Confirm Delete is pressed. The server
+  // additionally enforces that a Sub Admin may only delete their own customers.
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -182,6 +188,19 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
                         "Manage Status"
                       )}
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteError("");
+                        setDeleteTarget(c);
+                      }}
+                      className="w-full min-h-[44px] rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-600 hover:text-white hover:border-red-500 transition-all flex items-center justify-center gap-2"
+                      aria-label="Delete customer"
+                    >
+                      <Trash2 size={13} /> Delete
+                    </button>
                   </div>
                 </article>
               ))}
@@ -246,6 +265,20 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
                             "Manage Status"
                           )}
                         </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteError("");
+                            setDeleteTarget(c);
+                          }}
+                          className="px-3 py-2 bg-red-500/10 hover:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-400 hover:text-white font-bold rounded-lg text-[10px] uppercase transition-all"
+                          aria-label="Delete customer"
+                        >
+                          <Trash2 size={13} className="inline-block mr-1" />
+                          Delete
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -256,6 +289,47 @@ export function SubAdminOwnedCustomers({ axiosInstance, onRefresh }) {
           </>
         )}
       </div>
+
+      <ConfirmDeleteModal
+        open={Boolean(deleteTarget)}
+        title="Delete customer"
+        message="The customer and all of their policies will be permanently removed."
+        itemLabel={deleteTarget?.fullName || ""}
+        details={
+          deleteTarget
+            ? [
+                deleteTarget.email,
+                "All policies for this customer will also be deleted.",
+              ].filter(Boolean)
+            : []
+        }
+        loading={deleteLoading}
+        error={deleteError}
+        onCancel={() => {
+          setDeleteTarget(null);
+          setDeleteError("");
+        }}
+        onConfirm={async () => {
+          if (!deleteTarget) return;
+          setDeleteLoading(true);
+          setDeleteError("");
+          try {
+            await axiosInstance.delete(
+              `/api/management/customers/${deleteTarget._id}`,
+            );
+            setDeleteTarget(null);
+            await fetchCustomers();
+            if (onRefresh) onRefresh();
+          } catch (error) {
+            setDeleteError(
+              error?.response?.data?.message ||
+                "Failed to delete this customer.",
+            );
+          } finally {
+            setDeleteLoading(false);
+          }
+        }}
+      />
     </div>
   );
 }

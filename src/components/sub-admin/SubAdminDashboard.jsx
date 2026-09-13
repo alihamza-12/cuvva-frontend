@@ -210,6 +210,7 @@ export default function SubAdminDashboard() {
             <SubAdminOwnPolicies
               policies={policies}
               onRefresh={fetchSubAdminMetricsData}
+              axiosInstance={httpClient}
             />
           )}
 
@@ -217,6 +218,7 @@ export default function SubAdminDashboard() {
             <SubAdminPolicyContracts
               policies={policies}
               onRefresh={fetchSubAdminMetricsData}
+              axiosInstance={httpClient}
             />
           )}
 
