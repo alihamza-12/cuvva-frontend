@@ -1,7 +1,18 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, RefreshCw, Search, Shield, Trash2, Users, X } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Pencil,
+  RefreshCw,
+  Search,
+  Shield,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
 import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
+import UppercaseInput from "../common/UppercaseInput";
 import {
   getSuspensionSummary,
   requestSuspensionDays,
@@ -51,6 +62,16 @@ export default function AccountManagement({
   const [editExpiresAt, setEditExpiresAt] = useState(""); 
   const [editPassword, setEditPassword] = useState("");
   const [editPasswordConfirm, setEditPasswordConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
+  // Residential address — customers only. Sub Admin accounts have no address.
+  const [editAddress, setEditAddress] = useState({
+    line1: "",
+    line2: "",
+    city: "",
+    postcode: "",
+  });
 
   const activeList = activeDirectoryTab === "subAdmins" ? subAdmins : customers;
 
@@ -78,6 +99,9 @@ export default function AccountManagement({
     setEditExpiresAt("");
     setEditPassword("");
     setEditPasswordConfirm("");
+    setShowPassword(false);
+    setShowPasswordConfirm(false);
+    setEditAddress({ line1: "", line2: "", city: "", postcode: "" });
   };
 
   const openEditFor = (e, record) => {
@@ -104,6 +128,17 @@ export default function AccountManagement({
 
     setEditPassword("");
     setEditPasswordConfirm("");
+    setShowPassword(false);
+    setShowPasswordConfirm(false);
+
+    // Prefill the saved address so the admin edits real values, not blanks.
+    setEditAddress({
+      line1: record.address?.line1 || "",
+      line2: record.address?.line2 || "",
+      city: record.address?.city || "",
+      postcode: record.address?.postcode || "",
+    });
+
     setEditOpen(true);
   };
 
@@ -169,6 +204,16 @@ export default function AccountManagement({
       };
 
       if (wantsPasswordChange) payload.password = editPassword;
+
+      // Only customers have a residential address.
+      if (activeDirectoryTab !== "subAdmins") {
+        payload.address = {
+          line1: editAddress.line1.trim(),
+          line2: editAddress.line2.trim(),
+          city: editAddress.city.trim(),
+          postcode: editAddress.postcode.trim().toUpperCase(),
+        };
+      }
 
       if (activeDirectoryTab === "subAdmins") {
         await axiosInstance.patch(
@@ -582,32 +627,129 @@ export default function AccountManagement({
                   </p>
                 </div>
 
+                {/* Residential address — customers only. */}
+                {activeDirectoryTab !== "subAdmins" && (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
+                        Address line 1
+                      </label>
+                      <input
+                        value={editAddress.line1}
+                        onChange={(e) =>
+                          setEditAddress((previous) => ({
+                            ...previous,
+                            line1: e.target.value,
+                          }))
+                        }
+                        className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                        placeholder="Address line 1"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
+                        Address line 2 (optional)
+                      </label>
+                      <input
+                        value={editAddress.line2}
+                        onChange={(e) =>
+                          setEditAddress((previous) => ({
+                            ...previous,
+                            line2: e.target.value,
+                          }))
+                        }
+                        className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                        placeholder="Address line 2"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
+                        City / town
+                      </label>
+                      <input
+                        value={editAddress.city}
+                        onChange={(e) =>
+                          setEditAddress((previous) => ({
+                            ...previous,
+                            city: e.target.value,
+                          }))
+                        }
+                        className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                        placeholder="City / town"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
+                        Postcode
+                      </label>
+                      <UppercaseInput
+                        value={editAddress.postcode}
+                        onChange={(e) =>
+                          setEditAddress((previous) => ({
+                            ...previous,
+                            postcode: e.target.value,
+                          }))
+                        }
+                        className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff] uppercase"
+                        placeholder="Postcode"
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
                     New password (optional)
                   </label>
-                  <input
-                    type="password"
-                    value={editPassword}
-                    onChange={(e) => setEditPassword(e.target.value)}
-                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
-                    placeholder="At least 6 characters"
-                    autoComplete="new-password"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={editPassword}
+                      onChange={(e) => setEditPassword(e.target.value)}
+                      className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff] pr-10"
+                      placeholder="At least 6 characters"
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((previous) => !previous)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b7280] hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
                     Confirm password
                   </label>
-                  <input
-                    type="password"
-                    value={editPasswordConfirm}
-                    onChange={(e) => setEditPasswordConfirm(e.target.value)}
-                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
-                    placeholder="Re-type password"
-                    autoComplete="new-password"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPasswordConfirm ? "text" : "password"}
+                      value={editPasswordConfirm}
+                      onChange={(e) => setEditPasswordConfirm(e.target.value)}
+                      className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff] pr-10"
+                      placeholder="Re-type password"
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPasswordConfirm((previous) => !previous)
+                      }
+                      aria-label={
+                        showPasswordConfirm ? "Hide password" : "Show password"
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b7280] hover:text-white transition-colors"
+                    >
+                      {showPasswordConfirm ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-2">

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { getResidentialAddress, saveResidentialAddress } from "../../utils/profileLocalStorage";
+import { getMyProfile, updateMyAddress } from "../../app/api/customerApi";
+import {
+  getResidentialAddress,
+  saveResidentialAddress,
+} from "../../utils/profileLocalStorage";
 
 export default function ResidentialAddressPage() {
   const navigate = useNavigate();
@@ -11,10 +15,44 @@ export default function ResidentialAddressPage() {
     city: "",
     postcode: "",
   });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
+  /*
+   * The address now lives in MongoDB on the customer's own record, which is the
+   * same field the policy certificate PDF and the in-app policy document read.
+   * Saving here therefore updates those documents too.
+   *
+   * The cached localStorage copy is still shown first so the fields are not
+   * blank while the request is in flight, then overwritten by the server value.
+   */
   useEffect(() => {
-    const existing = getResidentialAddress();
-    if (existing) setForm((prev) => ({ ...prev, ...existing }));
+    let active = true;
+
+    const cached = getResidentialAddress();
+    if (cached) setForm((previous) => ({ ...previous, ...cached }));
+
+    getMyProfile()
+      .then((response) => {
+        if (!active) return;
+        const address = response.data?.customer?.address;
+        if (!address) return;
+        const nextForm = {
+          line1: address.line1 || "",
+          line2: address.line2 || "",
+          city: address.city || "",
+          postcode: address.postcode || "",
+        };
+        setForm(nextForm);
+        saveResidentialAddress(nextForm);
+      })
+      .catch(() => {
+        // Offline or request failed: keep whatever the cache provided.
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleBack = () => {
@@ -26,10 +64,37 @@ export default function ResidentialAddressPage() {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleDone = () => {
+  const handleDone = async () => {
+    if (saving) return;
+    setSaving(true);
+    setError("");
 
-    saveResidentialAddress(form);
-    handleBack();
+    try {
+      const response = await updateMyAddress({
+        line1: form.line1,
+        line2: form.line2,
+        city: form.city,
+        postcode: form.postcode,
+      });
+
+      // Mirror the saved value locally so the page reopens instantly.
+      const saved = response.data?.customer?.address;
+      saveResidentialAddress({
+        line1: saved?.line1 ?? form.line1,
+        line2: saved?.line2 ?? form.line2,
+        city: saved?.city ?? form.city,
+        postcode: saved?.postcode ?? form.postcode,
+      });
+
+      handleBack();
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "We couldn't save your address. Please try again.",
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -81,13 +146,18 @@ export default function ResidentialAddressPage() {
           />
         </div>
 
+        {error && (
+          <p className="mt-4 text-[13px] text-red-400">{error}</p>
+        )}
+
         <div className="mt-8">
           <button
             type="button"
             onClick={handleDone}
-            className="w-full py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white"
+            disabled={saving}
+            className="w-full py-4 bg-[#7c6bff] hover:bg-[#6c5ae8] active:scale-[0.98] transition-all rounded-full text-[16px] font-bold text-white disabled:opacity-60"
           >
-            Done
+            {saving ? "Saving…" : "Done"}
           </button>
         </div>
       </div>
