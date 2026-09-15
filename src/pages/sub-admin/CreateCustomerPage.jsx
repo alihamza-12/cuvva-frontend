@@ -249,7 +249,8 @@ export default function CreateCustomerPage() {
                     drivingLicenceNumber: event.target.value.toUpperCase(),
                   }))
                 }
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                required
+                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs uppercase text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
                 placeholder="e.g. SMITH••••J99AB"
               />
             </Field>
@@ -377,7 +378,7 @@ export default function CreateCustomerPage() {
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mt-8">
+          <div className="flex flex-col gap-3 mt-8 sm:flex-row sm:items-center sm:justify-end">
             <button
               type="button"
               onClick={() =>
@@ -395,7 +396,7 @@ export default function CreateCustomerPage() {
                   county: "",
                   postcode: "",
                   // Country is fixed platform-wide and is not user-editable.
-    country: "GB",
+                  country: "GB",
                   useDurationDays: true,
                   durationDays: "365",
                   expiresAt: "",

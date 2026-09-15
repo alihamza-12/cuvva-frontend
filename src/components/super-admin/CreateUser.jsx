@@ -1,10 +1,18 @@
 import React, { useState } from "react";
 import { AlertTriangle, CheckCircle2, UserPlus } from "lucide-react";
 
-const AddressInput = ({ label, value, onChange, required = false, uppercase = false, readOnly = false }) => (
+const AddressInput = ({
+  label,
+  value,
+  onChange,
+  required = false,
+  uppercase = false,
+  readOnly = false,
+}) => (
   <label className="space-y-1">
     <span className="block text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
-      {label}{required ? " *" : ""}
+      {label}
+      {required ? " *" : ""}
     </span>
     <input
       value={value}
@@ -96,7 +104,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
         county: "",
         postcode: "",
         // Country is fixed platform-wide and is not user-editable.
-    country: "GB",
+        country: "GB",
       });
 
       if (onCreated) onCreated();
@@ -256,7 +264,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
-                  Driving Licence
+                  Driving Licence *
                 </label>
                 <input
                   type="text"
@@ -277,12 +285,52 @@ export default function CreateUser({ axiosInstance, onCreated }) {
                 Customer Address
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <AddressInput label="Address line 1" required value={formData.addressLine1} onChange={(value) => setFormData({ ...formData, addressLine1: value })} />
-                <AddressInput label="Address line 2" value={formData.addressLine2} onChange={(value) => setFormData({ ...formData, addressLine2: value })} />
-                <AddressInput label="City" required value={formData.city} onChange={(value) => setFormData({ ...formData, city: value })} />
-                <AddressInput label="County" value={formData.county} onChange={(value) => setFormData({ ...formData, county: value })} />
-                <AddressInput label="Postcode" required value={formData.postcode} onChange={(value) => setFormData({ ...formData, postcode: value.toUpperCase() })} uppercase />
-                <AddressInput label="Country" required readOnly value="GB" onChange={() => {}} />
+                <AddressInput
+                  label="Address line 1"
+                  required
+                  value={formData.addressLine1}
+                  onChange={(value) =>
+                    setFormData({ ...formData, addressLine1: value })
+                  }
+                />
+                <AddressInput
+                  label="Address line 2"
+                  value={formData.addressLine2}
+                  onChange={(value) =>
+                    setFormData({ ...formData, addressLine2: value })
+                  }
+                />
+                <AddressInput
+                  label="City"
+                  required
+                  value={formData.city}
+                  onChange={(value) =>
+                    setFormData({ ...formData, city: value })
+                  }
+                />
+                <AddressInput
+                  label="County"
+                  value={formData.county}
+                  onChange={(value) =>
+                    setFormData({ ...formData, county: value })
+                  }
+                />
+                <AddressInput
+                  label="Postcode"
+                  required
+                  value={formData.postcode}
+                  onChange={(value) =>
+                    setFormData({ ...formData, postcode: value.toUpperCase() })
+                  }
+                  uppercase
+                />
+                <AddressInput
+                  label="Country"
+                  required
+                  readOnly
+                  value="GB"
+                  onChange={() => {}}
+                />
               </div>
             </>
           )}
