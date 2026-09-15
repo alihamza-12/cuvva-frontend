@@ -32,7 +32,8 @@ export default function CreateCustomerPage() {
     city: "",
     county: "",
     postcode: "",
-    country: "UK",
+    // Country is fixed platform-wide and is not user-editable.
+    country: "GB",
 
     useDurationDays: true,
     durationDays: "365",
@@ -53,7 +54,6 @@ export default function CreateCustomerPage() {
     if (!form.line1.trim()) return false;
     if (!form.city.trim()) return false;
     if (!form.postcode.trim()) return false;
-    if (!form.country.trim()) return false;
     if (form.useDurationDays) {
       const n = Number(form.durationDays);
       if (!Number.isFinite(n) || n <= 0) return false;
@@ -102,7 +102,7 @@ export default function CreateCustomerPage() {
         city: form.city?.trim() || undefined,
         county: form.county?.trim() || undefined,
         postcode: form.postcode?.trim() || undefined,
-        country: form.country || "UK",
+        country: "GB",
       };
 
       payload.address = {
@@ -311,11 +311,11 @@ export default function CreateCustomerPage() {
 
               <Field label="Country (required)">
                 <input
-                  value={form.country}
-                  onChange={handleChange("country")}
-                  required
-                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
-                  placeholder="UK"
+                  value="GB"
+                  readOnly
+                  aria-readonly="true"
+                  tabIndex={-1}
+                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-[#8a8fbc] cursor-not-allowed outline-none"
                 />
               </Field>
             </div>
@@ -394,7 +394,8 @@ export default function CreateCustomerPage() {
                   city: "",
                   county: "",
                   postcode: "",
-                  country: "UK",
+                  // Country is fixed platform-wide and is not user-editable.
+    country: "GB",
                   useDurationDays: true,
                   durationDays: "365",
                   expiresAt: "",

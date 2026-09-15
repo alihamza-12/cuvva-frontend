@@ -28,7 +28,7 @@ const buildFormFromCustomer = (customer) => ({
   city: customer?.address?.city || "",
   county: customer?.address?.county || "",
   postcode: customer?.address?.postcode || "",
-  country: customer?.address?.country || "UK",
+  country: "GB",
 
   lastFourDigits: customer?.lastFourDigits || "",
   role: customer?.role || "Customer",
@@ -77,15 +77,19 @@ const TextInput = ({
   type = "text",
   required = false,
   colSpan2 = false,
+  readOnly = false,
 }) => (
   <div className={`space-y-1 ${colSpan2 ? "md:col-span-2" : ""}`}>
     <FieldLabel>{label}</FieldLabel>
     <input
       type={type}
       value={value}
-      onChange={onChange}
+      onChange={readOnly ? undefined : onChange}
       required={required}
-      className="w-full min-h-[44px] bg-[#060814] border border-[#1e2238] rounded-lg p-2 text-white outline-none focus:border-[#644aff]"
+      readOnly={readOnly}
+      aria-readonly={readOnly}
+      tabIndex={readOnly ? -1 : undefined}
+      className={`w-full min-h-[44px] bg-[#060814] border border-[#1e2238] rounded-lg p-2 outline-none focus:border-[#644aff] ${readOnly ? "text-[#8a8fbc] cursor-not-allowed" : "text-white"}`}
     />
   </div>
 );
@@ -389,11 +393,8 @@ export default function CustomerDetailPage() {
                         value={editForm.postcode}
                         onChange={setField("postcode")}
                       />
-                      <TextInput
-                        label="Country"
-                        value={editForm.country}
-                        onChange={setField("country")}
-                      />
+                      {/* Country is fixed platform-wide. */}
+                      <TextInput label="Country" value="GB" readOnly />
                     </div>
                   </div>
 

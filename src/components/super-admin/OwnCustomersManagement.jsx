@@ -103,6 +103,8 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
   const [editPasswordConfirm, setEditPasswordConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [editPhone, setEditPhone] = useState("");
+  const [editAdditionalPhones, setEditAdditionalPhones] = useState([]);
   const [editAddress, setEditAddress] = useState({
     line1: "",
     line2: "",
@@ -121,6 +123,8 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
     setEditPasswordConfirm("");
     setShowPassword(false);
     setShowPasswordConfirm(false);
+    setEditPhone("");
+    setEditAdditionalPhones([]);
     setEditAddress({ line1: "", line2: "", city: "", postcode: "" });
   };
 
@@ -150,6 +154,9 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
     setEditPasswordConfirm("");
     setShowPassword(false);
     setShowPasswordConfirm(false);
+
+    setEditPhone(record.phone || "");
+    setEditAdditionalPhones(record.additionalPhones || []);
 
     // Prefill the saved address so the admin edits real values, not blanks.
     setEditAddress({
@@ -199,6 +206,11 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
       };
 
       if (wantsPasswordChange) payload.password = editPassword;
+
+      if (editPhone.trim()) payload.phone = editPhone.trim();
+      payload.additionalPhones = editAdditionalPhones
+        .map((value) => value.trim())
+        .filter(Boolean);
 
       payload.address = {
         line1: editAddress.line1.trim(),
@@ -290,6 +302,57 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                   <p className="text-[11px] text-[#6b7280]">
                     Leave empty to clear expiration.
                   </p>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
+                    Mobile number
+                  </label>
+                  <input
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                    placeholder="07xxx xxxxxx"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
+                    Additional numbers
+                  </label>
+                  {editAdditionalPhones.map((extraPhone, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        value={extraPhone}
+                        onChange={(e) =>
+                          setEditAdditionalPhones((previous) =>
+                            previous.map((value, i) => (i === index ? e.target.value : value)),
+                          )
+                        }
+                        className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                        placeholder="07xxx xxxxxx"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setEditAdditionalPhones((previous) =>
+                            previous.filter((_, i) => i !== index),
+                          )
+                        }
+                        aria-label="Remove number"
+                        className="shrink-0 min-h-[44px] px-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-600 hover:text-white transition-all"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setEditAdditionalPhones((previous) => [...previous, ""])}
+                    className="self-start min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] text-[#8a8fbc] font-bold rounded-lg text-[10px] uppercase hover:border-[#644aff] hover:text-white transition-all"
+                  >
+                    + Add number
+                  </button>
                 </div>
 
                 {/* Residential address */}

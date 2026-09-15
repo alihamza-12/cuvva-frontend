@@ -51,6 +51,19 @@ export const profileApi = createApi({
       invalidatesTags: ["Profile"],
     }),
 
+    /*
+     * Add an EXTRA contact number. Kept separate from updatePhoneNumber so the
+     * main number captured at customer creation is never overwritten.
+     */
+    addAdditionalPhone: builder.mutation({
+      query: (additionalPhone) => ({
+        url: "/customers/me",
+        method: "PATCH",
+        body: { additionalPhone },
+      }),
+      invalidatesTags: ["Profile"],
+    }),
+
     updateProfilePhoto: builder.mutation({
       query: (profilePhotoUrl) => ({
         url: "/customers/me",
@@ -68,5 +81,6 @@ export const {
   useUpdatePreferredNameMutation,
   useAddAdditionalEmailMutation,
   useUpdatePhoneNumberMutation,
+  useAddAdditionalPhoneMutation,
   useUpdateProfilePhotoMutation,
 } = profileApi;

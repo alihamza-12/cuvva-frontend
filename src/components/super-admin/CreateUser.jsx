@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { AlertTriangle, CheckCircle2, UserPlus } from "lucide-react";
 
-const AddressInput = ({ label, value, onChange, required = false, uppercase = false }) => (
+const AddressInput = ({ label, value, onChange, required = false, uppercase = false, readOnly = false }) => (
   <label className="space-y-1">
     <span className="block text-[10px] font-bold uppercase tracking-wider text-[#8a8fbc]">
       {label}{required ? " *" : ""}
     </span>
     <input
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => !readOnly && onChange(event.target.value)}
       required={required}
-      className={`w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors ${uppercase ? "uppercase" : ""}`}
+      readOnly={readOnly}
+      aria-readonly={readOnly}
+      tabIndex={readOnly ? -1 : undefined}
+      className={`w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors ${uppercase ? "uppercase" : ""} ${readOnly ? "cursor-not-allowed text-[#8a8fbc]" : ""}`}
     />
   </label>
 );
@@ -24,13 +27,15 @@ export default function CreateUser({ axiosInstance, onCreated }) {
     durationDays: "",
     dateOfBirth: "",
     gender: "",
+    phone: "",
     drivingLicenceNumber: "",
     addressLine1: "",
     addressLine2: "",
     city: "",
     county: "",
     postcode: "",
-    country: "UK",
+    // Country is fixed platform-wide and is not user-editable.
+    country: "GB",
   });
 
   const [error, setError] = useState("");
@@ -58,6 +63,9 @@ export default function CreateUser({ axiosInstance, onCreated }) {
       if (formData.role === "Customer") {
         payload.dateOfBirth = formData.dateOfBirth;
         payload.gender = formData.gender;
+        // Mobile number is stored on the customer and appears on the policy
+        // certificate, the emailed PDF and the customer's own profile screen.
+        if (formData.phone.trim()) payload.phone = formData.phone.trim();
         payload.drivingLicenceNumber = formData.drivingLicenceNumber.trim();
         payload.address = {
           line1: formData.addressLine1.trim(),
@@ -65,7 +73,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
           city: formData.city.trim(),
           county: formData.county.trim(),
           postcode: formData.postcode.trim(),
-          country: formData.country.trim(),
+          country: "GB",
         };
       }
 
@@ -80,13 +88,15 @@ export default function CreateUser({ axiosInstance, onCreated }) {
         durationDays: "",
         dateOfBirth: "",
         gender: "",
+        phone: "",
         drivingLicenceNumber: "",
         addressLine1: "",
         addressLine2: "",
         city: "",
         county: "",
         postcode: "",
-        country: "UK",
+        // Country is fixed platform-wide and is not user-editable.
+    country: "GB",
       });
 
       if (onCreated) onCreated();
@@ -210,6 +220,22 @@ export default function CreateUser({ axiosInstance, onCreated }) {
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
+                  Mobile Number
+                </label>
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                  placeholder="07xxx xxxxxx"
+                  className="w-full min-h-[44px] bg-white/5 border border-[#1e2238] rounded-xl p-3 text-xs text-white outline-none focus:border-[#644aff] transition-colors"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
                   Gender
                 </label>
                 <select
@@ -256,7 +282,7 @@ export default function CreateUser({ axiosInstance, onCreated }) {
                 <AddressInput label="City" required value={formData.city} onChange={(value) => setFormData({ ...formData, city: value })} />
                 <AddressInput label="County" value={formData.county} onChange={(value) => setFormData({ ...formData, county: value })} />
                 <AddressInput label="Postcode" required value={formData.postcode} onChange={(value) => setFormData({ ...formData, postcode: value.toUpperCase() })} uppercase />
-                <AddressInput label="Country" required value={formData.country} onChange={(value) => setFormData({ ...formData, country: value })} />
+                <AddressInput label="Country" required readOnly value="GB" onChange={() => {}} />
               </div>
             </>
           )}

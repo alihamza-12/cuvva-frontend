@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, MessageCircleQuestion } from "lucide-react";
 import {
+  useAddAdditionalPhoneMutation,
   useGetMyProfileQuery,
-  useUpdatePhoneNumberMutation,
 } from "../../app/api/profileApi";
 
 const UK_MOBILE_REGEX = /^(?:\+44\s?7|0044\s?7|07)\d{3}[\s-]?\d{6}$/;
@@ -11,8 +11,9 @@ const UK_MOBILE_REGEX = /^(?:\+44\s?7|0044\s?7|07)\d{3}[\s-]?\d{6}$/;
 export default function AddMobileNumberPage() {
   const navigate = useNavigate();
   const { refetch } = useGetMyProfileQuery();
-  const [updatePhoneNumber, { isLoading: isSaving }] =
-    useUpdatePhoneNumberMutation();
+  // Appends an EXTRA number; the main number stays untouched.
+  const [addAdditionalPhone, { isLoading: isSaving }] =
+    useAddAdditionalPhoneMutation();
 
   const [phoneInput, setPhoneInput] = useState("");
   const [addedPhone, setAddedPhone] = useState("");
@@ -49,7 +50,7 @@ export default function AddMobileNumberPage() {
     setErrorMessage("");
 
     try {
-      await updatePhoneNumber(trimmed).unwrap();
+      await addAdditionalPhone(trimmed).unwrap();
 
       await refetch();
       setAddedPhone(trimmed);
