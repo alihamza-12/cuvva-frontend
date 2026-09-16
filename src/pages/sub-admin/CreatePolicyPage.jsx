@@ -5,7 +5,9 @@ import CurrencyInput from "../../components/common/CurrencyInput";
 import CustomerSearchSelect from "../../components/common/CustomerSearchSelect";
 import MaskedDateInput from "../../components/common/MaskedDateInput";
 import MaskedTimeInput from "../../components/common/MaskedTimeInput";
+import FieldError from "../../components/common/FieldError";
 import { normalizeTime } from "../../utils/normalizeTime";
+import { digitsOnly, isValidCardLast4 } from "../../utils/titleCase";
 import PolicyVehicleLookup from "../../components/common/PolicyVehicleLookup";
 
 function Field({ label, children }) {
@@ -16,6 +18,15 @@ function Field({ label, children }) {
       </div>
       {children}
     </label>
+  );
+}
+
+/* Red outline wrapper so date/time/currency inputs show an error state. */
+function ErrorRing({ error, children }) {
+  return (
+    <div className={error ? "rounded-lg ring-1 ring-red-500" : ""}>
+      {children}
+    </div>
   );
 }
 
@@ -45,6 +56,7 @@ export default function CreatePolicyPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
   const [vehicleLookupKey, setVehicleLookupKey] = useState(0);
 
@@ -96,19 +108,67 @@ export default function CreatePolicyPage() {
     [customerOptions],
   );
 
-  const isValid = useMemo(() => {
-    if (!form.customerId) return false;
-    if (!form.vehicleId) return false;
-    if (!form.premiumAmount || Number(form.premiumAmount) <= 0) return false;
-    if (form.excess === "" || Number(form.excess) < 0) return false;
-    if (!/^\d{4}$/.test(form.cardLast4)) return false;
-    if (!form.startDate || !form.endDate) return false;
-    if (!form.startTime || !form.endTime) return false;
-    return true;
-  }, [form]);
+  const clearFieldError = (key) => {
+    setFieldErrors((previous) => {
+      if (!previous[key]) return previous;
+      const next = { ...previous };
+      delete next[key];
+      return next;
+    });
+  };
+
+  /*
+   * Picking a customer loads the card marker stored on that customer, so the
+   * payment field is pre-filled from the database. It stays editable: whatever
+   * is in the box when the policy is created is written back to the customer.
+   */
+  const handleCustomerChange = (customerId) => {
+    const selectedCustomer = customers.find(
+      (customer) => customer._id === customerId,
+    );
+
+    setForm((previous) => ({
+      ...previous,
+      customerId,
+      cardLast4: selectedCustomer?.lastFourDigits
+        ? digitsOnly(selectedCustomer.lastFourDigits)
+        : "",
+    }));
+
+    clearFieldError("customerId");
+    clearFieldError("cardLast4");
+  };
 
   const handleChange = (key) => (e) => {
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
+    clearFieldError(key);
+  };
+
+  /* Per-field validation so every message sits under its own field. */
+  const buildFieldErrors = () => {
+    const next = {};
+
+    if (!form.customerId) next.customerId = "Select a customer.";
+    if (!form.vehicleId) {
+      next.vehicleId = "Search and save a vehicle for this policy.";
+    }
+    if (!form.premiumAmount || Number(form.premiumAmount) <= 0) {
+      next.premiumAmount = "Enter the premium amount.";
+    }
+    if (form.excess === "" || Number(form.excess) < 0) {
+      next.excess = "Enter the excess amount.";
+    }
+    if (!form.cardLast4) {
+      next.cardLast4 = "Enter the last 4 digits of the payment card.";
+    } else if (!isValidCardLast4(form.cardLast4)) {
+      next.cardLast4 = "Enter exactly the last 4 digits of the payment card.";
+    }
+    if (!form.startDate) next.startDate = "Enter the start date.";
+    if (!form.endDate) next.endDate = "Enter the end date.";
+    if (!form.startTime) next.startTime = "Enter the start time.";
+    if (!form.endTime) next.endTime = "Enter the end time.";
+
+    return next;
   };
 
   const handleSubmit = async (e) => {
@@ -116,8 +176,11 @@ export default function CreatePolicyPage() {
     setError("");
     setSuccessMsg("");
 
-    if (!isValid) {
-      setError("Please complete required fields.");
+    const validationErrors = buildFieldErrors();
+    setFieldErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setError("Please fix the highlighted fields and try again.");
       return;
     }
 
@@ -125,6 +188,7 @@ export default function CreatePolicyPage() {
     const normalizedEndTime = normalizeTime(form.endTime);
 
     if (normalizedStartTime === null || normalizedEndTime === null) {
+      setFieldErrors({ startTime: "Enter a valid time (e.g. 09:30).", endTime: "Enter a valid time (e.g. 09:30)." });
       setError("Enter a valid time (e.g. 09:30 or 5 PM)");
       return;
     }
@@ -133,6 +197,7 @@ export default function CreatePolicyPage() {
       form.startDate === form.endDate &&
       normalizedEndTime <= normalizedStartTime
     ) {
+      setFieldErrors({ endTime: "End time must be after the start time." });
       setError("End time must be after start time");
       return;
     }
@@ -145,7 +210,7 @@ export default function CreatePolicyPage() {
         vehicleId: form.vehicleId,
         premiumAmount: form.premiumAmount,
         excess: form.excess,
-        cardLast4: form.cardLast4,
+        cardLast4: digitsOnly(form.cardLast4),
         startDate: form.startDate,
         endDate: form.endDate,
         startTime: normalizedStartTime,
@@ -159,8 +224,17 @@ export default function CreatePolicyPage() {
       const res = await httpClient.post("/api/policies", payload);
       setSuccessMsg(res?.data?.message || "Policy created successfully.");
 
+      /*
+       * Straight to the new policy's page. The backend has already written the
+       * card marker back onto the customer for the next quote.
+       */
+      const createdPolicyId = res?.data?.policy?._id;
+      const destination = createdPolicyId
+        ? `/dashboard/policies/${createdPolicyId}`
+        : "/dashboard?tab=my-policies";
+
       setTimeout(() => {
-        navigate("/dashboard?tab=my-policies", { replace: true });
+        navigate(destination, { replace: true });
       }, 900);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to create policy.");
@@ -228,7 +302,7 @@ export default function CreatePolicyPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-6">
+        <form onSubmit={handleSubmit} noValidate className="mt-6">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Customer (required)">
               <CustomerSearchSelect
@@ -238,13 +312,14 @@ export default function CreatePolicyPage() {
                   disabled: customer.policyCreationRestricted,
                 }))}
                 value={form.customerId}
-                onChange={(customerId) =>
-                  setForm((prev) => ({ ...prev, customerId }))
-                }
+                onChange={handleCustomerChange}
                 placeholder="Search customer by name or email"
                 showIcon={false}
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.customerId ? "border-red-500" : "border-[#1e2238]"
+                }`}
               />
+              <FieldError message={fieldErrors.customerId} />
             </Field>
 
             <div className="md:col-span-2">
@@ -252,35 +327,45 @@ export default function CreatePolicyPage() {
                 key={`${vehicleLookupKey}-${form.customerId}`}
                 customerId={form.customerId}
                 accent="cyan"
-                onVehicleResolved={(vehicle) =>
+                onVehicleResolved={(vehicle) => {
                   setForm((current) => ({
                     ...current,
                     vehicleId: vehicle?._id || "",
-                  }))
-                }
+                  }));
+                  if (vehicle?._id) clearFieldError("vehicleId");
+                }}
               />
+              <FieldError message={fieldErrors.vehicleId} />
             </div>
 
             <Field label="Premium Amount (£) (required)">
-              <CurrencyInput
-                value={form.premiumAmount}
-                onChange={(v) =>
-                  setForm((prev) => ({ ...prev, premiumAmount: v }))
-                }
-                required
-                accentClass="focus:border-[#00f0ff]"
-              />
+              <ErrorRing error={fieldErrors.premiumAmount}>
+                <CurrencyInput
+                  value={form.premiumAmount}
+                  onChange={(v) => {
+                    setForm((prev) => ({ ...prev, premiumAmount: v }));
+                    clearFieldError("premiumAmount");
+                  }}
+                  required
+                  accentClass="focus:border-[#00f0ff]"
+                />
+              </ErrorRing>
+              <FieldError message={fieldErrors.premiumAmount} />
             </Field>
 
             <Field label="Excess (£) (required)">
-              <CurrencyInput
-                value={form.excess}
-                onChange={(v) =>
-                  setForm((prev) => ({ ...prev, excess: v }))
-                }
-                required
-                accentClass="focus:border-[#00f0ff]"
-              />
+              <ErrorRing error={fieldErrors.excess}>
+                <CurrencyInput
+                  value={form.excess}
+                  onChange={(v) => {
+                    setForm((prev) => ({ ...prev, excess: v }));
+                    clearFieldError("excess");
+                  }}
+                  required
+                  accentClass="focus:border-[#00f0ff]"
+                />
+              </ErrorRing>
+              <FieldError message={fieldErrors.excess} />
             </Field>
 
             <Field label="Last 4 digits of payment card (required)">
@@ -289,17 +374,18 @@ export default function CreatePolicyPage() {
                 inputMode="numeric"
                 autoComplete="off"
                 maxLength={4}
-                required
                 value={form.cardLast4}
-                onChange={(event) =>
-                  setForm((previous) => ({
-                    ...previous,
-                    cardLast4: event.target.value.replace(/\D/g, "").slice(0, 4),
-                  }))
-                }
+                onChange={(event) => {
+                  const value = digitsOnly(event.target.value);
+                  setForm((previous) => ({ ...previous, cardLast4: value }));
+                  clearFieldError("cardLast4");
+                }}
                 placeholder="0000"
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.cardLast4 ? "border-red-500" : "border-[#1e2238]"
+                }`}
               />
+              <FieldError message={fieldErrors.cardLast4} />
             </Field>
 
             <Field label="Underwriter (required)">
@@ -343,39 +429,63 @@ export default function CreatePolicyPage() {
             </Field>
 
             <Field label="Start Date (required)">
-              <MaskedDateInput
-                value={form.startDate}
-                onChange={(v) => setForm((prev) => ({ ...prev, startDate: v }))}
-                required
-                accentClass="focus:border-[#00f0ff]"
-              />
+              <ErrorRing error={fieldErrors.startDate}>
+                <MaskedDateInput
+                  value={form.startDate}
+                  onChange={(v) => {
+                    setForm((prev) => ({ ...prev, startDate: v }));
+                    clearFieldError("startDate");
+                  }}
+                  required
+                  accentClass="focus:border-[#00f0ff]"
+                />
+              </ErrorRing>
+              <FieldError message={fieldErrors.startDate} />
             </Field>
 
             <Field label="End Date (required)">
-              <MaskedDateInput
-                value={form.endDate}
-                onChange={(v) => setForm((prev) => ({ ...prev, endDate: v }))}
-                required
-                accentClass="focus:border-[#00f0ff]"
-              />
+              <ErrorRing error={fieldErrors.endDate}>
+                <MaskedDateInput
+                  value={form.endDate}
+                  onChange={(v) => {
+                    setForm((prev) => ({ ...prev, endDate: v }));
+                    clearFieldError("endDate");
+                  }}
+                  required
+                  accentClass="focus:border-[#00f0ff]"
+                />
+              </ErrorRing>
+              <FieldError message={fieldErrors.endDate} />
             </Field>
 
             <Field label="Start Time (required)">
-              <MaskedTimeInput
-                value={form.startTime}
-                onChange={(v) => setForm((prev) => ({ ...prev, startTime: v }))}
-                required
-                accentClass="focus:border-[#00f0ff]"
-              />
+              <ErrorRing error={fieldErrors.startTime}>
+                <MaskedTimeInput
+                  value={form.startTime}
+                  onChange={(v) => {
+                    setForm((prev) => ({ ...prev, startTime: v }));
+                    clearFieldError("startTime");
+                  }}
+                  required
+                  accentClass="focus:border-[#00f0ff]"
+                />
+              </ErrorRing>
+              <FieldError message={fieldErrors.startTime} />
             </Field>
 
             <Field label="End Time (required)">
-              <MaskedTimeInput
-                value={form.endTime}
-                onChange={(v) => setForm((prev) => ({ ...prev, endTime: v }))}
-                required
-                accentClass="focus:border-[#00f0ff]"
-              />
+              <ErrorRing error={fieldErrors.endTime}>
+                <MaskedTimeInput
+                  value={form.endTime}
+                  onChange={(v) => {
+                    setForm((prev) => ({ ...prev, endTime: v }));
+                    clearFieldError("endTime");
+                  }}
+                  required
+                  accentClass="focus:border-[#00f0ff]"
+                />
+              </ErrorRing>
+              <FieldError message={fieldErrors.endTime} />
             </Field>
           </div>
 
@@ -411,6 +521,9 @@ export default function CreatePolicyPage() {
                   underwriter: "Wakam",
                   internalNotes: "",
                 });
+                setFieldErrors({});
+                setError("");
+                setSuccessMsg("");
                 setVehicleLookupKey((current) => current + 1);
               }}
               className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
@@ -420,7 +533,7 @@ export default function CreatePolicyPage() {
 
             <button
               type="submit"
-              disabled={!isValid || submitting}
+              disabled={submitting}
               className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               {submitting ? "Creating..." : "Create Policy"}

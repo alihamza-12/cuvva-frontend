@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, FileText, Trash2 } from "lucide-react";
 import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
@@ -9,6 +9,9 @@ export default function PolicyContracts({
   axiosInstance,
 }) {
   const navigate = useNavigate();
+
+  // Search across policy number, customer details, vehicle and card marker.
+  const [query, setQuery] = useState("");
 
   // Nothing is deleted until the modal's Confirm Delete is pressed.
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -31,6 +34,35 @@ export default function PolicyContracts({
       setDeleteLoading(false);
     }
   };
+
+  const filteredPolicies = useMemo(() => {
+    const q = (query || "").trim().toLowerCase();
+    if (!q) return policies;
+
+    return policies.filter((p) => {
+      const haystack = [
+        p?._id,
+        p?.policyNumber,
+        p?.customerId?.fullName,
+        p?.customerId?.email,
+        p?.customerId?.phone,
+        p?.customerId?.lastFourDigits,
+        p?.vehicleId?.registration,
+        p?.vehicleId?.make,
+        p?.vehicleId?.model,
+        p?.policyType,
+        p?.coverageType,
+        p?.underwriter,
+        p?.status,
+        p?.cardLast4,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(q);
+    });
+  }, [policies, query]);
 
   const formatDateString = (rawDate) => {
     if (!rawDate) return "N/A";
@@ -55,18 +87,37 @@ export default function PolicyContracts({
               profiles.
             </p>
           </div>
-          <span className="px-2.5 py-1 bg-white/5 border border-[#1e2238] rounded-lg text-[10px] text-gray-400 font-mono">
-            Count: {policies.length}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-1 bg-white/5 border border-[#1e2238] rounded-lg text-[10px] text-gray-400 font-mono">
+              Count: {policies.length}
+            </span>
+            {query ? (
+              <span className="px-2.5 py-1 bg-white/5 border border-[#1e2238] rounded-lg text-[10px] text-gray-400 font-mono">
+                Filtered: {filteredPolicies.length}
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="mb-4 space-y-1">
+          <label className="text-[10px] font-bold text-[#8a8fbc] uppercase tracking-wider">
+            Search
+          </label>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Policy number, customer name, email, phone, vehicle, card, status..."
+            className="w-full bg-white/5 border border-[#1e2238] rounded-xl py-2.5 px-3 text-white outline-none focus:border-[#644aff]"
+          />
         </div>
 
         <div className="space-y-3">
-          {policies.length === 0 ? (
+          {filteredPolicies.length === 0 ? (
             <div className="text-center py-16 text-[#6b7280] font-medium tracking-wide">
-              No insurance policies match your system visibility parameters.
+              No insurance policies match your search.
             </div>
           ) : (
-            policies.map((p) => (
+            filteredPolicies.map((p) => (
               <div
                 key={p._id}
                 className="w-full text-left p-4.5 bg-[#060814]/60 border border-[#1e2238] rounded-xl pace-y-3 cursor-pointer hover:border-[#3b4263] hover:ring-1 hover:ring-[#3b4263]/50 transition-all duration-300"

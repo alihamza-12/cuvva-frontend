@@ -38,23 +38,30 @@ export default function OwnPoliciesManagement({
     if (!q) return policies;
 
     return policies.filter((p) => {
-      const id = (p?._id || "").toLowerCase();
-      const policyNumber = (p?.policyNumber || "").toLowerCase();
-      const customerName = (p?.customerId?.fullName || "").toLowerCase();
-      const vehicleReg = (p?.vehicleId?.registration || "").toLowerCase();
-      const policyType = (p?.policyType || "").toLowerCase();
-      const coverageType = (p?.coverageType || "").toLowerCase();
+      const haystack = [
+        p?._id,
+        p?.policyNumber,
+        p?.customerId?.fullName,
+        p?.customerId?.email,
+        p?.customerId?.phone,
+        p?.customerId?.lastFourDigits,
+        p?.vehicleId?.registration,
+        p?.vehicleId?.make,
+        p?.vehicleId?.model,
+        p?.policyType,
+        p?.coverageType,
+        p?.underwriter,
+        p?.status,
+        p?.cardLast4,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
-      return (
-        id.includes(q) ||
-        policyNumber.includes(q) ||
-        customerName.includes(q) ||
-        vehicleReg.includes(q) ||
-        policyType.includes(q) ||
-        coverageType.includes(q)
-      );
+      return haystack.includes(q);
     });
   }, [policies, query]);
+
 
   const formatDateString = (rawDate) => {
     if (!rawDate) return "N/A";
@@ -90,7 +97,7 @@ export default function OwnPoliciesManagement({
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Policy ID, number, driver, vehicle, type..."
+            placeholder="Policy number, customer name, email, phone, vehicle, card, status..."
             className="w-full bg-white/5 border border-[#1e2238] rounded-xl py-2.5 px-3 text-white outline-none focus:border-[#644aff]"
           />
         </div>

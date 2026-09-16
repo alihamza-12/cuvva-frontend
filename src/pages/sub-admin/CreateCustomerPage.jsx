@@ -1,8 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { httpClient } from "../../app/api/httpClient";
-import { registerCustomerBySubAdmin } from "../../app/api/customerCreateApi";
 import UppercaseInput from "../../components/common/UppercaseInput";
+import TitleCaseInput from "../../components/common/TitleCaseInput";
+import FieldError from "../../components/common/FieldError";
+import {
+  toTitleCase,
+  toUpperCaseValue,
+  digitsOnly,
+  isValidCardLast4,
+  EMAIL_PATTERN,
+  requiredMessage,
+} from "../../utils/titleCase";
 
 function Field({ label, children }) {
   return (
@@ -15,57 +24,108 @@ function Field({ label, children }) {
   );
 }
 
+const EMPTY_FORM = {
+  fullName: "",
+  email: "",
+  password: "",
+  phone: "",
+  dateOfBirth: "",
+  gender: "",
+  drivingLicenceNumber: "",
+  // Optional at creation. Stored on the customer so Create Policy can
+  // pre-fill the payment card field.
+  lastFourDigits: "",
+
+  line1: "",
+  line2: "",
+  city: "",
+  county: "",
+  postcode: "",
+  // Country is fixed platform-wide and is not user-editable.
+  country: "GB",
+
+  useDurationDays: true,
+  durationDays: "365",
+  expiresAt: "",
+};
+
 export default function CreateCustomerPage() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    phone: "",
-    dateOfBirth: "",
-    gender: "",
-    drivingLicenceNumber: "",
-
-    line1: "",
-    line2: "",
-    city: "",
-    county: "",
-    postcode: "",
-    // Country is fixed platform-wide and is not user-editable.
-    country: "GB",
-
-    useDurationDays: true,
-    durationDays: "365",
-    expiresAt: "",
-  });
+  const [form, setForm] = useState({ ...EMPTY_FORM });
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
 
-  const isValid = useMemo(() => {
-    if (!form.fullName.trim()) return false;
-    if (!form.email.trim()) return false;
-    if (!form.password.trim() || form.password.trim().length < 6) return false;
-    if (!form.dateOfBirth) return false;
-    if (!form.gender) return false;
-    if (!form.drivingLicenceNumber.trim()) return false;
-    if (!form.line1.trim()) return false;
-    if (!form.city.trim()) return false;
-    if (!form.postcode.trim()) return false;
-    if (form.useDurationDays) {
-      const n = Number(form.durationDays);
-      if (!Number.isFinite(n) || n <= 0) return false;
-    } else {
-      if (!form.expiresAt) return false;
+  /*
+   * Every required field is checked here so the message can be shown under the
+   * field it belongs to. Returns an object of { fieldName: message }.
+   */
+  const validate = (values) => {
+    const nextErrors = {};
+
+    if (!values.fullName.trim()) {
+      nextErrors.fullName = requiredMessage("Full name");
     }
-    return true;
-  }, [form]);
+    if (!values.email.trim()) {
+      nextErrors.email = requiredMessage("Email");
+    } else if (!EMAIL_PATTERN.test(values.email.trim())) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+    if (!values.password.trim()) {
+      nextErrors.password = requiredMessage("Password");
+    } else if (values.password.trim().length < 6) {
+      nextErrors.password = "Password must be at least 6 characters.";
+    }
+    if (!values.dateOfBirth) {
+      nextErrors.dateOfBirth = requiredMessage("Date of birth");
+    }
+    if (!values.gender) {
+      nextErrors.gender = "Select a gender.";
+    }
+    if (!values.drivingLicenceNumber.trim()) {
+      nextErrors.drivingLicenceNumber = requiredMessage("Driving licence");
+    }
+
+    if (!values.line1.trim()) {
+      nextErrors.line1 = requiredMessage("Address line 1");
+    }
+    if (!values.city.trim()) {
+      nextErrors.city = requiredMessage("City");
+    }
+    if (!values.postcode.trim()) {
+      nextErrors.postcode = requiredMessage("Postcode");
+    }
+
+    // Optional: blank is fine, anything else must be exactly four digits.
+    if (values.lastFourDigits.trim() && !isValidCardLast4(values.lastFourDigits)) {
+      nextErrors.lastFourDigits =
+        "Enter exactly the last 4 digits of the payment card.";
+    }
+
+    if (values.useDurationDays) {
+      const duration = Number(values.durationDays);
+      if (!Number.isFinite(duration) || duration <= 0) {
+        nextErrors.durationDays = "Enter a duration of at least 1 day.";
+      }
+    } else if (!values.expiresAt) {
+      nextErrors.expiresAt = requiredMessage("Expiry date");
+    }
+
+    return nextErrors;
+  };
 
   const handleChange = (key) => (e) => {
     const value = e.target.value;
     setForm((prev) => ({ ...prev, [key]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -73,8 +133,11 @@ export default function CreateCustomerPage() {
     setError("");
     setSuccessMsg("");
 
-    if (!isValid) {
-      setError("Please complete required fields.");
+    const validationErrors = validate(form);
+    setFieldErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setError("Please fix the highlighted fields and try again.");
       return;
     }
 
@@ -82,13 +145,21 @@ export default function CreateCustomerPage() {
     try {
       const payload = {
         role: "Customer",
-        fullName: form.fullName.trim(),
+        // Names and address prose are stored title cased, so they are sent
+        // already normalised ("jane doe" -> "Jane Doe").
+        fullName: toTitleCase(form.fullName),
         email: form.email.trim(),
         password: form.password,
         phone: form.phone?.trim() || undefined,
         dateOfBirth: form.dateOfBirth,
         gender: form.gender,
-        drivingLicenceNumber: form.drivingLicenceNumber.trim(),
+        drivingLicenceNumber: toUpperCaseValue(
+          form.drivingLicenceNumber.trim(),
+        ),
+        // Optional card marker — omitted entirely when left blank.
+        lastFourDigits: form.lastFourDigits.trim()
+          ? digitsOnly(form.lastFourDigits)
+          : undefined,
 
         durationDays: form.useDurationDays
           ? Number(form.durationDays)
@@ -97,11 +168,11 @@ export default function CreateCustomerPage() {
           ? undefined
           : new Date(form.expiresAt).toISOString(),
 
-        line1: form.line1?.trim() || undefined,
-        line2: form.line2?.trim() || undefined,
-        city: form.city?.trim() || undefined,
-        county: form.county?.trim() || undefined,
-        postcode: form.postcode?.trim() || undefined,
+        line1: toTitleCase(form.line1),
+        line2: toTitleCase(form.line2),
+        city: toTitleCase(form.city),
+        county: toTitleCase(form.county),
+        postcode: toUpperCaseValue(form.postcode.trim()),
         country: "GB",
       };
 
@@ -131,8 +202,18 @@ export default function CreateCustomerPage() {
       const msg = res?.data?.message || "Customer created successfully.";
       setSuccessMsg(msg);
 
+      /*
+       * Straight to the new customer's page so the admin can verify what was
+       * stored (name casing, address, card marker). Falls back to the customer
+       * list if the API did not return an id.
+       */
+      const createdCustomerId = res?.data?.user?.id;
+      const destination = createdCustomerId
+        ? `/dashboard/customers/${createdCustomerId}`
+        : "/dashboard?tab=my-customers";
+
       setTimeout(() => {
-        navigate("/dashboard?tab=my-customers", { replace: true });
+        navigate(destination, { replace: true });
       }, 900);
     } catch (err) {
       const msg = err?.response?.data?.message || "Failed to create customer.";
@@ -177,15 +258,18 @@ export default function CreateCustomerPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-6">
+        <form onSubmit={handleSubmit} noValidate className="mt-6">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Full name (required)">
-              <input
+              <TitleCaseInput
                 value={form.fullName}
                 onChange={handleChange("fullName")}
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.fullName ? "border-red-500" : "border-[#1e2238]"
+                }`}
                 placeholder="e.g. Jane Sarah Doe"
               />
+              <FieldError message={fieldErrors.fullName} />
             </Field>
 
             <Field label="Email (required)">
@@ -193,9 +277,12 @@ export default function CreateCustomerPage() {
                 value={form.email}
                 onChange={handleChange("email")}
                 type="email"
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.email ? "border-red-500" : "border-[#1e2238]"
+                }`}
                 placeholder="e.g. jane@example.com"
               />
+              <FieldError message={fieldErrors.email} />
             </Field>
 
             <Field label="Password (required, min 6)">
@@ -203,9 +290,12 @@ export default function CreateCustomerPage() {
                 value={form.password}
                 onChange={handleChange("password")}
                 type="password"
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.password ? "border-red-500" : "border-[#1e2238]"
+                }`}
                 placeholder="Create customer password"
               />
+              <FieldError message={fieldErrors.password} />
             </Field>
 
             <Field label="Phone (optional)">
@@ -222,15 +312,20 @@ export default function CreateCustomerPage() {
                 value={form.dateOfBirth}
                 onChange={handleChange("dateOfBirth")}
                 type="date"
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.dateOfBirth ? "border-red-500" : "border-[#1e2238]"
+                }`}
               />
+              <FieldError message={fieldErrors.dateOfBirth} />
             </Field>
 
             <Field label="Gender (required)">
               <select
                 value={form.gender}
                 onChange={handleChange("gender")}
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.gender ? "border-red-500" : "border-[#1e2238]"
+                }`}
               >
                 <option value="">Select gender</option>
                 <option value="Male">Male</option>
@@ -238,21 +333,48 @@ export default function CreateCustomerPage() {
                 <option value="Other">Other</option>
                 <option value="Prefer not to say">Prefer not to say</option>
               </select>
+              <FieldError message={fieldErrors.gender} />
             </Field>
 
             <Field label="Driving licence (required)">
-              <input
+              <UppercaseInput
                 value={form.drivingLicenceNumber}
-                onChange={(event) =>
-                  setForm((previous) => ({
-                    ...previous,
-                    drivingLicenceNumber: event.target.value.toUpperCase(),
-                  }))
-                }
-                required
-                className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs uppercase text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                onChange={handleChange("drivingLicenceNumber")}
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs uppercase text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.drivingLicenceNumber
+                    ? "border-red-500"
+                    : "border-[#1e2238]"
+                }`}
                 placeholder="e.g. SMITH••••J99AB"
               />
+              <FieldError message={fieldErrors.drivingLicenceNumber} />
+            </Field>
+
+            <Field label="Last 4 digits of payment card (optional)">
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                maxLength={4}
+                value={form.lastFourDigits}
+                onChange={(event) => {
+                  const value = digitsOnly(event.target.value);
+                  setForm((prev) => ({ ...prev, lastFourDigits: value }));
+                  setFieldErrors((prev) => {
+                    if (!prev.lastFourDigits) return prev;
+                    const next = { ...prev };
+                    delete next.lastFourDigits;
+                    return next;
+                  });
+                }}
+                placeholder="0000"
+                className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                  fieldErrors.lastFourDigits
+                    ? "border-red-500"
+                    : "border-[#1e2238]"
+                }`}
+              />
+              <FieldError message={fieldErrors.lastFourDigits} />
             </Field>
           </div>
 
@@ -263,17 +385,19 @@ export default function CreateCustomerPage() {
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <Field label="Line 1 (required)">
-                <input
+                <TitleCaseInput
                   value={form.line1}
                   onChange={handleChange("line1")}
-                  required
-                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                    fieldErrors.line1 ? "border-red-500" : "border-[#1e2238]"
+                  }`}
                   placeholder="Street address"
                 />
+                <FieldError message={fieldErrors.line1} />
               </Field>
 
               <Field label="Line 2">
-                <input
+                <TitleCaseInput
                   value={form.line2}
                   onChange={handleChange("line2")}
                   className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
@@ -282,17 +406,19 @@ export default function CreateCustomerPage() {
               </Field>
 
               <Field label="City (required)">
-                <input
+                <TitleCaseInput
                   value={form.city}
                   onChange={handleChange("city")}
-                  required
-                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                    fieldErrors.city ? "border-red-500" : "border-[#1e2238]"
+                  }`}
                   placeholder="Town / City"
                 />
+                <FieldError message={fieldErrors.city} />
               </Field>
 
               <Field label="County">
-                <input
+                <TitleCaseInput
                   value={form.county}
                   onChange={handleChange("county")}
                   className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
@@ -304,10 +430,12 @@ export default function CreateCustomerPage() {
                 <UppercaseInput
                   value={form.postcode}
                   onChange={handleChange("postcode")}
-                  required
-                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                    fieldErrors.postcode ? "border-red-500" : "border-[#1e2238]"
+                  }`}
                   placeholder="e.g. AB12 3CD"
                 />
+                <FieldError message={fieldErrors.postcode} />
               </Field>
 
               <Field label="Country (required)">
@@ -363,8 +491,13 @@ export default function CreateCustomerPage() {
                   onChange={handleChange("durationDays")}
                   type="number"
                   min={1}
-                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff]"
+                  className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white placeholder:text-[#3a3f5f] outline-none focus:border-[#00f0ff] ${
+                    fieldErrors.durationDays
+                      ? "border-red-500"
+                      : "border-[#1e2238]"
+                  }`}
                 />
+                <FieldError message={fieldErrors.durationDays} />
               </Field>
             ) : (
               <Field label="Expires at">
@@ -372,8 +505,11 @@ export default function CreateCustomerPage() {
                   value={form.expiresAt}
                   onChange={handleChange("expiresAt")}
                   type="datetime-local"
-                  className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#00f0ff]"
+                  className={`w-full min-h-[44px] px-3 py-2 bg-[#060814] border rounded-xl text-xs text-white outline-none focus:border-[#00f0ff] ${
+                    fieldErrors.expiresAt ? "border-red-500" : "border-[#1e2238]"
+                  }`}
                 />
+                <FieldError message={fieldErrors.expiresAt} />
               </Field>
             )}
           </div>
@@ -381,27 +517,12 @@ export default function CreateCustomerPage() {
           <div className="flex flex-col gap-3 mt-8 sm:flex-row sm:items-center sm:justify-end">
             <button
               type="button"
-              onClick={() =>
-                setForm({
-                  fullName: "",
-                  email: "",
-                  password: "",
-                  phone: "",
-                  dateOfBirth: "",
-                  gender: "",
-                  drivingLicenceNumber: "",
-                  line1: "",
-                  line2: "",
-                  city: "",
-                  county: "",
-                  postcode: "",
-                  // Country is fixed platform-wide and is not user-editable.
-                  country: "GB",
-                  useDurationDays: true,
-                  durationDays: "365",
-                  expiresAt: "",
-                })
-              }
+              onClick={() => {
+                setForm({ ...EMPTY_FORM });
+                setFieldErrors({});
+                setError("");
+                setSuccessMsg("");
+              }}
               disabled={submitting}
               className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-white/5 hover:bg-white/10 border border-[#1e2238] text-[#8a8fbc] hover:text-white font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
@@ -410,7 +531,7 @@ export default function CreateCustomerPage() {
 
             <button
               type="submit"
-              disabled={!isValid || submitting}
+              disabled={submitting}
               className="w-full sm:w-auto min-h-[44px] px-5 py-2 bg-[#00f0ff]/15 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/25 text-[#e9fdff] font-bold rounded-xl text-[10px] uppercase transition-all disabled:opacity-40"
             >
               {submitting ? "Creating..." : "Create Customer"}

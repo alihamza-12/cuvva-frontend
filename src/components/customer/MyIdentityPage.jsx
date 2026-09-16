@@ -17,6 +17,42 @@ export default function MyIdentityPage() {
     console.log(`${label} tapped — not wired up yet.`);
   };
 
+  /*
+   * "Verification photos -> Driving licence" used to be hardcoded to
+   * "Not taken", so a customer whose licence number is already saved — and is
+   * shown two rows above — still read "Not taken" underneath it, which looks
+   * like a contradiction.
+   *
+   * The value is now read from the customer record instead of being a fixed
+   * string:
+   *
+   *   1. a stored licence photo/verification URL, if identity verification is
+   *      ever wired up on the account, otherwise
+   *   2. the driving licence number being on file means there is nothing left
+   *      for the customer to do, so it is no longer "Not taken", and only
+   *   3. when we hold nothing at all does it still say "Not taken".
+   *
+   * The wording lives in these two constants so it can be changed in one place
+   * without touching the markup.
+   */
+  const LICENCE_TAKEN_LABEL = "Taken";
+  const LICENCE_MISSING_LABEL = "Not taken";
+
+  const licencePhotoUrl =
+    customer?.drivingLicencePhotoUrl ||
+    customer?.licencePhotoUrl ||
+    customer?.identityVerification?.licencePhotoUrl ||
+    "";
+
+  const licenceIsOnFile = Boolean(
+    String(customer?.drivingLicenceNumber || "").trim(),
+  );
+
+  const licenceVerificationValue =
+    licencePhotoUrl || licenceIsOnFile
+      ? LICENCE_TAKEN_LABEL
+      : LICENCE_MISSING_LABEL;
+
   const formatDob = (dob) => {
     if (!dob) return "Not provided";
     const d = new Date(dob);
@@ -29,7 +65,7 @@ export default function MyIdentityPage() {
   };
 
   return (
-    <div className="text-white pb-40">
+    <div className="pb-40 text-white">
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           type="button"
@@ -101,7 +137,7 @@ export default function MyIdentityPage() {
       <div className="px-4 space-y-px">
         <IdentityRow
           label="Driving licence"
-          value="Not taken"
+          value={licenceVerificationValue}
           onClick={() => handleNotWiredUp("Driving licence photo")}
         />
         <IdentityRow

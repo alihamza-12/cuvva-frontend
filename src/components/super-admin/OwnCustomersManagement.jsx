@@ -10,6 +10,8 @@ import {
   X,
 } from "lucide-react";
 import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
+import TitleCaseInput from "../common/TitleCaseInput";
+import { digitsOnly, toTitleCaseLive } from "../../utils/titleCase";
 import UppercaseInput from "../common/UppercaseInput";
 import {
   getSuspensionSummary,
@@ -111,6 +113,8 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
     city: "",
     postcode: "",
   });
+  // Optional card marker, stored on the customer and re-used by Create Policy.
+  const [editLastFour, setEditLastFour] = useState("");
 
   const closeEdit = () => {
     setEditOpen(false);
@@ -126,6 +130,7 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
     setEditPhone("");
     setEditAdditionalPhones([]);
     setEditAddress({ line1: "", line2: "", city: "", postcode: "" });
+    setEditLastFour("");
   };
 
   const openEditFor = (e, record) => {
@@ -165,6 +170,8 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
       city: record.address?.city || "",
       postcode: record.address?.postcode || "",
     });
+
+    setEditLastFour(record.lastFourDigits || "");
 
     setEditOpen(true);
   };
@@ -219,6 +226,9 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
         postcode: editAddress.postcode.trim().toUpperCase(),
       };
 
+      // Optional card marker — an empty box clears it ("" is a valid value).
+      payload.lastFourDigits = editLastFour.trim();
+
       await axiosInstance.patch(`/api/customers/${editTarget._id}`, payload);
 
       if (onRefresh) onRefresh();
@@ -269,7 +279,7 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                   <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
                     Full name
                   </label>
-                  <input
+                  <TitleCaseInput
                     value={editFullName}
                     onChange={(e) => setEditFullName(e.target.value)}
                     className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
@@ -360,12 +370,12 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                   <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
                     Address line 1
                   </label>
-                  <input
+                  <TitleCaseInput
                     value={editAddress.line1}
                     onChange={(e) =>
                       setEditAddress((previous) => ({
                         ...previous,
-                        line1: e.target.value,
+                        line1: toTitleCaseLive(e.target.value),
                       }))
                     }
                     className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
@@ -377,12 +387,12 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                   <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
                     Address line 2 (optional)
                   </label>
-                  <input
+                  <TitleCaseInput
                     value={editAddress.line2}
                     onChange={(e) =>
                       setEditAddress((previous) => ({
                         ...previous,
-                        line2: e.target.value,
+                        line2: toTitleCaseLive(e.target.value),
                       }))
                     }
                     className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
@@ -394,12 +404,12 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                   <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
                     City / town
                   </label>
-                  <input
+                  <TitleCaseInput
                     value={editAddress.city}
                     onChange={(e) =>
                       setEditAddress((previous) => ({
                         ...previous,
-                        city: e.target.value,
+                        city: toTitleCaseLive(e.target.value),
                       }))
                     }
                     className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
@@ -421,6 +431,22 @@ export default function OwnCustomersManagement({ axiosInstance, onRefresh }) {
                     }
                     className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff] uppercase"
                     placeholder="Postcode"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-[#6b7280] uppercase font-semibold tracking-wider">
+                    Last 4 digits of payment card (optional)
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    maxLength={4}
+                    value={editLastFour}
+                    onChange={(e) => setEditLastFour(digitsOnly(e.target.value))}
+                    className="w-full min-h-[44px] px-3 py-2 bg-[#060814] border border-[#1e2238] rounded-xl text-xs text-white outline-none focus:border-[#644aff]"
+                    placeholder="0000"
                   />
                 </div>
 

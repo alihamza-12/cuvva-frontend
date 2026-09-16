@@ -6,6 +6,11 @@ import { getCustomerById } from "../../app/api/customerApi";
 import { updateCustomer } from "../../app/api/customerUpdateApi";
 import ConfirmDeleteModal from "../../components/common/ConfirmDeleteModal";
 import { httpClient } from "../../app/api/httpClient";
+import {
+  digitsOnly,
+  toTitleCaseLive,
+  toUpperCaseValue,
+} from "../../utils/titleCase";
 
 const ROLES = ["Super Admin", "Sub Admin", "Customer"];
 const STATUSES = ["Active", "Suspended"];
@@ -56,7 +61,8 @@ const buildPayloadFromForm = (form) => {
       country: strOrUndef(form.country),
     },
 
-    lastFourDigits: strOrUndef(form.lastFourDigits),
+    // Sent even when blank, so clearing the box clears the stored value.
+    lastFourDigits: form.lastFourDigits === "" ? "" : form.lastFourDigits.trim(),
     role: strOrUndef(form.role),
     status: strOrUndef(form.status),
 
@@ -78,6 +84,9 @@ const TextInput = ({
   required = false,
   colSpan2 = false,
   readOnly = false,
+  placeholder,
+  maxLength,
+  inputMode,
 }) => (
   <div className={`space-y-1 ${colSpan2 ? "md:col-span-2" : ""}`}>
     <FieldLabel>{label}</FieldLabel>
@@ -89,6 +98,9 @@ const TextInput = ({
       readOnly={readOnly}
       aria-readonly={readOnly}
       tabIndex={readOnly ? -1 : undefined}
+      placeholder={placeholder}
+      maxLength={maxLength}
+      inputMode={inputMode}
       className={`w-full min-h-[44px] bg-[#060814] border border-[#1e2238] rounded-lg p-2 outline-none focus:border-[#644aff] ${readOnly ? "text-[#8a8fbc] cursor-not-allowed" : "text-white"}`}
     />
   </div>
@@ -153,8 +165,30 @@ export default function CustomerDetailPage() {
   const [updateError, setUpdateError] = useState("");
   const [updateSuccess, setUpdateSuccess] = useState("");
 
-  const setField = (key) => (e) =>
-    setEditForm((prev) => ({ ...prev, [key]: e.target.value }));
+  /*
+   * Field level normalisation, so the edit form previews exactly what will be
+   * stored: names and address prose with a capital first letter, postcode and
+   * driving licence in capitals, card marker digits only.
+   */
+  const FIELD_TRANSFORMS = {
+    fullName: toTitleCaseLive,
+    addressLine1: toTitleCaseLive,
+    addressLine2: toTitleCaseLive,
+    city: toTitleCaseLive,
+    county: toTitleCaseLive,
+    postcode: toUpperCaseValue,
+    drivingLicenceNumber: toUpperCaseValue,
+    lastFourDigits: (value) => digitsOnly(value),
+  };
+
+  const setField = (key) => (e) => {
+    const raw = e.target.value;
+    const transform = FIELD_TRANSFORMS[key];
+    setEditForm((prev) => ({
+      ...prev,
+      [key]: transform ? transform(raw) : raw,
+    }));
+  };
 
   const fetchCustomer = useCallback(async () => {
     setLoading(true);
@@ -422,9 +456,12 @@ export default function CustomerDetailPage() {
                         onChange={setField("expiresAt")}
                       />
                       <TextInput
-                        label="Last Four Digits (search marker)"
+                        label="Last 4 digits of payment card (optional)"
                         value={editForm.lastFourDigits}
                         onChange={setField("lastFourDigits")}
+                        placeholder="0000"
+                        maxLength={4}
+                        inputMode="numeric"
                       />
                     </div>
                   </div>
