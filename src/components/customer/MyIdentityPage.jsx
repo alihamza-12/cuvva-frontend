@@ -168,5 +168,3 @@ function IdentityRow({ label, value, onClick, isLast }) {
     </button>
   );
 }
-
-
