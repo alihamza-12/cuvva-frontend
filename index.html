@@ -4,12 +4,28 @@
     <meta charset="UTF-8" />
 
     <link rel="manifest" href="/manifest.json" />
+
+    <!-- Browser tab icon — unchanged, stays the same in light and dark mode. -->
     <link rel="icon" type="image/png" href="/favicon.png" />
 
+    <!--
+      Home screen app icon, light and dark.
+      "media" makes Chrome / Android / Edge pick the icon that matches the
+      phone's theme; Safari ignores it, so the script at the bottom of <head>
+      switches the href for iOS.
+    -->
     <link
       rel="apple-touch-icon"
+      id="apple-touch-icon"
       sizes="180x180"
       href="/icons/apple-touch-icon.png?v=2"
+    />
+    <link
+      rel="apple-touch-icon"
+      id="apple-touch-icon-dark"
+      sizes="180x180"
+      href="/icons/apple-touch-icon-dark.png?v=2"
+      media="(prefers-color-scheme: dark)"
     />
 
     <meta
@@ -64,6 +80,54 @@
     />
 
     <title>Cuvva</title>
+
+    <script>
+      /*
+       * Theme-aware APP icon (home screen icon) only.
+       *
+       * The browser tab favicon is deliberately not touched — it stays the same
+       * in light and dark mode.
+       *
+       * Chrome / Android / Edge honour the `media="(prefers-color-scheme: dark)"`
+       * on the apple-touch-icon link above and in the web app manifest. Safari
+       * does not, so on iOS the phone would keep showing the light icon even in
+       * dark mode.
+       *
+       * This swaps the app icon href to match the phone's theme, and keeps it in
+       * sync if the user switches theme while the app is open.
+       */
+      (function () {
+        var darkQuery =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)");
+
+        if (!darkQuery) return;
+
+        var APPLE_LIGHT = "/icons/apple-touch-icon.png?v=2";
+        var APPLE_DARK = "/icons/apple-touch-icon-dark.png?v=2";
+
+        function applyIcon(isDark) {
+          var appleIcon = document.getElementById("apple-touch-icon");
+
+          if (appleIcon) {
+            appleIcon.href = isDark ? APPLE_DARK : APPLE_LIGHT;
+          }
+        }
+
+        applyIcon(darkQuery.matches);
+
+        if (darkQuery.addEventListener) {
+          darkQuery.addEventListener("change", function (event) {
+            applyIcon(event.matches);
+          });
+        } else if (darkQuery.addListener) {
+          // Older Safari only supports the deprecated API.
+          darkQuery.addListener(function (event) {
+            applyIcon(event.matches);
+          });
+        }
+      })();
+    </script>
   </head>
 
   <body>
