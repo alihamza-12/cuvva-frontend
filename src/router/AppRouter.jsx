@@ -65,6 +65,7 @@ import CarClubDetailPage from "../components/customer/CarClubDetailPage";
 import CreateCarClubPage from "../components/customer/CreateCarClubPage";
 import CarClubResourcePage from "../components/customer/CarClubResourcePage";
 import ChatSupportPage from "../components/customer/ChatSupportWidget";
+import ChangeAppIconPage from "../components/customer/ChangeAppIconPage";
 import Screen from "../components/layout/Screen";
 
 const TempForgot = () => (
@@ -167,6 +168,7 @@ export default function AppRouter() {
           <Route path="profile/discount-code" element={<Screen><DiscountCodePage /></Screen>} />
           <Route path="profile/discounts" element={<Screen><YourDiscountsPage /></Screen>} />
           <Route path="profile/refer" element={<Screen><ReferFriendPage /></Screen>} />
+          <Route path="profile/icon" element={<Screen><ChangeAppIconPage /></Screen>} />
           
           <Route
             path="profile/account/preferred-name"

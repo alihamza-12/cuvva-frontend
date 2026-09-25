@@ -288,7 +288,7 @@ export default function ProfilePage() {
       <Card>
         <Row
           label="Change icon"
-          onClick={() => handleNotWiredUp("Change icon")}
+          onClick={() => navigate("/customer/profile/icon")}
           isLast
         />
       </Card>
