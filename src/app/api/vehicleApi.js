@@ -6,9 +6,9 @@ const REGCHECK_CREDITS_URL =
 
 const REGCHECK_USERNAMES = [
   import.meta.env?.VITE_REGCHECK_USERNAME || "Jackcanada777",
-  "jackcanada03",
-  "jackcanada04",
-  "jackcanada01",
+  "jackcanada003",
+  "jackchan005",
+  "jackcanada01",//change krna ha
 ].filter(Boolean);
 
 const RECENTLY_VIEWED_KEY = "customer_recently_viewed_vehicles";
