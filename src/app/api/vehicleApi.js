@@ -5,7 +5,7 @@ const REGCHECK_CREDITS_URL =
   "https://www.regcheck.org.uk/ajax/getcredits.aspx";
 
 const REGCHECK_USERNAMES = [
-  import.meta.env?.VITE_REGCHECK_USERNAME || "jackcanada02",
+  import.meta.env?.VITE_REGCHECK_USERNAME || "Jackcanada777",
   "jackcanada03",
   "jackcanada04",
   "jackcanada01",
