@@ -175,12 +175,23 @@ export default function CustomerDetailPage() {
                   </div>
                   <div className="text-xs text-[#6b7280]">
                     {customer.createdBy?.fullName
-                      ? `${customer.createdBy.fullName} (${customer.createdBy.role})`
-                      : "System Bootstrap / Unknown"}
+                      ? String(customer.createdBy._id) === String(customer._id) || customer.createdBy.email === customer.email
+                        ? customer.authSource === "tempify" || customer.createdBy?.email === customer.email
+                          ? "Tempify - Self Registered"
+                          : `${customer.createdBy.fullName} (Self)`
+                        : `${customer.createdBy.fullName} (${customer.createdBy.role})`
+                      : customer.authSource === "tempify"
+                        ? "Tempify - Self Registered"
+                        : "System Bootstrap / Unknown"}
                   </div>
-                  {customer.createdBy?.email && (
+                  {customer.createdBy?.email && String(customer.createdBy._id) !== String(customer._id) && (
                     <div className="text-xs text-[#6b7280]">
                       {customer.createdBy.email}
+                    </div>
+                  )}
+                  {customer.authSource === "tempify" && (
+                    <div className="text-[10px] text-[#644aff] mt-1">
+                      Source: Tempify (client.zavoryn.tech)
                     </div>
                   )}
                 </div>
