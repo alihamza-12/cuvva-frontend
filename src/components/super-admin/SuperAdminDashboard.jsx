@@ -27,6 +27,7 @@ import PolicyContracts from "./PolicyContracts";
 import CreateUser from "./CreateUser";
 import CreatePolicy from "./CreatePolicy";
 import CreateVehicle from "./CreateVehicle";
+import CuvvafyPricingManagement from "./CuvvafyPricingManagement";
 
 const api = httpClient;
 
@@ -121,6 +122,7 @@ export default function SuperAdminDashboard() {
       "create-user",
       "create-policy",
       "create-vehicle",
+      "cuvvafy-pricing",
     ]);
     setActiveTab(allowedTabs.has(tab) ? tab : "overview");
   }, [location.search]);
@@ -303,6 +305,10 @@ export default function SuperAdminDashboard() {
               axiosInstance={api}
               onCreated={fetchGlobalMetricsData}
             />
+          )}
+
+          {activeTab === "cuvvafy-pricing" && (
+            <CuvvafyPricingManagement axiosInstance={api} />
           )}
         </main>
       </div>

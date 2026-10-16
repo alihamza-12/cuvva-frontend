@@ -8,6 +8,7 @@ import {
   LogOut,
   MoreHorizontal,
   X,
+  PoundSterling,
 } from "lucide-react";
 
 export default function Sidebar({
@@ -84,6 +85,12 @@ export default function Sidebar({
       name: "Create Vehicle",
       icon: Car,
       href: "/admin/dashboard?tab=create-vehicle",
+    },
+    {
+      id: "cuvvafy-pricing",
+      name: "Cuvvafy Pricing",
+      icon: PoundSterling,
+      href: "/admin/dashboard?tab=cuvvafy-pricing",
     },
   ];
 
