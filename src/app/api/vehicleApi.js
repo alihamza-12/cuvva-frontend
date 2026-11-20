@@ -6,7 +6,7 @@ const REGCHECK_CREDITS_URL =
 
 const REGCHECK_USERNAMES = [
   import.meta.env?.VITE_REGCHECK_USERNAME || " jackcanada008",
-  "jackcanada003",
+  "minoindia",
   "jackchan005",
   "jackcanada01",//change krna ha
 ].filter(Boolean);
